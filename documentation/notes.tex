@@ -1,0 +1,383 @@
+\documentclass[letterpaper]{article}
+
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+\title{Notes on an axisymmetric global stability code for the Princeton MRI experiment}
+\author{Austin Roach}
+
+
+\begin{document}
+\maketitle{}
+
+\section{Introduction}
+
+Recently, nonaxisymmetric MHD modes have been observed in the Princeton MRI experiment$^1$.  Previous computational work in support of the experiment has been almost exclusively axisymmetric.  This work will follow a similar approach to Goodman and Ji's examination of unstable axisymmetric global linear modes in a cylindrical system$^2$, but will extend the analysis to allow examination of nonaxisymmetric eigenmodes, eigenmodes with non-ideal Couette rotation profiles, and damped eigenmodes.
+
+\section{Linearized Equations}
+
+We start with the equations of incompressible MHD:
+
+\begin{align}
+&\dot{{\bf B}} + {\bf v}\cdot\nabla{\bf B} - {\bf B}\cdot\nabla{\bf v}=\eta\nabla^2 {\bf B}
+\\
+&\dot{{\bf v}}+{\bf v}\cdot\nabla{\bf v}+\frac{1}{\rho}\nabla{P}-\frac{{\bf B}\cdot\nabla{\bf B}}{4\pi\rho}=\nu\nabla^2{\bf v}
+\\
+&\nabla\cdot{\bf B}=0
+\\
+&\nabla\cdot{\bf v}=0
+\end{align}
+
+Here $P$ is defined as the sum of the hydrodynamic and magnetic pressures, $P=p+{\bf B}^2/8\pi$.We assume a background state with zeroth-order ${\bf B}=B_o \hat{z}$ and ${\bf v}=r\Omega(r)\hat{\theta}$.  First order quantities will be denoted by a $\delta$.
+
+We will define two radial derivative operators, $\partial_r \equiv \frac{\partial}{\partial r}$ and $\partial_{r}^\dagger \equiv \frac{\partial}{\partial r}+\frac{1}{r}$.  So the combination $\partial_r \partial_r^\dagger = \frac{\partial^2}{\partial r^2}-\frac{1}{r^2}+\frac{1}{r}\partial_r$.
+
+\subsection{Radial induction equation}
+
+The radial component of the induction equation is
+\begin{align}
+\dot{B_r} + v_r \partial_r B_r + \frac{v_\theta}{r}\partial_\theta B_r + v_z \partial_z B_r - B_r \partial_r v_r -\frac{B_\theta}{r}\partial_\theta v_r - B_z \partial_z v_r
+\\ \nonumber
+ = \eta\left(\nabla^2 B_r -\frac{2}{r^2}\partial_\theta B_\theta - \frac{1}{r^2}B_r\right)
+\end{align}
+After linearization, keeping only 1st-order quantities, this becomes
+\begin{equation}
+\delta \dot{B_r} + \Omega \partial_\theta \delta B_r - B_o \partial_z \delta v_r = \eta\left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta B_r - \frac{2}{r^2}\partial_\theta \delta B_\theta\right]
+\end{equation}
+
+\subsection{Azimuthal induction equation}
+The azimuthal component of the induction equation is
+\begin{align}
+\dot{B_\theta}+v_r \partial_r B_\theta + \frac{v_\theta}{r}\partial_\theta B_\theta + v_z \partial_z B_\theta + \frac{v_\theta}{r}B_r - B_r\partial_r v_\theta - \frac{1}{r}B_\theta \partial_\theta v_\theta
+\\ \nonumber
+ - B_z \partial_z v_\theta - \frac{v_r}{r}B_\theta = \eta\left(\nabla^2 B_\theta + \frac{2}{r^2}\partial_\theta B_r - \frac{1}{r^2}B_\theta \right)
+\end{align}
+After linearization, this becomes
+\begin{align}
+\delta \dot{B_\theta} + \Omega \partial_\theta \delta B_\theta - B_o \partial_z \delta v_\theta - \delta B_r r \partial_r \Omega=\eta\left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta B_\theta + \frac{2}{r^2}\partial_\theta \delta B_r\right]
+\end{align}
+
+\subsection{Axial induction equation}
+The axial component of the induction equation is
+\begin{align}
+\dot{B_z} + v_r \partial_r B_z + \frac{v_\theta}{r}\partial_\theta B_z + v_z \partial_z B_z - B_r \partial_r v_z - \frac{1}{r}B_\theta \partial_\theta v_z - B_z \partial_z v_z
+\\ \nonumber
+=\eta\left[\frac{1}{r}\partial_r + \partial_r^2 + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]B_z
+\end{align}
+After linearization this becomes
+\begin{align}
+\delta\dot{B_z} + \Omega\partial_\theta \delta B_z - B_o\partial_z \delta v_z = \eta\left[\partial_r^\dagger \partial_r + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]\delta B_z
+\end{align}
+
+\subsection{Radial Euler equation}
+
+The radial component of the Euler equation is
+\begin{align}
+\dot{v_r} + v_r \partial_r v_r + \frac{v_\theta}{r}\partial_\theta v_r + v_z \partial_z v_r - \frac{v_\theta^2}{r}+\frac{1}{\rho}\partial_r P 
+\\ \nonumber 
+- \frac{1}{4\pi\rho}\left(B_r \partial_r B_r + \frac{B_\theta}{r}\partial_\theta B_r + B_z \partial_z B_r - \frac{B_\theta^2}{r}\right)
+\\ \nonumber
+ = \nu\left(\nabla^2 v_r -\frac{2}{r^2}\partial_\theta v_\theta - \frac{1}{r^2}v_r\right)
+\end{align}
+After linearization this becomes
+\begin{align}
+\delta\dot{v_r} + \Omega \partial_\theta \delta v_r - 2\Omega\delta v_\theta + \partial_r \frac{\delta P}{\rho} - \frac{B_o}{4\pi\rho}\partial_z \delta B_r
+\\ \nonumber
+= \nu \left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta v_r - \frac{2}{r^2}\partial_\theta \delta v_\theta\right]
+\end{align}
+
+\subsection{Azimuthal Euler Equation}
+The azimuthal component of the Euler equation is
+\begin{align}
+\dot{v_\theta} + v_r \partial_r v_\theta + \frac{v_\theta}{r}\partial_\theta v_\theta + v_z \partial_z v_\theta + \frac{v_\theta v_r}{r} + \frac{1}{\rho}\frac{1}{r}\partial_\theta P 
+\\ \nonumber
+-\frac{1}{4\pi\rho}\left[B_r\partial_r B_\theta + \frac{B_\theta}{r}\partial_\theta B_\theta + B_z \partial_z B_\theta + \frac{B_\theta B_r}{r}\right]
+\\ \nonumber
+= \nu\left(\nabla^2 v_\theta + \frac{2}{r^2}\partial_\theta v_r - \frac{1}{r^2}v_\theta \right)
+\end{align}
+After linearization this becomes
+\begin{align}
+\delta \dot{v_\theta} + \delta v_r \partial_r^\dagger(r\Omega) + \Omega \partial_\theta \delta v_\theta + \frac{1}{r}\partial_\theta \frac{\delta P}{\rho} - \frac{B_o}{4\pi\rho} \partial_z \delta B_\theta
+\\ \nonumber
+= \nu\left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta v_\theta + \frac{2}{r^2}\partial_\theta \delta v_r \right]
+\end{align}
+
+\subsection{Axial Euler Equation}
+The axial component of the Euler equation is
+\begin{align}
+\dot{v_z} + v_r \partial_r v_z + \frac{v_\theta}{r}\partial_\theta v_z + v_z \partial_z v_z + \frac{1}{\rho}\partial_z P
+\\ \nonumber
+-\frac{1}{4\pi\rho}\left[B_r\partial_r B_z + \frac{B_\theta}{r}\partial_\theta B_z + B_z \partial_z B_z \right]
+\\ \nonumber
+=\nu\left[\frac{1}{r}\partial_r + \partial_r^2 + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]v_z
+\end{align}
+After linearization this becomes
+\begin{align}
+\delta\dot{v_z} + \Omega \partial_\theta \delta v_z + \partial_z \frac{\delta P}{\rho} -\frac{B_o}{4\pi\rho} \partial_z \delta B_z = \nu\left[\partial_r^\dagger \partial_r + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]\delta v_z
+\end{align}
+
+\subsection{Equations of constraint}
+
+The equation of incompressibility, $\nabla\cdot\vec{v}=0$ is, with no approximation
+\begin{align}
+\partial_r^\dagger \delta v_r + \frac{1}{r}\partial_\theta \delta v_\theta + \partial_z \delta v_z = 0
+\end{align}
+and $\nabla\cdot\vec{B}=0$ is
+\begin{align}
+\partial_r^\dagger \delta B_r + \frac{1}{r}\partial_\theta \delta B_\theta + \partial_z \delta B_z = 0
+\end{align}
+
+\section{Forms of perturbations}
+
+Perturbations to the background solution are allowed to have an arbitrary form with respect to the $\hat{r}$-coordinate.  The perturbations are assumed to vary periodically in $\hat{z}$ and $\hat{r}$, with mode numbers $k$ and $m$.  The form of the equations suggests the relation of the phases of the various field components in $\hat{z}$.  It does not, however, suggest the phase relation in $\hat{\theta}$.  Because of that, I suggest the following form for the perturbations of the field components:
+\begin{align*}
+&\delta B_r / \sqrt{4\pi\rho} = \beta_r (r,t)e^{im\theta}\cos{kz},\quad
+&\delta v_r = \phi_r (r,t) e^{im\theta} \sin{kz}
+\\
+&\delta B_\theta / \sqrt{4\pi\rho} = \beta_\theta (r,t)e^{im\theta}\cos{kz},\quad
+&\delta v_\theta = \phi_\theta (r,t) e^{im\theta} \sin{kz}
+\\
+&\delta B_z / \sqrt{4\pi\rho} = \beta_z (r,t)e^{im\theta}\sin{kz},\quad
+&\delta v_z = \phi_z (r,t) e^{im\theta} \cos{kz}
+\\
+&\delta P / \rho = \Pi (r,t) e^{im\theta} \sin{kz}&
+\end{align*}
+
+The quantities $\beta$, $\phi$, and $\Pi$ are complex, and comparing the real and imaginary parts of the various components determines their phase in the $\hat{\theta}$ direction.
+
+With these definitions, it is now possible to write the linearized equations in terms of the perturbed quantities, which replaces the derivatives in $\hat{\theta}$ and $\hat{z}$ by $\pm k$ and $im$.  I have also made use of the Alfven speed, $v_A = B_o / \sqrt{4\pi\rho}$.
+
+\begin{equation}\label{rind_p}
+\dot{\beta_r} + im\Omega\beta_r - kv_A\phi_r = \eta\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\beta_r - \frac{2im}{r^2}\beta_\theta\right]
+\end{equation}
+\begin{equation}\label{tind_p}
+\dot{\beta_\theta} + im\Omega\beta_\theta - kv_A \phi_\theta - r(\partial_r \Omega)\beta_r = \eta\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\beta_\theta + \frac{2im}{r^2}\beta_r\right]
+\end{equation}
+\begin{equation}\label{zind_p}
+\dot{\beta_z} + im\Omega\beta_z + kv_A \phi_z = \eta\left[\left(\partial_r^\dagger \partial_r -\frac{m^2}{r^2} - k^2\right)\beta_z\right]
+\end{equation}
+\begin{equation}\label{reul_p}
+\dot{\phi_r} + im\Omega\phi_r - 2\Omega\phi_\theta + \partial_r \Pi + kv_A\beta_r = \nu\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\phi_r - \frac{2im}{r^2}\phi_\theta\right]
+\end{equation}
+\begin{equation}\label{teul_p}
+\dot{\phi_\theta} + im\Omega\phi_\theta + \phi_r \partial_r^\dagger(r\Omega) + \frac{im}{r}\Pi + kv_A \beta_\theta = \nu\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\phi_\theta + \frac{2im}{r^2}\phi_r\right]
+\end{equation}
+\begin{equation}\label{zeul_p}
+\dot{\phi_z} + im\Omega{\phi_z} + k\Pi - kv_A \beta_z = \nu\left[\left(\partial_r^\dagger \partial_r - \frac{m^2}{r^2} - k^2\right)\phi_z\right]
+\end{equation}
+\begin{equation}\label{inc_p}
+\partial_r^\dagger \phi_r + \frac{im}{r}\phi_\theta - k\phi_z = 0
+\end{equation}
+\begin{equation}\label{delB_p}
+\partial_r^\dagger \beta_r + \frac{im}{r}\beta_\theta + k\beta_z = 0
+\end{equation}
+
+\section{Reduced set of equations}
+
+We can reduce the set of equations by applying the operator $\partial_r^\dagger$ to Equation~\ref{reul_p}, $(1/r)\partial_\theta$ to Equation~\ref{teul_p}, and $\partial_z$ to Equation~\ref{zeul_p}, and then summing the resulting equations.  We can use the equations of constraint to eliminate many of the terms in the resulting equation.
+
+The following relations will be needed in order to massage some of the terms into the correct form for elimination by the constraint equations:
+\begin{equation}
+\frac{1}{r}\partial_r \partial_r^\dagger = \partial_r^\dagger \partial_r \frac{1}{r} - \frac{2}{r^3} + \frac{2}{r^2}\partial_r
+\end{equation}
+\begin{equation}
+\partial_r^\dagger \frac{1}{r^2} = \frac{1}{r^2} \partial_r^\dagger - \frac{2}{r^3}
+\end{equation}
+
+This produces the following constraint equation:
+\begin{equation}\label{piconeq}
+im\left(\frac{2\Omega}{r}+2\partial_r \Omega\right)\phi_r - \partial_r^\dagger\left(2\Omega\phi_\theta\right)+\left(\partial_r^\dagger \partial_r - \frac{m^2}{r^2}-k^2\right)\Pi = 0
+\end{equation}
+
+We will solve the system of equations formed by Equations \ref{rind_p}, \ref{tind_p}, \ref{reul_p}, \ref{zeul_p}, and \ref{piconeq} for the quantities $\beta_r$, $\beta_\theta$, $\phi_r$, $\phi_\theta$, and $\Pi$.  $\beta_z$ and $\phi_z$ can be found from $\nabla\cdot{\bf B}=0$ and $\nabla\cdot{\bf v}=0$.
+\section{Numerics}
+
+Following Goodman and Ji, we will make use of a logarithmic grid in $r$, equally spaced in $x=\ln{r}$.  The radial derivatives will now be replaced by $\partial_r = (1/r)\partial_x$ and $\partial_r^2 = -(1/r^2)\partial_x + (1/r^2)\partial_x^2$.  This means that $\partial_r \partial_r^\dagger = (1/r^2)\partial_x^2 - (1/r^2)$ and $\partial_r^\dagger \partial_r = (1/r^2)\partial_x^2$.
+
+The equations will be written with centered differences.  The quantity $\beta_{r,j}$ indicates the value of $\beta_r$ at the $j$th gridpoint. $\Delta x$ indicates the size of the grid step.
+
+The linearized quantities are expected to have a time behavior that goes as $e^{\gamma t}$, so that the growth rate of the mode is given by $\mathrm{Re}\{\gamma\}$ and the oscillating frequency is given by $\mathrm{Im}\{\gamma\}$.
+
+The following finite difference equations are found:
+\begin{align}
+\gamma\beta_{r, j} = &-(\frac{2\eta}{r^2 \Delta x^2} + \frac{\eta}{r^2} + \frac{\eta m^2}{r^2} + \eta k^2 + im\Omega )\beta_{r, j}
+\\ \nonumber
+&+\frac{\eta}{r^2 \Delta x^2}(\beta_{r, j+1} + \beta_{r, j-1}) - \frac{2im \eta}{r^2}\beta_{\theta,j} + k v_A \phi_{r,j}
+\end{align}
+\begin{align}
+\gamma\beta_{\theta,j}=&-(\frac{2\eta}{r^2 \Delta x^2} + \frac{\eta}{r^2} + \frac{\eta m^2}{r^2} + \eta k^2 + im\Omega)\beta_{\theta, j}
+\\ \nonumber
+&+\frac{\eta}{r^2 \Delta x^2}(\beta_{\theta, j+1} + \beta_{\theta, j-1}) +\left[\frac{\Omega_{j+1}-\Omega_{j-1}}{2\Delta x} + \frac{2im\eta}{r^2}\right]\beta_{r,j}
+\\ \nonumber
+&+kv_A\phi_{\theta,j}
+\end{align}
+\begin{align}
+\gamma\phi_{r, j} = &-(\frac{2\nu}{r^2 \Delta x^2} + \frac{\nu}{r^2} + \frac{\nu m^2}{r^2} + \nu k^2 + im\Omega)\phi_{r, j}
+\\ \nonumber
+&+\frac{\nu}{r^2 \Delta x^2}(\phi_{r, j+1} + \phi_{r, j-1}) + \left[2\Omega_{j}-\frac{2im\nu}{r^2} \right]\phi_{\theta, j} 
+\\ \nonumber
+& - kv_A\beta_{r,j} - \frac{1}{2 r \Delta x}\left(\Pi_{j+1}-\Pi_{j-1}\right)
+\end{align}
+\begin{align}
+\gamma\phi_{\theta, j} = &-(\frac{2\nu}{r^2 \Delta x^2} + \frac{\nu}{r^2} + \frac{\nu m^2}{r^2} + \nu k^2 + im\Omega)\phi_{\theta, j}
+\\ \nonumber
+&+\frac{\nu}{r^2 \Delta x^2}(\phi_{\theta, j+1} + \phi_{\theta, j-1}) + \left[\frac{2im\nu}{r^2} - 2\Omega_j - \frac{1}{2\Delta x}\left(\Omega_{j+1}-\Omega_{j-1}\right)\right]\phi_{r,j}
+\\ \nonumber
+& - kv_A \beta_{\theta, j} - \frac{im}{r}\Pi_{j}
+\end{align}
+\begin{align}
+&\left[\frac{2im\Omega_j}{r} + \frac{im}{r\Delta x}(\Omega_{j+1}-\Omega_{j-1})\right]\phi_{r,j} - \frac{2\Omega_j}{r}\phi_{\theta,j} 
+\\ \nonumber
+&- \frac{1}{r\Delta x}\left(\Omega_{j+1}\phi_{\theta,j+1}-\Omega_{j-1}\phi_{\theta,j-1}\right) - \left[\frac{2}{r^2\Delta x^2} + \frac{m^2}{r^2}+k^2\right]\Pi_{j}
+\\ \nonumber
+&+\frac{1}{r^2\Delta x^2}\left(\Pi_{j+1} + \Pi_{j-1}\right) = 0
+\end{align}
+
+\section{Boundary Conditions}
+
+Boundary conditions are implemented by a set of constraint equations at the inner and outer cylinders. The constraint equations are scaled so that the terms in the equations are of the same order as the other non-zero elements in the matrix.
+
+\subsection{Hydrodynamic boundary conditions}
+
+The hydrodynamic boundary conditions on $\phi_r$ and $\phi_\theta$ are satisfied by $\phi_r = 0$ (no inflow) and $\phi_\theta = 0$ (no slip) at the boundary.  There is a further no-slip constraint on $\phi_z$.  Because $\phi_z$ is not being solved for in the equations, this is satisfied by setting $\partial \phi_r/\partial r = 0$ at the boundary, implying $\phi_z=0$ by the incompressibility constraint.
+
+\subsection{Magnetic boundary conditions}
+
+There are two choices for the magnetic boundary condition at the inner and outer cylinder: perfectly conducting boundaries, and perfectly insulating boundaries.  For the perfectly conducting boundary condition, we demand $\beta_r = 0$ and $\partial (r \beta_\theta)/\partial r = 0$ at the wall, implying no field perpendicular to the conductor, and no tangential component of the current density. 
+
+The perfect insulating boundary condition is implemented as follows:  In the insulating region outside the fluid, the current density is zero, so the magnetic field can be written in terms of a scalar potential
+\begin{equation}
+{\bf B} = {\bf \nabla}\Phi
+\end{equation}
+Since ${\bf \nabla}\cdot{\bf B} = 0$, we know that $\nabla^2 \Phi = 0$.  In cylindrical coordinates, this means
+\begin{equation}
+\left[\frac{1}{r}\frac{\partial}{\partial r}r\frac{\partial}{\partial r} + \frac{1}{r^2}\frac{\partial^2}{\partial\theta^2} +\frac{\partial^2}{\partial z^2}\right]\Phi = 0
+\end{equation}
+If we assume a form for $\Phi$ that goes as $\Phi(r,\theta,z) = e^{i(m\theta + k z)}\tilde{\Phi}(r)$
+this yields a differential equation in $\tilde{\Phi}$
+\begin{equation}
+\frac{d^2}{d r^2}\tilde{\Phi} + \frac{1}{r}\frac{d}{dr}\tilde{\Phi} - \left(\frac{m^2}{r^2} + k^2\right)\tilde{\Phi} = 0
+\end{equation}
+This equation is satisfied by modified Bessel fuctions
+\begin{equation}
+\tilde{\Phi}(r) = A_{in} I_m (k r) + A_{out} K_m (k r)
+\end{equation}
+Because of the behavior of the modified Bessel fuctions as $k r \rightarrow 0$ and $k r \rightarrow \infty$, $A_{out} = 0$ at the inner boundary, and $A_{in} = 0$ at the outer boundary.
+
+The values of $B_r$ and $B_\theta$ in the ghost zone are simply found by matching the insulating solution to the value of $B_r$ and $B_\theta$ in the last cell of the fluid volume.
+
+\section{Solving the equations}
+
+These equations form a generalized eigenvalue problem which can be solved with off-the-shelf linear algebra routines to find the eigenvalues and eigenvectors.  The matrix that is formed by the 5N equations (where N is the number of gridpoints) is a band diagonal matrix with bandwidth 15, with the ordering of the variables going $\beta_{r,0}$, $\beta_{\theta,0}$, $\phi_{r,0}$, $\phi_{\theta,0}$, $\Pi_0$, $\beta_{r,1}$, $\beta_{\theta,1}$,...
+
+The number of gridpoints necessary to properly resolve features on the viscous scale is on the order of 4000, yielding a 20000x20000 matrix.  Solving for all of the eigenvalues of this system would require prohibitive amounts of computation time.  And in any case, many of the eigenvalues correspond to extremely strongly damped, uninteresting modes.  \verb@ARPACK@ is used in shift-invert mode to obtain some a subset of the eigenvalues.  It takes about 30 minutes to obtain 600 eigenvalues and eigenvectors on a desktop PC.
+
+The choice of $\sigma$, the eigenvalue shift, is very important for correct behavior of the code.  $\sigma$ is chosen by an iterative technique.  $\sigma$ is intially chosen to be 10 times the inner cylinder speed, in order to assure that it will be larger than the fastest growing mode.  The system is solved for the first few fastest growing modes with a large tolerance.  This only takes a few seconds.  A step is taken 4/5ths of the way from the old $\sigma$ toward the fastest growing eigenvalue determined in the previous step.  The tolerance is tightened, and the problem is solved again.  This is repeated several times to find a $\sigma$ that is close to the fastest growing eigenvalue.
+
+It is important that $\sigma$ not be too close to the eigenvalue.  Runs in which $\sigma$ was set to be exactly the eigenvalue from the last iteration of the $\sigma$-finding routine resulted in numerical problems, specifically the generation of spurious eigenvalues. 
+
+\section{Benchmarking}
+
+\subsection{Narrow gap: Non-axisymmetric Alfv\'en waves}
+
+This test case was run in a narrow gap with the inner cylinder at 20.2 cm, and the outer cylinder at 20.3 cm.  There was no background azimuthal flow.  The applied field was 1000 Gauss, and $\eta$ and $\nu$ were both 3.4e-3 cm$^2$/sec.  $k$ was 17.9 1/cm, and m was 1.  Several eigenmodes, with different effective values of $k_r$ are shown in figure~\ref{fig:narrowgapalfveneigenmodes}.  The value of $k_r$ was calculated for each mode, and the growth rate and oscillation frequency are plotted again $k_r$ to yield the dispersion relation for these modes.  The dispersion relation is plotted in figure~\ref{fig:narrowgapalfven}.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.80\textwidth]{narrowgap_alfven_eigenmodes.eps}
+\caption{Alfv\'en eigenmodes with Pm=1 in a narrow gap. Modes with several different values of $k_r$ are shown.}
+\label{fig:narrowgapalfveneigenmodes}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.80\textwidth]{narrowgap_alfven_pm1.0.eps}
+\caption{Alfv\'en waves with Pm=1 in a narrow gap.  The lines indicate the analytic solution to the dispersion relation.}
+\label{fig:narrowgapalfven}
+\end{center}
+\end{figure}
+
+\subsection{Narrow gap: Non-axisymmetric Alfv\'en waves with Pm=0.1}
+
+The same problem as in the previous section was repeated, but this time with $\nu$ of 3.4e-3 cm$^2$/sec, to yield Pm=0.1.  In this case, the modes stop oscillating at a sufficiently high $k_r$.  The dispersion relation is plotted in figure~\ref{fig:narrowgapalfvenpm0.1}.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.80\textwidth]{narrowgap_alfven_pm0.1.eps}
+\caption{Alfv\'en waves with Pm=0.1 in a narrow gap.  The lines indicate the analytic solution to the dispersion relation.}
+\label{fig:narrowgapalfvenpm0.1}
+\end{center}
+\end{figure}
+
+\subsection{Narrow gap: Non-axisymmetric inertial waves}
+Inertial waves were examined in the narrow gap.  In this case, the background flow rotated at a rate of 42 radians/sec, and there was no background magnetic field.  $k_z$ was 1795 1/cm, and $\eta$ and $\nu$ were both 3.4e-3 cm$^2$/sec.  The dispersion relation for these modes in shown in figure~\ref{fig:narrowgapinertial}.  The result again matches the analytic dispersion relation.  The zero frequency modes in this case correspond to zero-frequency alfven waves.  These waves are completely decoupled from the inertial modes since $v_{A}=0$.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.80\textwidth]{narrowgap_inertial.eps}
+\caption{Inertial waves in a narrow gap.}
+\label{fig:narrowgapinertial}
+\end{center}
+\end{figure}
+
+\subsection{Axisymmetric MRI modes}
+
+The code was used to solve the problem of the slightly unstable eigenmode from the paper of Goodman and Ji.  In this case, the inner cylinder radius is 5cm, the outer cylinder radius is 15cm, $k$ is 0.05 1/cm, the applied field is 3000 gauss, and $\rho$, $\nu$, and $\theta$ of the fluid are those of liquid gallium: 6.0 g/cm$^3$, 3.2e-3 cm$^2$/sec, and 2.0e3 cm$^2$/sec.  The magnetic boundary condition is insulating, and the background rotation profile is an ideal Couette profile with $\Omega$ of 290 rad/sec at the inner cylinder, and 35 rad/sec at the outer cylinder.
+
+The spectrum of eigenvalues for the axisymmetric case, m=0, is shown in figure~\ref{fig:goodmanm0eigenvalues}.  The unstable mode is shown in figure~\ref{fig:goodmanm0unstablemode}.  This mode matches that found in Goodman and Ji's paper.
+
+The unstable mode has a $k_r$ such that a half-wavelength of the mode spans the gap between the two cylinders.  The other, damped modes of the system are modes with increasing $k_r$ as they are increasingly damped.  A couple of typical eigenmodes, with two different values of $k_r$, are shown in figure~\ref{fig:goodmanm0typicalmodes}.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.80\textwidth]{goodman_m0_eigenvalues.eps}
+\caption{Spectrum of eigenvalues for axisymmetric problem.  Eigenvalue with a slightly positive growth rate and zero frequency is the MRI mode.}
+\label{fig:goodmanm0eigenvalues}
+\end{center}
+\end{figure}
+
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.80\textwidth]{goodman_m0_unstable_mode.eps}
+\caption{Unstable MRI mode}
+\label{fig:goodmanm0unstablemode}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.80\textwidth]{goodman_m0_typical_modes.eps}
+\caption{Typical modes of the axisymmetric eigenvalue problem.  The modes span the gap with different values of $k_r$.}
+\label{fig:goodmanm0typicalmodes}
+\end{center}
+\end{figure}
+
+\subsection{Nonaxisymmetric modes}
+
+Nonaxisymmetric modes of the MRI problem were also examined.  The spectrum of eigenvalues for m=1 is shown in figure~\ref{fig:goodmanm1eigenvalues}.  The nonaxisymmetric modes in this case are all damped.  Typical eigenmodes of this problem are shown in figure~\ref{fig:goodmanm1typicalmodes}.  The modes in this case tend to be localized at some radius.  The oscillation frequency of the mode is Doppler shifted by the fluid retation frequency at that radius.  The shape of the velocity component of the modes is that of a wavepacket.  But the magnetic modes often have tails that have a finite value across the cylinder gap.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.80\textwidth]{goodman_m1_eigenvalues.eps}
+\caption{Spectrum of eigenvalues for nonaxisymmetric problem, m=1.}
+\label{fig:goodmanm1eigenvalues}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.80\textwidth]{goodman_m1_typical_modes.eps}
+\caption{Typical modes of the nonaxisymmetric eigenvalue problem.  Each mode is localized near a specific radius.}
+\label{fig:goodmanm1typicalmodes}
+\end{center}
+\end{figure}
+
+
+\section{References}
+1. M Nornberg, H. Ji, E. Schartman, A. Roach, and J. Goodman, Phys Rev. Lett. {\bf 104}, 074501 (2010).
+
+\noindent 2. J. Goodman and H. Ji, J. Fluid Mech. {\bf 462}, 365 (2002).
+\end{document}
