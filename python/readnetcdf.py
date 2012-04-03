@@ -52,7 +52,7 @@ def find_eigenvalue_number(filename, gr, omega, tol=2.0):
     distances = list()
     for i in range(ncfile.dimensions['index']):
         tempgr = ncfile.variables['lambda'][i][0]
-        tempomega = ncfile.variables['lambda'][i][1]
+        tempomega = -ncfile.variables['lambda'][i][1]
         distance = sqrt((gr - tempgr)**2 +
                         (omega - tempomega)**2)
         if (sqrt(distance) < tol):
@@ -79,7 +79,7 @@ def plot_grs(filename):
     title("Growth rates for " + filename)    
 
     subplot(2,1,2)
-    plot(ncfile.variables['lambda'][:,1])
+    plot(-ncfile.variables['lambda'][:,1])
     xlabel("Mode number")
     ylabel("Oscillation frequency [rad/sec]")
     ncfile.close()
@@ -88,7 +88,7 @@ def plot_grs(filename):
 def plot_eigenvalues(filename):
     ncfile = netcdf.netcdf_file(filename, 'r')
 
-    plot(ncfile.variables['lambda'][:,0], ncfile.variables['lambda'][:,1], 'o')
+    plot(ncfile.variables['lambda'][:,0], -ncfile.variables['lambda'][:,1], 'o')
     xlabel("Growth rate [1/sec]")
     ylabel("Oscillation frequency [rad/sec]")
     grid(b=1)
@@ -98,7 +98,7 @@ def plot_eigenvalues(filename):
 def plot_eigenvalues_residual(filename):
     ncfile = netcdf.netcdf_file(filename, 'r')
 
-    scatter(ncfile.variables['lambda'][:,0], ncfile.variables['lambda'][:,1], c=ncfile.variables['residual'], cmap=cm.spectral)
+    scatter(ncfile.variables['lambda'][:,0], -ncfile.variables['lambda'][:,1], c=ncfile.variables['residual'], cmap=cm.spectral)
     colorbar()
     xlabel("Growth rate [1/sec]")
     ylabel("Oscillation frequency [rad/sec]")
@@ -109,7 +109,7 @@ def plot_eigenvalues_number(filename):
     ncfile = netcdf.netcdf_file(filename, 'r')
 
     index = arange(0, ncfile.dimensions['index'])
-    scatter(ncfile.variables['lambda'][:,0], ncfile.variables['lambda'][:,1], c=index, cmap=cm.spectral)
+    scatter(ncfile.variables['lambda'][:,0], -ncfile.variables['lambda'][:,1], c=index, cmap=cm.spectral)
     colorbar()
     xlabel("Growth rate [1/sec]")
     ylabel("Oscillation frequency [rad/sec]")
@@ -624,7 +624,7 @@ def plot_k_dependence(filename):
     xlabel("k_r [1/cm]")
     ylabel("Growth rate [1/sec]")
 
-    undoppler_frequency = ncfile.variables['lambda'][:,1] + ncfile.m*omega_at_peak
+    undoppler_frequency = -ncfile.variables['lambda'][:,1] - ncfile.m*omega_at_peak
     
     subplot(2,1,2)
     scatter(k, undoppler_frequency, c=modes, cmap=cm.spectral)
@@ -632,7 +632,7 @@ def plot_k_dependence(filename):
     ylabel("Oscillation frequency [rad/sec] - m*Omega")
 
     figure(3)
-    scatter(r, ncfile.variables['lambda'][:,1], c=modes, cmap=cm.spectral)
+    scatter(r, -ncfile.variables['lambda'][:,1], c=modes, cmap=cm.spectral)
     xlabel("peak radius [cm]")
     ylabel("Oscillation frequency [rad/sec]")
 
@@ -701,7 +701,7 @@ def get_mode_attributes_mequalzero(filename, mode):
     ncfile = netcdf.netcdf_file(filename, 'r')
 
     growthrate = ncfile.variables['lambda'][mode,0]
-    frequency = ncfile.variables['lambda'][mode,1]
+    frequency = -ncfile.variables['lambda'][mode,1]
 
     ncfile.close()
     del ncfile
@@ -737,7 +737,7 @@ def get_mode_attributes_mnotzero(filename, mode):
 
     #First get growthrate & frequency
     growthrate = ncfile.variables['lambda'][mode,0]
-    frequency = ncfile.variables['lambda'][mode,1]
+    frequency = -ncfile.variables['lambda'][mode,1]
 
     #Next find approximate location of maximum vr amplitude
     r = ncfile.variables['r'][:]
