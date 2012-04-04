@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <math.h>
 //#include <clapack.h>
 #include <complex.h>
@@ -31,10 +32,11 @@ RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
   double Im, Imp1, Km, Kmp1;
   double scalefactorpi, scalefactorv, scalefactorb, tempscalefactor;
 
+  RESULTS_STRUCT *results;
+
   //Variables needed to run the LAPACK routine
   int info;
   int lwork;
-  double complex *lambda;
   double complex *alpha;
   double complex *beta;
   double complex *vr;
@@ -447,7 +449,7 @@ void wAelbg(int i, int j, COMPRESSED_MATRIX *matrix, double complex value) {
   //structure, and write the value.
 
   int k;
-  k  matrix->n*j + i;
+  k = matrix->n*j + i;
   matrix->A[k] = value;
 }
 
@@ -458,6 +460,6 @@ void wBelbg(int i, int j, COMPRESSED_MATRIX *matrix, double complex value) {
   //structure, and write the value.
 
   int k;
-  k  matrix->n*j + i;
+  k  = matrix->n*j + i;
   matrix->B[k] = value;
 }
