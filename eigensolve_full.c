@@ -33,6 +33,7 @@ RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
   double scalefactorpi, scalefactorv, scalefactorb, tempscalefactor;
 
   RESULTS_STRUCT *results;
+  double complex tmpeigenvalue;
 
   //Variables needed to run the LAPACK routine
   int info;
@@ -393,6 +394,8 @@ RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
   assert(alpha);
   beta = malloc(sizeof(double complex)*matrix->n);
   assert(beta);
+  vr = malloc(sizeof(double complex)*matrix->n*matrix->n);
+  assert(vr);
   work = malloc(sizeof(double complex)*8*matrix->n);
   assert(work);
   rwork = malloc(sizeof(double)*8*matrix->n);
@@ -406,7 +409,7 @@ RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
 
   //Run the routine once to have it return the optimum size of the work array
   zggev_(&jobvl, &jobvr, &matrix->n, matrix->A, &matrix->n, matrix->B,
-	 &matrix->n, alpha, beta, NULL, &ldvl, results->z, &ldvr, work,
+	 &matrix->n, alpha, beta, NULL, &ldvl, vr, &ldvr, work,
 	 &lwork, rwork, &info);
 
   lwork = creal(work[0]);
@@ -416,22 +419,29 @@ RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
 
   //Now run again to actually solve the eigenproblem.
   zggev_(&jobvl, &jobvr, &matrix->n, matrix->A, &matrix->n, matrix->B,
-	 &matrix->n, alpha, beta, NULL, &ldvl, results->z, &ldvr, work,
+	 &matrix->n, alpha, beta, NULL, &ldvl, vr, &ldvr, work,
 	 &lwork, rwork, &info);
   
   if (info != 0) {
     printf("Error: ZGGEV returned %i.\n", info);
   }
 
+
   //Now store the eigenvalues from the calculation
+  results->nconv = 0;
   for (int i = 0; i < matrix->n; i++) {
-    results->lambda[i] = alpha[i]/beta[i];
+    tmpeigenvalue = alpha[i]/beta[i];
+    //Make sure this is a good eigenvalue before we save it.
+    if (!isinf(tmpeigenvalue)) {
+      results->lambda[results->nconv] = tmpeigenvalue;
+      memcpy(results->z + matrix->n*results->nconv,
+	     vr + matrix->n*i,
+	     sizeof(double complex)*matrix->n);
+      results->nconv++;
+    }
+
   }
 
-  //Set the number of converged eigenvalues to matrix->n, since we solve
-  //for everything here.
-
-  results->nconv = matrix->n;
 
   //And lets get out of here!
   free(alpha);
