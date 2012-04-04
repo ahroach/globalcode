@@ -24,6 +24,7 @@ int main(int ac, char **av)
   char profiletype[256];
   int iterate;
   int batch_run;
+  int fullmode;
 
   PARAMS_STRUCT *params;
   GRID_STRUCT *grid;
@@ -83,7 +84,9 @@ int main(int ac, char **av)
     arpack_params->maxiters = NAN;
     arpack_params->nummodes = NAN;
     
-    results = eigensolve(matrix, params, grid, rotation, arpack_params);
+    //Do the computation
+    results = eigensolve_full(matrix, params, grid, rotation, arpack_params);
+
     //Setup the things needed to output data files
     output_control = malloc(sizeof(OUTPUT_CONTROL));
     output_control->filenum = 0;

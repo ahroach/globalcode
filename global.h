@@ -98,6 +98,10 @@ RESULTS_STRUCT *eigensolve(COMPRESSED_MATRIX *matrix,
 			   PARAMS_STRUCT *params, GRID_STRUCT *grid,
 			   ROTATION_STRUCT *rotation,
 			   ARPACK_CONTROL *arpack_params);
+RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
+				PARAMS_STRUCT *params, GRID_STRUCT *grid,
+				ROTATION_STRUCT *rotation,
+				ARPACK_CONTROL *arpack_params);
 int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
             ROTATION_STRUCT *rotation, OUTPUT_CONTROL *output_control,
 	    ARPACK_CONTROL *arpack_params, RESULTS_STRUCT *results);

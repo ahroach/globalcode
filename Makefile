@@ -18,6 +18,7 @@ OBJS = main.o \
        output.o \
        writematrix.o \
        eigensolve.o \
+       eigensolve_full.o \
        wnetcdf.o \
        dataprofile.o
 
