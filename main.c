@@ -42,13 +42,14 @@ int main(int ac, char **av)
 
   strcpy(input_file_name, av[1]);
 
-  arpack_params = setup_arpack(input_file_name);
-
+  //Get the physical parameters for the computation
   params = malloc(sizeof(PARAMS_STRUCT));  
   probgen(input_file_name, params);
 
+  //Set up the grid, based on the physical parameters
   grid = gridgen(params);
 
+  //Set up the rotation profile, from a number of different options.
   get_sparam("rotation", input_file_name, profiletype);
   if(!(strcmp(profiletype,"couette"))) {
     rotation = couette(params, grid);
@@ -64,8 +65,38 @@ int main(int ac, char **av)
     rotation = couette(params, grid);
   }
 
-
+  //Set up the matrix for the computations.
   matrix = create_matrix(5*grid->numcells);
+
+  //Setup the arpack parameters
+  arpack_params = setup_arpack(input_file_name);
+
+
+  //Now figure out if we're running in full mode or not.
+
+  fullmode = get_iparam("full", input_file_name);
+
+  if(fullmode) {
+    //First signal that we're not using arpack in the output file
+    arpack_params->sigma = NAN;
+    arpack_params->tol = NAN;
+    arpack_params->maxiters = NAN;
+    arpack_params->nummodes = NAN;
+    
+    results = eigensolve(matrix, params, grid, rotation, arpack_params);
+    //Setup the things needed to output data files
+    output_control = malloc(sizeof(OUTPUT_CONTROL));
+    output_control->filenum = 0;
+    get_sparam("basefilename", input_file_name, output_control->basefilename); 
+    wnetcdf(params, grid, rotation, output_control, arpack_params, results);
+    free(results->lambda);
+    free(results->z);
+    free(results->residual);
+    free(results);
+    goto done;
+  }
+  
+
   iterate = get_iparam("iterate", input_file_name);
   batch_run = get_iparam("batch", input_file_name);
 
@@ -138,7 +169,9 @@ int main(int ac, char **av)
     free(results->residual);
     free(results);
   }  
-  
+
+
+ done:  
   free(matrix->A);
   free(matrix->B);
   free(matrix->Bb);
