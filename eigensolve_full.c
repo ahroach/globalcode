@@ -1,4 +1,4 @@
-/* Step the equations of the global code solving directly for all eigenvalues
+/* Step the equations of the global code solving the full problem directly
  *
  */
 
@@ -15,10 +15,10 @@ void wAelbg(int i, int j, COMPRESSED_MATRIX *matrix, double complex value);
 void wBelbg(int i, int j, COMPRESSED_MATRIX *matrix, double complex value);
 
 
-RESULTS_STRUCT *eigensolve_direct(COMPRESSED_MATRIX *matrix, 
-				  PARAMS_STRUCT *params, GRID_STRUCT *grid,
-				  ROTATION_STRUCT *rotation,
-				  ARPACK_CONTROL *arpack_params) {
+RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix, 
+				PARAMS_STRUCT *params, GRID_STRUCT *grid,
+				ROTATION_STRUCT *rotation,
+				ARPACK_CONTROL *arpack_params) {
 
   //Physical parameters needed to fill in the matrix
   double eta = params->eta;
