@@ -380,6 +380,13 @@ RESULTS_STRUCT *eigensolve_direct(COMPRESSED_MATRIX *matrix,
   results->residual = malloc(sizeof(double)*matrix->n);
   assert(results->residual);
 
+  //Make sure these things don't end up full of junk.
+  for (int i=0; i < matrix->n; i++) {
+    results->lambda[i]=0.0;
+    results->residual[i]=0.0;
+  }
+
+
   alpha = malloc(sizeof(double complex)*matrix->n);
   assert(alpha);
   beta = malloc(sizeof(double complex)*matrix->n);
@@ -418,6 +425,11 @@ RESULTS_STRUCT *eigensolve_direct(COMPRESSED_MATRIX *matrix,
   for (int i = 0; i < matrix->n; i++) {
     results->lambda[i] = alpha[i]/beta[i];
   }
+
+  //Set the number of converged eigenvalues to matrix->n, since we solve
+  //for everything here.
+
+  results->nconv = matrix->n;
 
   //And lets get out of here!
   free(alpha);
