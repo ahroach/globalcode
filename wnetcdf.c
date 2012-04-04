@@ -44,8 +44,8 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
   size_t put_index[3];
   double tmp_output_value;
   double sigma_r, sigma_i;
-  double bz;
-  double vz;
+  double complex bz;
+  double complex vz;
   int pos;
 
   //Create local pointers to these guys
