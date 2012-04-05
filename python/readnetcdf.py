@@ -150,11 +150,12 @@ def plot_mode_spectrogram(filename, component, min_mode, max_mode):
     ncfile.close()
     del ncfile
 
-def plot_single_component(filename, component, mode_number):
+def plot_single_component(filename, component, mode_number, norm=1.0):
     ncfile = netcdf.netcdf_file(filename, 'r')
 
     subplot(2,1,1)
-    plot(ncfile.variables['r'][:], ncfile.variables[component][mode_number,:,0], '.-')
+    plot(ncfile.variables['r'][:], 
+         norm*ncfile.variables[component][mode_number,:,0], '.-')
     xlabel("r [cm]")
     ylabel("Abs(" + component + ")")
     titlestring = "%s for mode %d, GR = %.6g + %.6g*i 1/s, resid= %.6g" % (component, mode_number,  ncfile.variables['lambda'][mode_number,0], ncfile.variables['lambda'][mode_number,1], ncfile.variables['residual'][mode_number])
