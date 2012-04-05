@@ -85,12 +85,21 @@ def plot_grs(filename):
     ncfile.close()
     del ncfile
 
-def plot_eigenvalues(filename):
+def plot_eigenvalues(filename, logx=0):
     ncfile = netcdf.netcdf_file(filename, 'r')
 
-    plot(ncfile.variables['lambda'][:,0], -ncfile.variables['lambda'][:,1], 'o')
-    xlabel("Growth rate [1/sec]")
-    ylabel("Oscillation frequency [rad/sec]")
+    ax = subplot(111)
+
+    if(logx):
+        ax.set_xscale('log')
+        plot(-ncfile.variables['lambda'][:,0], -ncfile.variables['lambda'][:,1], 'o')    
+        xlabel("-Growth rate [1/sec]")
+        ylabel("Oscillation frequency [rad/sec]")
+
+    else:
+        plot(ncfile.variables['lambda'][:,0], -ncfile.variables['lambda'][:,1], 'o')    
+        xlabel("Growth rate [1/sec]")
+        ylabel("Oscillation frequency [rad/sec]")
     grid(b=1)
     ncfile.close()
 
