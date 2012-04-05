@@ -230,10 +230,10 @@ def plot_all_components(filename, mode_number):
     br_real = zeros(vr_mag.size)
     bt_real = zeros(vr_mag.size)
     for i in range(0, vr_real.size):
-        vr_real[i] = vr_mag[i]*exp(1j*vr_arg[i])
-        vt_real[i] = vt_mag[i]*exp(1j*vt_arg[i])
-        br_real[i] = br_mag[i]*exp(1j*br_arg[i])
-        bt_real[i] = bt_mag[i]*exp(1j*bt_arg[i])
+        vr_real[i] = real(vr_mag[i]*exp(1j*vr_arg[i]))
+        vt_real[i] = real(vt_mag[i]*exp(1j*vt_arg[i]))
+        br_real[i] = real(br_mag[i]*exp(1j*br_arg[i]))
+        bt_real[i] = real(bt_mag[i]*exp(1j*bt_arg[i]))
 
     subplot(4,1,1)
     plot(r, vr_real, '.-')
