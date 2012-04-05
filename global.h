@@ -83,6 +83,17 @@ int get_iparam(char paramname[], char filename[]);
 double get_dparam(char paramname[], char filename[]);
 void get_sparam(char paramname[], char filename[], char destination[]);
 void probgen(char input_file_name[], PARAMS_STRUCT *params);
+
+void arpack_handler(char *input_file_name);
+void fullmode_handler(char *input_file_name);
+void batchmode_handler(char *input_file_name);
+
+ARPACK_CONTROL *setup_arpack(char *input_file_name);
+double complex find_sigma(COMPRESSED_MATRIX *matrix,
+                          PARAMS_STRUCT *params, GRID_STRUCT *grid,
+                          ROTATION_STRUCT *rotation,
+                          ARPACK_CONTROL *arpack_params);
+COMPRESSED_MATRIX *create_matrix(int numelems);
 GRID_STRUCT *gridgen(PARAMS_STRUCT *params);
 ROTATION_STRUCT *couette(PARAMS_STRUCT *params, GRID_STRUCT *grid);
 ROTATION_STRUCT *dataprofile(PARAMS_STRUCT *params, GRID_STRUCT *grid);
