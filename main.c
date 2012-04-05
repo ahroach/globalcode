@@ -14,7 +14,6 @@
 int main(int ac, char **av)
 {
   char input_file_name[256];
-  char profiletype[256];
   int batch_run;
   int fullmode;
 
@@ -28,8 +27,8 @@ int main(int ac, char **av)
 
   strcpy(input_file_name, av[1]);
 
-
   //Now figure out if we're running in full mode or batch mode
+  //or if we should just fall back to the standard ARPACK mode.
 
   fullmode = get_iparam("full", input_file_name);
   batch_run = get_iparam("batch", input_file_name);

@@ -9,6 +9,7 @@
 void arpack_handler(char *input_file_name)
 {
   int iterate;
+  char profiletype[256];
 
   PARAMS_STRUCT *params;
   GRID_STRUCT *grid;

@@ -8,6 +8,8 @@
 
 void fullmode_handler(char *input_file_name)
 {
+  char profiletype[256];
+
   PARAMS_STRUCT *params;
   GRID_STRUCT *grid;
   ROTATION_STRUCT *rotation;
@@ -46,8 +48,8 @@ void fullmode_handler(char *input_file_name)
   arpack_params = malloc(sizeof(ARPACK_CONTROL));
   arpack_params->sigma = NAN;
   arpack_params->tol = NAN;
-  arpack_params->maxiters = NAN;
-  arpack_params->nummodes = NAN;
+  arpack_params->maxiters = -1;
+  arpack_params->nummodes = -1;
 
   fprintf(stdout, "Entering main loop\n");
 

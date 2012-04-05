@@ -9,13 +9,24 @@
 void batchmode_handler(char *input_file_name)
 {
   int iterate;
+  char profiletype[256];
+
   PARAMS_STRUCT *params;
   GRID_STRUCT *grid;
   ROTATION_STRUCT *rotation;
-  OUTPUT_CONTROL *output_control;
   COMPRESSED_MATRIX *matrix;
   ARPACK_CONTROL *arpack_params;
   RESULTS_STRUCT *results;
+
+  double batch_B0_init;
+  double batch_B0_final;
+  double B0_stepsize;
+  int batch_B0_steps;
+  char base_file_name[256];
+  char output_file_path[256];
+  FILE *outputfile;
+
+
   //Get the physical parameters for the computation
   params = malloc(sizeof(PARAMS_STRUCT));
   probgen(input_file_name, params);

@@ -13,6 +13,12 @@ OBJS = main.o \
        getparam.o \
        probgen.o \
        gridgen.o \
+       create_matrix.o \
+       setup_arpack.o \
+       find_sigma.o \
+       arpack_handler.o \
+       batchmode_handler.o \
+       fullmode_handler.o \
        couette.o \
        shearlayer.o \
        output.o \
