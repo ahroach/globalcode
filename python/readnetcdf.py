@@ -458,6 +458,31 @@ def plot_torque(filename, mode_number):
     ncfile.close()
     del ncfile
 
+def calculate_potential(filename, B=1000):
+    ncfile = netcdf.netcdf_file(filename, 'r')
+    vt_mag = ncfile.variables['vt'][mode_number,:,0]
+    vt_phase = ncfile.variables['vt'][mode_number,:,1]
+
+    var_r = ncfile.variables['r'][:]
+    
+    potential = zeros(var_r.size, dtype=complex)
+
+    potential[0] = 0
+    for i in range(1, potential.size):
+        potential = (potential[i-1] + 
+                     ((var_r[i] - var_r[i-1]) *
+                      vt_mag[i]*cos(vt_phase[i]) +
+                      1j*vt_mag[i]*sin(vt_phase[i])))
+    
+    c = 2.998e10
+    potential = potential*B/c
+    potential_mag = abs(potential)
+    potential_phase = angle(potential)
+    ncfile.close()
+
+    return potential_mag, potential_phase                         
+    
+
 def plot_derived_quantity_contour(filename, quantity_mag, quantity_phase,
                                   showcolorbar=0, axisequalize=1):
     ncfile = netcdf.netcdf_file(filename, 'r')
