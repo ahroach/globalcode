@@ -458,7 +458,7 @@ def plot_torque(filename, mode_number):
     ncfile.close()
     del ncfile
 
-def calculate_potential(filename, B=1000):
+def calculate_potential(filename, mode_number, B=1000):
     ncfile = netcdf.netcdf_file(filename, 'r')
     vt_mag = ncfile.variables['vt'][mode_number,:,0]
     vt_phase = ncfile.variables['vt'][mode_number,:,1]
@@ -469,10 +469,10 @@ def calculate_potential(filename, B=1000):
 
     potential[0] = 0
     for i in range(1, potential.size):
-        potential = (potential[i-1] + 
-                     ((var_r[i] - var_r[i-1]) *
-                      vt_mag[i]*cos(vt_phase[i]) +
-                      1j*vt_mag[i]*sin(vt_phase[i])))
+        potential[i] = (potential[i-1] + 
+                        ((var_r[i] - var_r[i-1]) *
+                         vt_mag[i]*cos(vt_phase[i]) +
+                         1j*vt_mag[i]*sin(vt_phase[i])))
     
     c = 2.998e10
     potential = potential*B/c
