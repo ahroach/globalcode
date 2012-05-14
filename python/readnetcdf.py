@@ -458,6 +458,21 @@ def plot_torque(filename, mode_number):
     ncfile.close()
     del ncfile
 
+def calculate_stream(filename, mode_number):
+    ncfile = netcdf.netcdf_file(filename, 'r')
+    vt_mag = ncfile.variables['vt'][mode_number,:,0]
+    vt_phase = ncfile.variables['vt'][mode_number,:,1]
+    
+    r = ncfile.variables['r'][:]
+    
+    vt = vt_mag*exp(1j*vt_phase)
+    
+    stream = zeros(r.size, dtype=complex)
+    for i in range(1, stream.size):
+        stream[i] = stream[i-1] - (r[i] - r[i-1])*vt[i]
+    
+    return abs(stream), angle(stream)
+
 def calculate_potential(filename, mode_number, B=1000):
     ncfile = netcdf.netcdf_file(filename, 'r')
     vt_mag = ncfile.variables['vt'][mode_number,:,0]
@@ -521,7 +536,7 @@ def calculate_currents_kz0(filename, mode_number, B=1000):
 
 
 def plot_derived_quantity_contour(filename, quantity_mag, quantity_phase,
-                                  showcolorbar=0, axisequalize=1):
+                                  showcolorbar=0, axisequalize=1, lines=0):
     ncfile = netcdf.netcdf_file(filename, 'r')
     (xi,yi,zi)=regrid_component_two(ncfile.variables['r'][:],
                                     quantity_mag,
@@ -531,6 +546,8 @@ def plot_derived_quantity_contour(filename, quantity_mag, quantity_phase,
 
 
     contourf(xi, yi, zi.T, 50)
+    if(lines):
+        contour(xi, yi, zi.T, 20, colors='k')
 
     xlim(-ncfile.r2, ncfile.r2)
     ylim(-ncfile.r2, ncfile.r2)
@@ -547,11 +564,12 @@ def plot_derived_quantity_contour(filename, quantity_mag, quantity_phase,
 
     
 def plot_component_contour(filename, component, mode_number, showcolorbar=0,
-                           axisequalize=1, showtitle=1, desiredcells=400):
+                           axisequalize=1, showtitle=1, desiredcells=400,
+                           phase_offset=0.0):
     ncfile = netcdf.netcdf_file(filename, 'r')
     (xi,yi,zi)=regrid_component_two(ncfile.variables['r'][:],
                                     ncfile.variables[component][mode_number,:,0],
-                                    ncfile.variables[component][mode_number,:,1],
+                                    ncfile.variables[component][mode_number,:,1] + phase_offset,
                                     ncfile.m, ncfile.r1, ncfile.r2,
                                     desiredcells=desiredcells)
     print "Regrid complete"
