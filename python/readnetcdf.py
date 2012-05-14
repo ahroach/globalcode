@@ -471,8 +471,8 @@ def calculate_potential(filename, mode_number, B=1000):
     for i in range(1, potential.size):
         potential[i] = (potential[i-1] + 
                         ((var_r[i] - var_r[i-1]) *
-                         vt_mag[i]*cos(vt_phase[i]) +
-                         1j*vt_mag[i]*sin(vt_phase[i])))
+                         vt_mag[i]*(cos(vt_phase[i]) +
+                                    1j*vt_mag[i]*sin(vt_phase[i]))))
     
     c = 2.998e10
     potential = potential*B/c
