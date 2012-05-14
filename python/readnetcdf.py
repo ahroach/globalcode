@@ -482,6 +482,43 @@ def calculate_potential(filename, mode_number, B=1000):
 
     return potential_mag, potential_phase                         
     
+def calculate_currents_kz0(filename, mode_number, B=1000):
+    ncfile = netcdf.netcdf_file(filename, 'r')
+    vt_mag = ncfile.variables['vt'][mode_number,:,0]
+    vt_phase = ncfile.variables['vt'][mode_number,:,1]
+    vr_mag = ncfile.variables['vr'][mode_number,:,0]
+    vr_phase = ncfile.variables['vr'][mode_number,:,1]
+    
+    eta = ncfile.eta
+    m = ncfile.m
+    ncfile.close()
+
+    c = 2.998e10
+
+    r = ncfile.variables['r'][:]
+    jr_mag = vt_mag*c*B/(4*pi*eta)
+    jr_phase = vt_phase
+    jt_mag = vr_mag*c*B/(4*pi*eta)
+    jt_phase = vr_phase + pi
+
+    jr = zeros(jr_mag.size, dtype=complex)
+    jt = zeros(jr_mag.size, dtype=complex)
+    for i in range(jr.size):
+        jr[i] = jr_mag[i]*(cos(jr_phase[i]) + 1j*sin(jr_phase[i]))
+        jt[i] = jt_mag[i]*(cos(jt_phase[i]) + 1j*sin(jt_phase[i]))
+
+    delj_inplane = zeros(jr.size, dtype=complex)
+
+    for i in range(1,delj_inplane.size):
+        delj_inplane[i] = ((1/r[i])*jr[i] +
+                           (jr[i] - jr[i-1])/(r[i]-r[i-1]) +
+                           1j*m*jt[i]/r[i])
+    
+    delj_inplane_mag = abs(delj_inplane)
+    delj_inplane_phase = angle(delj_inplane)
+
+    return jr_mag, jr_phase, jt_mag, jt_phase, delj_inplane_mag, delj_inplane_phase
+
 
 def plot_derived_quantity_contour(filename, quantity_mag, quantity_phase,
                                   showcolorbar=0, axisequalize=1):
@@ -493,7 +530,7 @@ def plot_derived_quantity_contour(filename, quantity_mag, quantity_phase,
     print "Regrid complete"
 
 
-    contourf(xi, yi, zi, 50)
+    contourf(xi, yi, zi.T, 50)
 
     xlim(-ncfile.r2, ncfile.r2)
     ylim(-ncfile.r2, ncfile.r2)
@@ -510,7 +547,7 @@ def plot_derived_quantity_contour(filename, quantity_mag, quantity_phase,
 
     
 def plot_component_contour(filename, component, mode_number, showcolorbar=0,
-                           axisequalize=1, showtitle=1, desiredcells=100):
+                           axisequalize=1, showtitle=1, desiredcells=400):
     ncfile = netcdf.netcdf_file(filename, 'r')
     (xi,yi,zi)=regrid_component_two(ncfile.variables['r'][:],
                                     ncfile.variables[component][mode_number,:,0],
@@ -597,7 +634,7 @@ def regrid_component(filename, component, mode_number):
 
 
 def regrid_component_two(var_r, var_mag, var_phase, m, r1, r2,
-                         desiredcells=100):
+                         desiredcells=400):
 
     unwrapped_phase = numpy.unwrap(var_phase)
 
