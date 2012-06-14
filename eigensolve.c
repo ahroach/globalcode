@@ -157,8 +157,9 @@ RESULTS_STRUCT *eigensolve(COMPRESSED_MATRIX *matrix,
     //phi_r_i^(n+1) terms
     wAelem(5*(i) + 3, 5*(i) + 2, matrix,
 	   -2.0*rotation->omega[i] 
-	   - 0.5*(1/grid->dx)*
-	   (rotation->omega[i+1]-rotation->omega[i-1])
+	   - 0.5*(1/(grid->r[i]*grid->dx))*
+	   (grid->r[i+1]*rotation->omega[i+1] - 
+	    grid->r[i-1]*rotation->omega[i-1])
 	   + I*2.0*nu*params->m*grid->r2inv[i]);
 
     //pi_i^(n+1) terms

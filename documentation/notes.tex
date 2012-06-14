@@ -273,7 +273,7 @@ The following finite difference equations are found:
 \begin{align}
 \gamma\phi_{\theta, j} = &-(\frac{2\nu}{r^2 \Delta x^2} + \frac{\nu}{r^2} + \frac{\nu m^2}{r^2} + \nu k^2 + im\Omega)\phi_{\theta, j}
 \\ \nonumber
-&+\frac{\nu}{r^2 \Delta x^2}(\phi_{\theta, j+1} + \phi_{\theta, j-1}) + \left[\frac{2im\nu}{r^2} - 2\Omega_j - \frac{1}{2\Delta x}\left(\Omega_{j+1}-\Omega_{j-1}\right)\right]\phi_{r,j}
+&+\frac{\nu}{r^2 \Delta x^2}(\phi_{\theta, j+1} + \phi_{\theta, j-1}) + \left[\frac{2im\nu}{r^2} - 2\Omega_j - \frac{1}{2r\Delta x}\left(r_{j+1}\Omega_{j+1}-r_{j-1}\Omega_{j-1}\right)\right]\phi_{r,j}
 \\ \nonumber
 & - kv_A \beta_{\theta, j} - \frac{im}{r}\Pi_{j}
 \end{align}
