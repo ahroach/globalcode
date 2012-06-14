@@ -67,94 +67,94 @@ RESULTS_STRUCT *eigensolve(COMPRESSED_MATRIX *matrix,
 
   // First we'll fill out the matrix for the beta_r terms in the fluid
   for (int i=grid->is; i <= grid->ie; i++) {
-    // beta_r_i^(n+1) terms
+    // beta_r_j terms
     wAelem(5*(i) + 0, 5*(i) + 0, matrix,
 	   -eta*grid->diffuse[i] 
 	   - I*params->m*rotation->omega[i]);
     
 
-    // beta_r_(i+1)^(n+1) terms
+    // beta_r_(j+1) terms
     wAelem(5*(i) + 0, 5*(i+1) + 0, matrix, eta*grid->diffuse2[i]);
 
-    // beta_r_(i-1)^(n+1) terms
+    // beta_r_(j-1) terms
     wAelem(5*(i) + 0, 5*(i-1) + 0, matrix, eta*grid->diffuse2[i]);
-    // beta_theta_i^(n+1) terms
+    // beta_theta_j terms
     wAelem(5*(i) + 0, 5*(i) + 1, matrix, -I*2*eta*params->m
 	  *grid->r2inv[i]);
 
-    // phi_r_i^(n+1) terms
+    // phi_r_j terms
     wAelem(5*(i) + 0, 5*(i) + 2, matrix, kva);
   }
 
   // Next the beta_theta terms
   for (int i=grid->is; i <= grid->ie; i++) {
-    // beta_theta_i^(n+1) terms
+    // beta_theta_j terms
     wAelem(5*(i) + 1, 5*(i) + 1, matrix,
 	   -eta*grid->diffuse[i] 
 	   - I*params->m*rotation->omega[i]);
 
-    // beta_theta_(i+1)^(n+1) terms
+    // beta_theta_(j+1) terms
     wAelem(5*(i) + 1, 5*(i+1) + 1, matrix, eta*grid->diffuse2[i]);
     
-    // beta_theta_(i-1)^(n+1) terms
+    // beta_theta_(j-1) terms
     wAelem(5*(i) + 1, 5*(i-1) + 1, matrix, eta*grid->diffuse2[i]);
 
-    //beta_r_i^(n+1) terms
+    //beta_r_j terms
     wAelem(5*(i) + 1, 5*(i) + 0, matrix,
 	   0.5*(rotation->omega[i+1] -
 		       rotation->omega[i-1])/grid->dx
 	   + I*2.0*eta*params->m*grid->r2inv[i]);
 
-    //phi_theta_i^(n+1) terms
+    //phi_theta_j terms
     wAelem(5*(i) + 1, 5*(i) + 3, matrix, kva);
   }
 
   // Next the phi_r terms
   for (int i=grid->is; i <= grid->ie; i++) {
-    // phi_r_i^(n+1) terms
+    // phi_r_j terms
     wAelem(5*(i) + 2, 5*(i) + 2, matrix,
 	   -nu*grid->diffuse[i] - I*params->m*rotation->omega[i]);
 
-    // phi_r_(i+1)^(n+1) terms
+    // phi_r_(j+1) terms
     wAelem(5*(i) + 2, 5*(i+1) + 2, matrix, nu*grid->diffuse2[i]);
 
-    //phi_r_(i-1)^(n+1) terms
+    //phi_r_(j-1) terms
     wAelem(5*(i) + 2, 5*(i-1) + 2, matrix, nu*grid->diffuse2[i]);
 
-    //beta_r_i^(n+1) terms
+    //beta_r_j terms
     wAelem(5*(i) + 2, 5*(i) + 0, matrix, -kva);
     
-    //phi_theta_i^(n+1) terms
+    //phi_theta_j terms
     wAelem(5*(i) + 2, 5*(i) + 3, matrix, 2.0*
 	  rotation->omega[i]
 	  - I*2.0*nu*params->m*grid->r2inv[i]);
 
-    //pi_(i+1)^(n+1) terms
+    //pi_(j+1) terms
     wAelem(5*(i) + 2, 5*(i+1) + 4, matrix, -0.5/
 	   (grid->dx*grid->r[i]));
 
-    //pi_(i-1)^(n+1) terms
+    //pi_(j-1) terms
     wAelem(5*(i) + 2, 5*(i-1) + 4, matrix, 0.5/
 	   (grid->dx*grid->r[i]));
   }
 
   // Next the phi_theta terms
   for (int i=grid->is; i <= grid->ie; i++) {
-    // phi_theta_i^(n+1) terms
+    // phi_theta_j terms
     wAelem(5*(i) + 3, 5*(i) + 3, matrix,
 	  -nu*grid->diffuse[i] 
 	  - I*params->m*rotation->omega[i]);
 
-    // phi_theta_(i+1)^(n+1) terms
+    // phi_theta_(j+1) terms
     wAelem(5*(i) + 3, 5*(i+1) + 3, matrix, nu*grid->diffuse2[i]);
 
-    //phi_theta_(i-1)^(n+1) terms
+    //phi_theta_(j-1) terms
     wAelem(5*(i) + 3, 5*(i-1) + 3, matrix, nu*grid->diffuse2[i]);
 
-    //beta_theta_i^(n+1) terms
+    //beta_theta_j terms
     wAelem(5*(i) + 3, 5*(i) + 1, matrix, -kva);
 
-    //phi_r_i^(n+1) terms
+    //phi_r_j terms
     wAelem(5*(i) + 3, 5*(i) + 2, matrix,
 	   -2.0*rotation->omega[i] 
 	   - 0.5*(1/(grid->r[i]*grid->dx))*
@@ -162,7 +162,7 @@ RESULTS_STRUCT *eigensolve(COMPRESSED_MATRIX *matrix,
 	    grid->r[i-1]*rotation->omega[i-1])
 	   + I*2.0*nu*params->m*grid->r2inv[i]);
 
-    //pi_i^(n+1) terms
+    //pi_j terms
     wAelem(5*(i) + 3, 5*(i) + 4, matrix, -I*params->m/grid->r[i]);
   }
 
@@ -171,34 +171,34 @@ RESULTS_STRUCT *eigensolve(COMPRESSED_MATRIX *matrix,
     
     scalefactorpi = nu*grid->diffuse[(grid->ie-grid->is)/2]/
       (2.0*dx2inv*grid->r2inv[i] + m2*grid->r2inv[i] + k2);
-    //pi_i^(n+1) terms
+    //pi_j terms
     wAelem(5*(i) + 4, 5*(i) + 4, matrix,
            -(2.0*dx2inv*grid->r2inv[i] + m2*grid->r2inv[i] + k2)
 	   *scalefactorpi);
 
-    //pi_(i+1)^(n+1) terms
+    //pi_(j+1) terms
     wAelem(5*(i) + 4, 5*(i+1) + 4, matrix, dx2inv*grid->r2inv[i]
 	   *scalefactorpi);
 
-    //pi_(i-1)^(n+1) terms
+    //pi_(j-1) terms
     wAelem(5*(i) + 4, 5*(i-1) + 4, matrix, dx2inv*grid->r2inv[i]
 	   *scalefactorpi);
 
-    //phi_r_i^(n+1) terms
+    //phi_r_j terms
     wAelem(5*(i) + 4, 5*(i) + 2, matrix,
 	   (2.0*I*params->m/grid->r[i])*
 	   (rotation->omega[i] + (0.5/grid->dx)*
 	    (rotation->omega[i+1] - rotation->omega[i-1]))*scalefactorpi);
     
-    //phi_theta_i^(n+1) terms
+    //phi_theta_j terms
     wAelem(5*(i) + 4, 5*(i) + 3, matrix,
     	   (-2.0*rotation->omega[i]/grid->r[i])*scalefactorpi);
 
-    //phi_theta_(i+1)^(n+1) terms
+    //phi_theta_(j+1) terms
     wAelem(5*(i) + 4, 5*(i+1) + 3, matrix, 
 	   (-rotation->omega[i+1]/(grid->r[i]*grid->dx))*scalefactorpi);
 
-    //phi_theta_(i-1)^(n+2) terms
+    //phi_theta_(j-1) terms
     wAelem(5*(i) + 4, 5*(i-1) + 3, matrix,
 	   (rotation->omega[i-1]/(grid->r[i]*grid->dx))*scalefactorpi);    
   }
