@@ -24,7 +24,7 @@ damped eigenmodes.
 
 \section{Linearized Equations}
 
-We start with the equations of incompressible MHD:
+We start with the equations of incompressible MHD in CGS units:
 
 \begin{align}
 &\dot{{\bf B}} + {\bf v}\cdot\nabla{\bf B} - {\bf B}\cdot\nabla{\bf v}=\eta\nabla^2 {\bf B}
@@ -38,7 +38,7 @@ We start with the equations of incompressible MHD:
 
 Here $P$ is defined as the sum of the hydrodynamic and magnetic
 pressures, $P=p+{\bf B}^2/8\pi$.We assume a background state with
-zeroth-order ${\bf B}=B_o \hat{z}$ and ${\bf
+zeroth-order ${\bf B}=B_0 \hat{z}$ and ${\bf
   v}=r\Omega(r)\hat{\theta}$.  First order quantities will be denoted
 by a $\delta$.
 
@@ -58,7 +58,7 @@ The radial component of the induction equation is
 \end{align}
 After linearization, keeping only 1st-order quantities, this becomes
 \begin{equation}
-\delta \dot{B_r} + \Omega \partial_\theta \delta B_r - B_o \partial_z \delta v_r = \eta\left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta B_r - \frac{2}{r^2}\partial_\theta \delta B_\theta\right]
+\delta \dot{B_r} + \Omega \partial_\theta \delta B_r - B_0 \partial_z \delta v_r = \eta\left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta B_r - \frac{2}{r^2}\partial_\theta \delta B_\theta\right]
 \end{equation}
 
 \subsection{Azimuthal induction equation}
@@ -70,7 +70,7 @@ The azimuthal component of the induction equation is
 \end{align}
 After linearization, this becomes
 \begin{align}
-\delta \dot{B_\theta} + \Omega \partial_\theta \delta B_\theta - B_o \partial_z \delta v_\theta - \delta B_r r \partial_r \Omega=\eta\left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta B_\theta + \frac{2}{r^2}\partial_\theta \delta B_r\right]
+\delta \dot{B_\theta} + \Omega \partial_\theta \delta B_\theta - B_0 \partial_z \delta v_\theta - \delta B_r r \partial_r \Omega=\eta\left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta B_\theta + \frac{2}{r^2}\partial_\theta \delta B_r\right]
 \end{align}
 
 \subsection{Axial induction equation}
@@ -82,7 +82,7 @@ The axial component of the induction equation is
 \end{align}
 After linearization this becomes
 \begin{align}
-\delta\dot{B_z} + \Omega\partial_\theta \delta B_z - B_o\partial_z \delta v_z = \eta\left[\partial_r^\dagger \partial_r + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]\delta B_z
+\delta\dot{B_z} + \Omega\partial_\theta \delta B_z - B_0\partial_z \delta v_z = \eta\left[\partial_r^\dagger \partial_r + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]\delta B_z
 \end{align}
 
 \subsection{Radial Euler equation}
@@ -97,7 +97,7 @@ The radial component of the Euler equation is
 \end{align}
 After linearization this becomes
 \begin{align}
-\delta\dot{v_r} + \Omega \partial_\theta \delta v_r - 2\Omega\delta v_\theta + \partial_r \frac{\delta P}{\rho} - \frac{B_o}{4\pi\rho}\partial_z \delta B_r
+\delta\dot{v_r} + \Omega \partial_\theta \delta v_r - 2\Omega\delta v_\theta + \partial_r \frac{\delta P}{\rho} - \frac{B_0}{4\pi\rho}\partial_z \delta B_r
 \\ \nonumber
 = \nu \left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta v_r - \frac{2}{r^2}\partial_\theta \delta v_\theta\right]
 \end{align}
@@ -113,7 +113,7 @@ The azimuthal component of the Euler equation is
 \end{align}
 After linearization this becomes
 \begin{align}
-\delta \dot{v_\theta} + \delta v_r \partial_r^\dagger(r\Omega) + \Omega \partial_\theta \delta v_\theta + \frac{1}{r}\partial_\theta \frac{\delta P}{\rho} - \frac{B_o}{4\pi\rho} \partial_z \delta B_\theta
+\delta \dot{v_\theta} + \delta v_r \partial_r^\dagger(r\Omega) + \Omega \partial_\theta \delta v_\theta + \frac{1}{r}\partial_\theta \frac{\delta P}{\rho} - \frac{B_0}{4\pi\rho} \partial_z \delta B_\theta
 \\ \nonumber
 = \nu\left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta v_\theta + \frac{2}{r^2}\partial_\theta \delta v_r \right]
 \end{align}
@@ -129,7 +129,7 @@ The axial component of the Euler equation is
 \end{align}
 After linearization this becomes
 \begin{align}
-\delta\dot{v_z} + \Omega \partial_\theta \delta v_z + \partial_z \frac{\delta P}{\rho} -\frac{B_o}{4\pi\rho} \partial_z \delta B_z = \nu\left[\partial_r^\dagger \partial_r + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]\delta v_z
+\delta\dot{v_z} + \Omega \partial_\theta \delta v_z + \partial_z \frac{\delta P}{\rho} -\frac{B_0}{4\pi\rho} \partial_z \delta B_z = \nu\left[\partial_r^\dagger \partial_r + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]\delta v_z
 \end{align}
 
 \subsection{Equations of constraint}
@@ -154,26 +154,26 @@ $\hat{z}$.  It does not, however, suggest the phase relation in
 $\hat{\theta}$.  Because of that, I suggest the following form for the
 perturbations of the field components:
 \begin{align*}
-&\delta B_r / \sqrt{4\pi\rho} = \beta_r (r,t)e^{im\theta}\cos{kz},\quad
-&\delta v_r = \phi_r (r,t) e^{im\theta} \sin{kz}
+&\delta B_r / \sqrt{4\pi\rho} = \operatorname{Re}\{\beta_r (r,t)e^{im\theta}\cos{kz}\},\quad
+&\delta v_r = \operatorname{Re}\{\phi_r (r,t) e^{im\theta} \sin{kz}\}
 \\
-&\delta B_\theta / \sqrt{4\pi\rho} = \beta_\theta (r,t)e^{im\theta}\cos{kz},\quad
-&\delta v_\theta = \phi_\theta (r,t) e^{im\theta} \sin{kz}
+&\delta B_\theta / \sqrt{4\pi\rho} = \operatorname{Re}\{\beta_\theta (r,t)e^{im\theta}\cos{kz}\},\quad
+&\delta v_\theta = \operatorname{Re}\{\phi_\theta (r,t) e^{im\theta} \sin{kz}\}
 \\
-&\delta B_z / \sqrt{4\pi\rho} = \beta_z (r,t)e^{im\theta}\sin{kz},\quad
-&\delta v_z = \phi_z (r,t) e^{im\theta} \cos{kz}
+&\delta B_z / \sqrt{4\pi\rho} = \operatorname{Re}\{\beta_z (r,t)e^{im\theta}\sin{kz}\},\quad
+&\delta v_z = \operatorname{Re}\{\phi_z (r,t) e^{im\theta} \cos{kz}\}
 \\
-&\delta P / \rho = \Pi (r,t) e^{im\theta} \sin{kz}&
+&\delta P / \rho = \operatorname{Re}\{\Pi (r,t) e^{im\theta} \sin{kz}\}&
 \end{align*}
 
-The quantities $\beta$, $\phi$, and $\Pi$ are complex, and comparing
-the real and imaginary parts of the various components determines
-their phase in the $\hat{\theta}$ direction.
-
-With these definitions, it is now possible to write the linearized
-equations in terms of the perturbed quantities, which replaces the
-derivatives in $\hat{\theta}$ and $\hat{z}$ by $\pm k$ and $im$.  I
-have also made use of the Alfven speed, $v_A = B_o / \sqrt{4\pi\rho}$.
+The quantities $\beta$, $\phi$, and $\Pi$ are complex, holding
+information about both the magnitude and phase. Following the
+convention common in harmonic analysis, the real part of these
+variables is evaluated to find physically meaningful
+quantities. Because our equations are linear, we are justified in
+dropping the `$\mathrm{Re}$' when rewriting the equations in terms of
+these perturbations, shown below. Note that we have made use of the
+Alfv\'{e}n speed, $v_A = B_0/\sqrt{4\pi\rho}$.
 
 \begin{equation}\label{rind_p}
 \dot{\beta_r} + im\Omega\beta_r - kv_A\phi_r = \eta\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\beta_r - \frac{2im}{r^2}\beta_\theta\right]
@@ -203,8 +203,8 @@ have also made use of the Alfven speed, $v_A = B_o / \sqrt{4\pi\rho}$.
 \section{Reduced set of equations}
 
 We can reduce the set of equations by applying the operator
-$\partial_r^\dagger$ to Equation~\ref{reul_p}, $(1/r)\partial_\theta$
-to Equation~\ref{teul_p}, and $\partial_z$ to Equation~\ref{zeul_p},
+$\partial_r^\dagger$ to Equation~\ref{reul_p}, $(im/r)$
+to Equation~\ref{teul_p}, and $-k$ to Equation~\ref{zeul_p},
 and then summing the resulting equations.  We can use the equations of
 constraint to eliminate many of the terms in the resulting equation.
 
@@ -242,9 +242,13 @@ $\beta_{r,j}$ indicates the value of $\beta_r$ at the $j$th
 gridpoint. $\Delta x$ indicates the size of the grid step.
 
 The linearized quantities are expected to have a time behavior that
-goes as $e^{\gamma t}$, so that the growth rate of the mode is given
-by $\mathrm{Re}\{\gamma\}$ and the oscillating frequency is given by
--$\mathrm{Im}\{\gamma\}$.
+goes as $e^{\gamma t}$. Comparing to the time behavior for the form of
+a wave traveling in the positive direction,
+$e^{i({\bf k} \cdot {\bf x} - \omega t)}$, we see that
+$\mathrm{Re}\{\gamma\} = \mathrm{Im}\{\omega\}$, and
+$\mathrm{Im}\{\gamma\} = -\mathrm{Re}\{\omega\}$. So the growth rate of the
+mode is given by $\mathrm{Re}\{\gamma\}$, and the oscillation frequency is
+given by $-\mathrm{Im}\{\gamma\}$.
 
 The following finite difference equations are found:
 \begin{align}
