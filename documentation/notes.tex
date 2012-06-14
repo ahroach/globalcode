@@ -298,8 +298,10 @@ The hydrodynamic boundary conditions on $\phi_r$ and $\phi_\theta$ are
 satisfied by $\phi_r = 0$ (no inflow) and $\phi_\theta = 0$ (no slip)
 at the boundary.  There is a further no-slip constraint on $\phi_z$.
 Because $\phi_z$ is not being solved for in the equations, this is
-satisfied by setting $\partial \phi_r/\partial r = 0$ at the boundary,
-implying $\phi_z=0$ by the incompressibility constraint.
+satisfied by setting $\partial_r^\dagger \phi_r = 0$ at the boundary,
+implying $\phi_z=0$ by the incompressibility constraint. Since we have
+already specified that $\phi_r=0$, this means that $\partial_r
+\phi_r=0$ as well.
 
 \subsection{Magnetic boundary conditions}
 
