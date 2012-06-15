@@ -226,34 +226,45 @@ def plot_all_components(filename, mode_number):
     bt_mag = ncfile.variables['bt'][mode_number, :, 0]
     bt_arg = ncfile.variables['bt'][mode_number, :, 1]
 
+    pi_mag = ncfile.variables['pi'][mode_number, :, 0]
+    pi_arg = ncfile.variables['pi'][mode_number, :, 1]
+
     vr_real = zeros(vr_mag.size)
     vt_real = zeros(vr_mag.size)
     br_real = zeros(vr_mag.size)
     bt_real = zeros(vr_mag.size)
+    pi_real = zeros(vr_mag.size)
     for i in range(0, vr_real.size):
         vr_real[i] = real(vr_mag[i]*exp(1j*vr_arg[i]))
         vt_real[i] = real(vt_mag[i]*exp(1j*vt_arg[i]))
         br_real[i] = real(br_mag[i]*exp(1j*br_arg[i]))
         bt_real[i] = real(bt_mag[i]*exp(1j*bt_arg[i]))
+        pi_real[i] = real(pi_mag[i]*exp(1j*pi_arg[i]))
 
-    subplot(4,1,1)
+    subplot(5,1,1)
     plot(r, vr_real, '.-')
     ylabel(r"$v_r$")
     titlestring = "mode %d, GR = %.6g + %.6g*i 1/s" % (mode_number,  ncfile.variables['lambda'][mode_number,0], ncfile.variables['lambda'][mode_number,1])
     title(titlestring)
 
-    subplot(4,1,2)
+    subplot(5,1,2)
     plot(r, vt_real, '.-')
     ylabel(r"$v_\theta$")
 
-    subplot(4,1,3)
+    subplot(5,1,3)
     plot(r, br_real, '.-')
     ylabel(r"$b_r$")
 
-    subplot(4,1,4)
+    subplot(5,1,4)
     plot(r, bt_real, '.-')
     ylabel(r"$b_\theta$")
+
+
+    subplot(5,1,5)
+    plot(r, pi_real, '.-')
+    ylabel(r"$\pi$")
     xlabel("r [cm]")
+
     ncfile.close()
     del ncfile
 
