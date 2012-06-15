@@ -22,9 +22,9 @@ but will extend the analysis to allow examination of nonaxisymmetric
 eigenmodes, eigenmodes with non-ideal Couette rotation profiles, and
 damped eigenmodes.
 
-\section{Linearized Equations}
+\section{Linearized equations}
 
-We start with the equations of incompressible MHD in CGS units:
+We start with the equations of incompressible, nonideal MHD in cgs units:
 
 \begin{align}
 &\dot{{\bf B}} + {\bf v}\cdot\nabla{\bf B} - {\bf B}\cdot\nabla{\bf v}=\eta\nabla^2 {\bf B}
@@ -44,7 +44,7 @@ by a $\delta$.
 
 We will define two radial derivative operators, $\partial_r \equiv
 \frac{\partial}{\partial r}$ and $\partial_{r}^\dagger \equiv
-\frac{\partial}{\partial r}+\frac{1}{r}$.  So the combination
+\frac{\partial}{\partial r}+\frac{1}{r}$.  The combination
 $\partial_r \partial_r^\dagger = \frac{\partial^2}{\partial
   r^2}-\frac{1}{r^2}+\frac{1}{r}\partial_r$.
 
@@ -53,7 +53,7 @@ $\partial_r \partial_r^\dagger = \frac{\partial^2}{\partial
 The radial component of the induction equation is
 \begin{align}
 \dot{B_r} + v_r \partial_r B_r + \frac{v_\theta}{r}\partial_\theta B_r + v_z \partial_z B_r - B_r \partial_r v_r -\frac{B_\theta}{r}\partial_\theta v_r - B_z \partial_z v_r
-\\ \nonumber
+\nonumber \\
  = \eta\left(\nabla^2 B_r -\frac{2}{r^2}\partial_\theta B_\theta - \frac{1}{r^2}B_r\right)
 \end{align}
 After linearization, keeping only 1st-order quantities, this becomes
@@ -65,7 +65,7 @@ After linearization, keeping only 1st-order quantities, this becomes
 The azimuthal component of the induction equation is
 \begin{align}
 \dot{B_\theta}+v_r \partial_r B_\theta + \frac{v_\theta}{r}\partial_\theta B_\theta + v_z \partial_z B_\theta + \frac{v_\theta}{r}B_r - B_r\partial_r v_\theta - \frac{1}{r}B_\theta \partial_\theta v_\theta
-\\ \nonumber
+\nonumber \\
  - B_z \partial_z v_\theta - \frac{v_r}{r}B_\theta = \eta\left(\nabla^2 B_\theta + \frac{2}{r^2}\partial_\theta B_r - \frac{1}{r^2}B_\theta \right)
 \end{align}
 After linearization, this becomes
@@ -77,7 +77,7 @@ After linearization, this becomes
 The axial component of the induction equation is
 \begin{align}
 \dot{B_z} + v_r \partial_r B_z + \frac{v_\theta}{r}\partial_\theta B_z + v_z \partial_z B_z - B_r \partial_r v_z - \frac{1}{r}B_\theta \partial_\theta v_z - B_z \partial_z v_z
-\\ \nonumber
+\nonumber \\
 =\eta\left[\frac{1}{r}\partial_r + \partial_r^2 + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]B_z
 \end{align}
 After linearization this becomes
@@ -85,46 +85,46 @@ After linearization this becomes
 \delta\dot{B_z} + \Omega\partial_\theta \delta B_z - B_0\partial_z \delta v_z = \eta\left[\partial_r^\dagger \partial_r + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]\delta B_z
 \end{align}
 
-\subsection{Radial Euler equation}
+\subsection{Radial momentum equation}
 
 The radial component of the Euler equation is
 \begin{align}
 \dot{v_r} + v_r \partial_r v_r + \frac{v_\theta}{r}\partial_\theta v_r + v_z \partial_z v_r - \frac{v_\theta^2}{r}+\frac{1}{\rho}\partial_r P 
-\\ \nonumber 
+\nonumber \\
 - \frac{1}{4\pi\rho}\left(B_r \partial_r B_r + \frac{B_\theta}{r}\partial_\theta B_r + B_z \partial_z B_r - \frac{B_\theta^2}{r}\right)
-\\ \nonumber
+\nonumber \\
  = \nu\left(\nabla^2 v_r -\frac{2}{r^2}\partial_\theta v_\theta - \frac{1}{r^2}v_r\right)
 \end{align}
 After linearization this becomes
 \begin{align}
 \delta\dot{v_r} + \Omega \partial_\theta \delta v_r - 2\Omega\delta v_\theta + \partial_r \frac{\delta P}{\rho} - \frac{B_0}{4\pi\rho}\partial_z \delta B_r
-\\ \nonumber
+\nonumber \\
 = \nu \left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta v_r - \frac{2}{r^2}\partial_\theta \delta v_\theta\right]
 \end{align}
 
-\subsection{Azimuthal Euler Equation}
+\subsection{Azimuthal momentum equation}
 The azimuthal component of the Euler equation is
 \begin{align}
 \dot{v_\theta} + v_r \partial_r v_\theta + \frac{v_\theta}{r}\partial_\theta v_\theta + v_z \partial_z v_\theta + \frac{v_\theta v_r}{r} + \frac{1}{\rho}\frac{1}{r}\partial_\theta P 
-\\ \nonumber
+\nonumber \\
 -\frac{1}{4\pi\rho}\left[B_r\partial_r B_\theta + \frac{B_\theta}{r}\partial_\theta B_\theta + B_z \partial_z B_\theta + \frac{B_\theta B_r}{r}\right]
-\\ \nonumber
+\nonumber \\
 = \nu\left(\nabla^2 v_\theta + \frac{2}{r^2}\partial_\theta v_r - \frac{1}{r^2}v_\theta \right)
 \end{align}
 After linearization this becomes
 \begin{align}
 \delta \dot{v_\theta} + \delta v_r \partial_r^\dagger(r\Omega) + \Omega \partial_\theta \delta v_\theta + \frac{1}{r}\partial_\theta \frac{\delta P}{\rho} - \frac{B_0}{4\pi\rho} \partial_z \delta B_\theta
-\\ \nonumber
+\nonumber \\
 = \nu\left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta v_\theta + \frac{2}{r^2}\partial_\theta \delta v_r \right]
 \end{align}
 
-\subsection{Axial Euler Equation}
+\subsection{Axial momentum equation}
 The axial component of the Euler equation is
 \begin{align}
 \dot{v_z} + v_r \partial_r v_z + \frac{v_\theta}{r}\partial_\theta v_z + v_z \partial_z v_z + \frac{1}{\rho}\partial_z P
-\\ \nonumber
+\nonumber \\
 -\frac{1}{4\pi\rho}\left[B_r\partial_r B_z + \frac{B_\theta}{r}\partial_\theta B_z + B_z \partial_z B_z \right]
-\\ \nonumber
+\nonumber \\
 =\nu\left[\frac{1}{r}\partial_r + \partial_r^2 + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]v_z
 \end{align}
 After linearization this becomes
@@ -153,18 +153,18 @@ suggests the relation of the phases of the various field components in
 $\hat{z}$.  It does not, however, suggest the phase relation in
 $\hat{\theta}$.  Because of that, I suggest the following form for the
 perturbations of the field components:
-\begin{align*}
+\begin{align}
 &\delta B_r / \sqrt{4\pi\rho} = \operatorname{Re}\{\beta_r (r,t)e^{im\theta}\cos{kz}\},\quad
 &\delta v_r = \operatorname{Re}\{\phi_r (r,t) e^{im\theta} \sin{kz}\}
-\\
+\nonumber \\
 &\delta B_\theta / \sqrt{4\pi\rho} = \operatorname{Re}\{\beta_\theta (r,t)e^{im\theta}\cos{kz}\},\quad
 &\delta v_\theta = \operatorname{Re}\{\phi_\theta (r,t) e^{im\theta} \sin{kz}\}
-\\
+\nonumber \\
 &\delta B_z / \sqrt{4\pi\rho} = \operatorname{Re}\{\beta_z (r,t)e^{im\theta}\sin{kz}\},\quad
 &\delta v_z = \operatorname{Re}\{\phi_z (r,t) e^{im\theta} \cos{kz}\}
-\\
+\nonumber \\
 &\delta P / \rho = \operatorname{Re}\{\Pi (r,t) e^{im\theta} \sin{kz}\}&
-\end{align*}
+\end{align}
 
 The quantities $\beta$, $\phi$, and $\Pi$ are complex, holding
 information about both the magnitude and phase. Following the
@@ -208,9 +208,9 @@ to Equation~\ref{teul_p}, and $-k$ to Equation~\ref{zeul_p},
 and then summing the resulting equations.  We can use the equations of
 constraint to eliminate many of the terms in the resulting equation.
 
-The following relations will be needed in order to massage some of the
-terms into the correct form for elimination by the constraint
-equations:
+The following relations are useful in casting some of the terms in the
+resulting equation into the correct form for elimination by the
+constraint equations:
 \begin{equation}
 \frac{1}{r}\partial_r \partial_r^\dagger = \partial_r^\dagger \partial_r \frac{1}{r} - \frac{2}{r^3} + \frac{2}{r^2}\partial_r
 \end{equation}
@@ -218,11 +218,10 @@ equations:
 \partial_r^\dagger \frac{1}{r^2} = \frac{1}{r^2} \partial_r^\dagger - \frac{2}{r^3}
 \end{equation}
 
-This produces the following constraint equation:
+The following constraint equation is produced:
 \begin{equation}\label{piconeq}
 im\left(\frac{2\Omega}{r}+2\partial_r \Omega\right)\phi_r - \partial_r^\dagger\left(2\Omega\phi_\theta\right)+\left(\partial_r^\dagger \partial_r - \frac{m^2}{r^2}-k^2\right)\Pi = 0
 \end{equation}
-
 We will solve the system of equations formed by Equations
 \ref{rind_p}, \ref{tind_p}, \ref{reul_p}, \ref{zeul_p}, and
 \ref{piconeq} for the quantities $\beta_r$, $\beta_\theta$, $\phi_r$,
@@ -230,14 +229,14 @@ $\phi_\theta$, and $\Pi$.  $\beta_z$ and $\phi_z$ can be found from
 $\nabla\cdot{\bf B}=0$ and $\nabla\cdot{\bf v}=0$.
 \section{Numerics}
 
-Following Goodman and Ji, we will make use of a logarithmic grid in
-$r$, equally spaced in $x=\ln{r}$.  The radial derivatives will now be
-replaced by $\partial_r = (1/r)\partial_x$ and $\partial_r^2 =
+Following Goodman and Ji, we use a radial grid which is logarithmic in
+$r$, and equally spaced in $x=\ln{r}$.  The radial derivatives can
+be replaced by $\partial_r = (1/r)\partial_x$ and $\partial_r^2 =
 -(1/r^2)\partial_x + (1/r^2)\partial_x^2$.  This means that
 $\partial_r \partial_r^\dagger = (1/r^2)\partial_x^2 - (1/r^2)$ and
 $\partial_r^\dagger \partial_r = (1/r^2)\partial_x^2$.
 
-The equations will be written with centered differences.  The quantity
+The equations are evaluated with centered differences.  The quantity
 $\beta_{r,j}$ indicates the value of $\beta_r$ at the $j$th
 gridpoint. $\Delta x$ indicates the size of the grid step.
 
@@ -252,37 +251,31 @@ given by $-\mathrm{Im}\{\gamma\}$.
 
 The following finite difference equations are found:
 \begin{align}
-\gamma\beta_{r, j} = &-(\frac{2\eta}{r^2 \Delta x^2} + \frac{\eta}{r^2} + \frac{\eta m^2}{r^2} + \eta k^2 + im\Omega )\beta_{r, j}
-\\ \nonumber
-&+\frac{\eta}{r^2 \Delta x^2}(\beta_{r, j+1} + \beta_{r, j-1}) - \frac{2im \eta}{r^2}\beta_{\theta,j} + k v_A \phi_{r,j}
-\end{align}
-\begin{align}
-\gamma\beta_{\theta,j}=&-(\frac{2\eta}{r^2 \Delta x^2} + \frac{\eta}{r^2} + \frac{\eta m^2}{r^2} + \eta k^2 + im\Omega)\beta_{\theta, j}
-\\ \nonumber
-&+\frac{\eta}{r^2 \Delta x^2}(\beta_{\theta, j+1} + \beta_{\theta, j-1}) +\left[\frac{\Omega_{j+1}-\Omega_{j-1}}{2\Delta x} + \frac{2im\eta}{r^2}\right]\beta_{r,j}
-\\ \nonumber
-&+kv_A\phi_{\theta,j}
-\end{align}
-\begin{align}
-\gamma\phi_{r, j} = &-(\frac{2\nu}{r^2 \Delta x^2} + \frac{\nu}{r^2} + \frac{\nu m^2}{r^2} + \nu k^2 + im\Omega)\phi_{r, j}
-\\ \nonumber
-&+\frac{\nu}{r^2 \Delta x^2}(\phi_{r, j+1} + \phi_{r, j-1}) + \left[2\Omega_{j}-\frac{2im\nu}{r^2} \right]\phi_{\theta, j} 
-\\ \nonumber
-& - kv_A\beta_{r,j} - \frac{1}{2 r \Delta x}\left(\Pi_{j+1}-\Pi_{j-1}\right)
-\end{align}
-\begin{align}
-\gamma\phi_{\theta, j} = &-(\frac{2\nu}{r^2 \Delta x^2} + \frac{\nu}{r^2} + \frac{\nu m^2}{r^2} + \nu k^2 + im\Omega)\phi_{\theta, j}
-\\ \nonumber
-&+\frac{\nu}{r^2 \Delta x^2}(\phi_{\theta, j+1} + \phi_{\theta, j-1}) + \left[\frac{2im\nu}{r^2} - 2\Omega_j - \frac{1}{2\Delta x}\left(\Omega_{j+1}-\Omega_{j-1}\right)\right]\phi_{r,j}
-\\ \nonumber
-& - kv_A \beta_{\theta, j} - \frac{im}{r}\Pi_{j}
-\end{align}
-\begin{align}
-&\left[\frac{2im\Omega_j}{r} + \frac{im}{r\Delta x}(\Omega_{j+1}-\Omega_{j-1})\right]\phi_{r,j} - \frac{2\Omega_j}{r}\phi_{\theta,j} 
-\\ \nonumber
-&- \frac{1}{r\Delta x}\left(\Omega_{j+1}\phi_{\theta,j+1}-\Omega_{j-1}\phi_{\theta,j-1}\right) - \left[\frac{2}{r^2\Delta x^2} + \frac{m^2}{r^2}+k^2\right]\Pi_{j}
-\\ \nonumber
-&+\frac{1}{r^2\Delta x^2}\left(\Pi_{j+1} + \Pi_{j-1}\right) = 0
+\gamma\beta_{r, j} = &-(\frac{2\eta}{r_j^2 \Delta x^2} + \frac{\eta}{r_j^2} + \frac{\eta m^2}{r_j^2} + \eta k^2 + im\Omega_j )\beta_{r, j} +\frac{\eta}{r_j^2 \Delta x^2}(\beta_{r, j+1} + \beta_{r, j-1})
+\nonumber \\
+&- \frac{2im \eta}{r_j^2}\beta_{\theta,j} + k v_A \phi_{r,j}
+\\
+\nonumber \\
+\gamma\beta_{\theta,j}=&-(\frac{2\eta}{r_j^2 \Delta x^2} + \frac{\eta}{r_j^2} + \frac{\eta m^2}{r_j^2} + \eta k^2 + im\Omega_j)\beta_{\theta, j} +\frac{\eta}{r_j^2 \Delta x^2}(\beta_{\theta, j+1} + \beta_{\theta, j-1})
+\nonumber \\
+&+\left[\frac{\Omega_{j+1}-\Omega_{j-1}}{2\Delta x} + \frac{2im\eta}{r_j^2}\right]\beta_{r,j} + kv_A\phi_{\theta,j}
+\\
+\nonumber \\
+\gamma\phi_{r, j} = &-(\frac{2\nu}{r_j^2 \Delta x^2} + \frac{\nu}{r_j^2} + \frac{\nu m^2}{r_j^2} + \nu k^2 + im\Omega_j)\phi_{r, j} + \frac{\nu}{r_j^2 \Delta x^2}(\phi_{r, j+1} + \phi_{r, j-1})
+\nonumber \\
+&+ \left[2\Omega_{j}-\frac{2im\nu}{r_j^2} \right]\phi_{\theta, j} - kv_A\beta_{r,j} - \frac{1}{2 r_j \Delta x}\left(\Pi_{j+1}-\Pi_{j-1}\right)
+\\
+\nonumber \\
+\gamma\phi_{\theta, j} = &-(\frac{2\nu}{r_j^2 \Delta x^2} + \frac{\nu}{r_j^2} + \frac{\nu m^2}{r_j^2} + \nu k^2 + im\Omega_j)\phi_{\theta, j} + \frac{\nu}{r_j^2 \Delta x^2}(\phi_{\theta, j+1} + \phi_{\theta, j-1})
+\nonumber \\
+&+ \left[\frac{2im\nu}{r_j^2} - 2\Omega_j - \frac{1}{2\Delta x}\left(\Omega_{j+1}-\Omega_{j-1}\right)\right]\phi_{r,j} - kv_A \beta_{\theta, j} - \frac{im}{r_j}\Pi_{j}
+\\
+\nonumber \\
+0 = &\left[\frac{2im\Omega_j}{r_j} + \frac{im}{r_j \Delta x}(\Omega_{j+1}-\Omega_{j-1})\right]\phi_{r,j} - \frac{2\Omega_j}{r_j}\phi_{\theta,j} 
+\nonumber \\
+&- \frac{1}{r_j \Delta x}\left(\Omega_{j+1}\phi_{\theta,j+1}-\Omega_{j-1}\phi_{\theta,j-1}\right) - \left[\frac{2}{r_j^2\Delta x^2} + \frac{m^2}{r_j^2}+k^2\right]\Pi_{j}
+\nonumber \\
+&+\frac{1}{r_j^2 \Delta x^2}\left(\Pi_{j+1} + \Pi_{j-1}\right)
 \end{align}
 
 \section{Boundary Conditions}
