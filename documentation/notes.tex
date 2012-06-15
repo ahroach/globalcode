@@ -182,39 +182,39 @@ are justified in dropping the `$\mathrm{Re}$' when rewriting the
 equations in terms of these perturbed quantities. Note that we have
 made use of the Alfv\'{e}n speed, $v_A = B_0/\sqrt{4\pi\rho}$.
 
-\begin{equation}\label{rind_p}
+\begin{equation}\label{eqn:globalcode:rind_p}
 \gamma \beta_r + im\Omega\beta_r - kv_A\phi_r = \eta\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\beta_r - \frac{2im}{r^2}\beta_\theta\right]
 \end{equation}
-\begin{equation}\label{tind_p}
+\begin{equation}\label{eqn:globalcode:tind_p}
 \gamma \beta_\theta + im\Omega\beta_\theta - kv_A \phi_\theta - r(\partial_r \Omega)\beta_r = \eta\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\beta_\theta + \frac{2im}{r^2}\beta_r\right]
 \end{equation}
-\begin{equation}\label{zind_p}
+\begin{equation}\label{eqn:globalcode:zind_p}
 \gamma \beta_z + im\Omega\beta_z + kv_A \phi_z = \eta\left[\left(\partial_r^\dagger \partial_r -\frac{m^2}{r^2} - k^2\right)\beta_z\right]
 \end{equation}
-\begin{equation}\label{reul_p}
+\begin{equation}\label{eqn:globalcode:reul_p}
 \gamma \phi_r + im\Omega\phi_r - 2\Omega\phi_\theta + \partial_r \Pi + kv_A\beta_r = \nu\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\phi_r - \frac{2im}{r^2}\phi_\theta\right]
 \end{equation}
-\begin{equation}\label{teul_p}
+\begin{equation}\label{eqn:globalcode:teul_p}
 \gamma \phi_\theta + im\Omega\phi_\theta + \phi_r \partial_r^\dagger(r\Omega) + \frac{im}{r}\Pi + kv_A \beta_\theta = \nu\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\phi_\theta + \frac{2im}{r^2}\phi_r\right]
 \end{equation}
-\begin{equation}\label{zeul_p}
+\begin{equation}\label{eqn:globalcode:zeul_p}
 \gamma \phi_z + im\Omega{\phi_z} + k\Pi - kv_A \beta_z = \nu\left[\left(\partial_r^\dagger \partial_r - \frac{m^2}{r^2} - k^2\right)\phi_z\right]
 \end{equation}
-\begin{equation}\label{inc_p}
+\begin{equation}\label{eqn:globalcode:inc_p}
 \partial_r^\dagger \phi_r + \frac{im}{r}\phi_\theta - k\phi_z = 0
 \end{equation}
-\begin{equation}\label{delB_p}
+\begin{equation}\label{eqn:globalcode:delB_p}
 \partial_r^\dagger \beta_r + \frac{im}{r}\beta_\theta + k\beta_z = 0
 \end{equation}
 
 \section{Reduced set of equations}
 
 We can reduce the set of equations by applying the operator
-$\partial_r^\dagger$ to Equation~\ref{reul_p}, $(im/r)$ to
-Equation~\ref{teul_p}, and $-k$ to Equation~\ref{zeul_p}, and then
-summing the equations.  The following relations are useful in casting
-some of the terms into the correct form for elimination by the
-constraint equations:
+$\partial_r^\dagger$ to Equation~\ref{eqn:globalcode:reul_p}, $(im/r)$
+to Equation~\ref{eqn:globalcode:teul_p}, and $-k$ to
+Equation~\ref{eqn:globalcode:zeul_p}, and then summing the equations.
+The following relations are useful in casting some of the terms into
+the correct form for elimination by the constraint equations:
 \begin{equation}
 \frac{1}{r}\partial_r \partial_r^\dagger = \partial_r^\dagger \partial_r \frac{1}{r} - \frac{2}{r^3} + \frac{2}{r^2}\partial_r
 \end{equation}
@@ -222,25 +222,38 @@ constraint equations:
 \partial_r^\dagger \frac{1}{r^2} = \frac{1}{r^2} \partial_r^\dagger - \frac{2}{r^3}
 \end{equation}
 The following constraint equation is then produced:
-\begin{equation}\label{piconeq}
+\begin{equation}\label{eqn:globalcode:piconeq}
 im\left(\frac{2\Omega}{r}+2\partial_r \Omega\right)\phi_r - \partial_r^\dagger\left(2\Omega\phi_\theta\right)+\left(\partial_r^\dagger \partial_r - \frac{m^2}{r^2}-k^2\right)\Pi = 0
 \end{equation}
 
 We will solve the system of equations formed by Equations
-\ref{rind_p}, \ref{tind_p}, \ref{reul_p}, \ref{zeul_p}, and
-\ref{piconeq} for the quantities $\beta_r$, $\beta_\theta$, $\phi_r$,
+\ref{eqn:globalcode:rind_p}, \ref{eqn:globalcode:tind_p}, \ref{eqn:globalcode:reul_p}, \ref{eqn:globalcode:zeul_p}, and
+\ref{eqn:globalcode:piconeq} for the quantities $\beta_r$, $\beta_\theta$, $\phi_r$,
 $\phi_\theta$, and $\Pi$. $\beta_z$ and $\phi_z$ can be found from
 $\nabla\cdot{\bf B}=0$ and $\nabla\cdot{\bf v}=0$ if desired.
 
 
-\section{Numerics}
+\section{Discretization}
 
 Following Goodman and Ji, we use a radial grid which is logarithmic in
-$r$, and equally spaced in $x=\ln{r}$.  The radial derivatives can
-be replaced by $\partial_r = (1/r)\partial_x$ and $\partial_r^2 =
--(1/r^2)\partial_x + (1/r^2)\partial_x^2$.  This means that
-$\partial_r \partial_r^\dagger = (1/r^2)\partial_x^2 - (1/r^2)$ and
-$\partial_r^\dagger \partial_r = (1/r^2)\partial_x^2$.
+$r$, and equally spaced in $x=\ln{r}$, as shown in
+Figure~\ref{fig:globalcode:globalcode_grid}.  The radial derivatives
+can be written in terms of the new coordinate $x$: $\partial_r =
+(1/r)\partial_x$ and $\partial_r^2 = -(1/r^2)\partial_x +
+(1/r^2)\partial_x^2$.  This means that $\partial_r \partial_r^\dagger
+= (1/r^2)\partial_x^2 - (1/r^2)$ and $\partial_r^\dagger \partial_r =
+(1/r^2)\partial_x^2$.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.95\textwidth]{globalcode_grid}
+\caption[Radial grid used for discretizing linearized MHD
+  equations]{Radial grid used for the discretization of the linearized
+  MHD equations. There is one ghost zone outside of each boundary,
+  which is used to specify the boundary conditions. The grid is
+  equally spaced in $x=\ln{r}$.}
+\label{fig:globalcode:globalcode_grid}
+\end{figure}
 
 The equations are evaluated with centered differences.  The quantity
 $\beta_{r,j}$ indicates the value of $\beta_r$ at the $j$th
@@ -282,7 +295,7 @@ at the inner and outer cylinders. The constraint equations are scaled
 so that the terms in the equations are of the same order as the other
 non-zero elements in the matrix.
 
-\subsection{Hydrodynamic boundary conditions}
+\subsection{Velocity boundary conditions}
 
 The hydrodynamic boundary conditions on $\phi_r$ and $\phi_\theta$ are
 satisfied by $\phi_r = 0$ (no inflow) and $\phi_\theta = 0$ (no slip)
@@ -293,7 +306,13 @@ implying $\phi_z=0$ by the incompressibility constraint. Since we have
 already specified that $\phi_r=0$, this means that $\partial_r
 \phi_r=0$ as well.
 
-\subsection{Magnetic boundary conditions}
+In the code, the constraints on $\phi_r$ are specified by setting
+$\phi_{r,js-1} = \phi_{r, js} = 0$, and $\phi_{r,je+1} = \phi_{r,je} =
+0$. The constraint on $\phi_\theta$ is specified by satisfying the
+equations $\phi_{\theta,js-1} + \phi_{\theta,js}=0$ and
+$\phi_{\theta,je+1} + \phi_{\theta,je}=0$.
+
+\subsection{Magnetic boundary condition: perfectly conducting}
 
 There are two choices for the magnetic boundary condition at the inner
 and outer cylinder: perfectly conducting boundaries, and perfectly
@@ -303,7 +322,12 @@ condition, we demand $\beta_r = 0$ and $\partial (r
 perpendicular to the conductor, and no tangential component of the
 current density.
 
-The perfect insulating boundary condition is implemented as follows:
+\subsection[Magnetic boundary condition: perfectly insulating]{Magnetic boundary condition: perfectly insulating\protect\footnote{Thanks to Jeremy Goodman for guidance in implementing this boundary condition.}}
+
+In the MHD approximation, Amp\`{e}re's law is
+\begin{equation}
+{\bf \nabla} \times {\bf B} = \frac{4\pi}{c}{\bf j}
+\end{equation}
 In the insulating region outside the fluid, the current density is
 zero, so the magnetic field can be written in terms of a scalar
 potential
@@ -323,13 +347,59 @@ This equation is satisfied by modified Bessel fuctions
 \begin{equation}
 \tilde{\Phi}(r) = A_{in} I_m (k r) + A_{out} K_m (k r)
 \end{equation}
-Because of the behavior of the modified Bessel fuctions as $k r
-\rightarrow 0$ and $k r \rightarrow \infty$, $A_{out} = 0$ at the
-inner boundary, and $A_{in} = 0$ at the outer boundary.
+Because $K_m(kr)\rightarrow \infty$ as $k r
+\rightarrow 0$ and $I_m(kr) \rightarrow \infty$ as $k r \rightarrow \infty$, 
+$A_{out} = 0$ in the inner region, and $A_{in} = 0$ in the outer region.
+\begin{equation}
+\tilde{\Phi}(r) = \begin{cases}
+                     A_{in} I_m(k r), &r \le r_1 \\
+                     A_{out} K_m(k r), &r \ge r_2
+                  \end{cases}
+\end{equation}
+We evaluate ${\bf \nabla} \Phi$ to find the components of the field
+\begin{align}
+B_r = &\frac{\partial \Phi}{\partial r} = e^{i(m\theta + kz)}
+ \begin{cases}
+   kA_{in}\left[I_{m+1}(kr) + \frac{m}{kr}I_{m}(kr)\right], &r \le r_1 \\
+   kA_{out}\left[-K_{m+1}(kr) + \frac{m}{kr}K_{m}(kr)\right], &r \ge r_2
+ \end{cases}
+\\
+\nonumber \\
+B_\theta = &\frac{1}{r}\frac{\partial \Phi}{\partial \theta} 
+         = \frac{im}{r}e^{i(m\theta + kz)}
+           \begin{cases}
+             A_{in} I_m(k r), &r \le r_1 \\
+             A_{out} K_m(k r), &r \ge r_2
+           \end{cases}
+\end{align}
 
-The values of $B_r$ and $B_\theta$ in the ghost zone are simply found
-by matching the insulating solution to the value of $B_r$ and
-$B_\theta$ in the last cell of the fluid volume.
+We now match the insulating solution to the magnetic field value just inside the domain of interest to find $A_{in}$ and $A_{out}$. Once those constants are known, the value of the magnetic field in the ghost zone can be calculated. Note also the special case when $m=0$, where $B_\theta$ at the boundary.
+
+\begin{align}
+\beta_{r, j_s-1} - \beta_{r, j_s}
+ \frac{\left[I_{m+1}(kr_{j_s-1})+\frac{m}{kr_{j_s-1}}I_{m}(kr_{j_s-1})\right]}
+      {\left[I_{m+1}(kr_{j_s})+\frac{m}{kr_{j_s}}I_{m}(kr_{j_s})\right]}
+=& 0
+\\
+\beta_{r, j_e+1} - \beta_{r, j_e}
+ \frac{\left[-K_{m+1}(kr_{j_e+1})+\frac{m}{kr_{j_e+1}}K_{m}(kr_{j_e+1})\right]}
+      {\left[-K_{m+1}(kr_{j_e})+\frac{m}{kr_{j_e}}K_{m}(kr_{j_e})\right]}
+=& 0
+\end{align}
+For $m \ne 0$:
+\begin{align}
+\beta_{\theta, j_s-1} - \beta_{\theta, j_s}\frac{r_{j_s}}{r_{j_s-1}}
+ \frac{I_m(kr_{j_s-1})}{I_m(kr_{j_s})} =& 0
+\\
+\beta_{\theta, j_e+1} - \beta_{\theta, j_e}\frac{r_{j_e}}{r_{j_e+1}}
+ \frac{K_m(kr_{j_e+1})}{K_m(kr_{j_e})} =& 0
+\end{align}
+For $m = 0$:
+\begin{align}
+\beta_{\theta, j_s-1} + \beta_{\theta, j_s} =& 0
+\\
+\beta_{\theta, j_e+1} + \beta_{\theta, j_e} =& 0
+\end{align}
 
 \section{Solving the equations}
 
