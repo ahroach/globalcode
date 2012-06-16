@@ -30,7 +30,6 @@ RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
   double kva = params->kva;
   double complex facin, facout;
   double Im, Imp1, Km, Kmp1;
-  double scalefactorpi, scalefactorv, scalefactorb, tempscalefactor;
 
   RESULTS_STRUCT *results;
   double complex tmpeigenvalue;
@@ -174,61 +173,50 @@ RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
   }
 
   // Next the pi terms
-  for (int i=grid->is; i <= grid->ie; i++) {
-    
-    scalefactorpi = nu*grid->diffuse[(grid->ie-grid->is)/2]/
-      (2.0*dx2inv*grid->r2inv[i] + m2*grid->r2inv[i] + k2);
+  for (int i=grid->is; i <= grid->ie; i++) {    
     //pi_j terms
     wAelbg(5*(i) + 4, 5*(i) + 4, matrix,
-           -(2.0*dx2inv*grid->r2inv[i] + m2*grid->r2inv[i] + k2)
-	   *scalefactorpi);
+           -(2.0*dx2inv*grid->r2inv[i] + m2*grid->r2inv[i] + k2));
 
     //pi_(j+1) terms
-    wAelbg(5*(i) + 4, 5*(i+1) + 4, matrix, dx2inv*grid->r2inv[i]
-	   *scalefactorpi);
+    wAelbg(5*(i) + 4, 5*(i+1) + 4, matrix, dx2inv*grid->r2inv[i]);
 
     //pi_(j-1) terms
-    wAelbg(5*(i) + 4, 5*(i-1) + 4, matrix, dx2inv*grid->r2inv[i]
-	   *scalefactorpi);
+    wAelbg(5*(i) + 4, 5*(i-1) + 4, matrix, dx2inv*grid->r2inv[i]);
 
     //phi_r_j terms
     wAelbg(5*(i) + 4, 5*(i) + 2, matrix,
 	   (2.0*I*params->m/grid->r[i])*
 	   (rotation->omega[i] + (0.5/grid->dx)*
-	    (rotation->omega[i+1] - rotation->omega[i-1]))*scalefactorpi);
+	    (rotation->omega[i+1] - rotation->omega[i-1])));
     
     //phi_theta_j terms
     wAelbg(5*(i) + 4, 5*(i) + 3, matrix,
-    	   (-2.0*rotation->omega[i]/grid->r[i])*scalefactorpi);
+    	   -2.0*rotation->omega[i]/grid->r[i]);
 
     //phi_theta_(j+1) terms
     wAelbg(5*(i) + 4, 5*(i+1) + 3, matrix, 
-	   (-rotation->omega[i+1]/(grid->r[i]*grid->dx))*scalefactorpi);
+	   -rotation->omega[i+1]/(grid->r[i]*grid->dx));
 
     //phi_theta_(j-1) terms
     wAelbg(5*(i) + 4, 5*(i-1) + 3, matrix,
-	   (rotation->omega[i-1]/(grid->r[i]*grid->dx))*scalefactorpi);    
+	   rotation->omega[i-1]/(grid->r[i]*grid->dx));    
   }
 
 
 
   // Now we need to apply boundary conditions. */
 
-  // Scale factors to make coefficients in constraint equations comparable
-  // to coefficients in diffusion equation.
-  scalefactorv = nu*grid->diffuse[(grid->ie-grid->is)/2];
-  scalefactorb = eta*grid->diffuse[(grid->ie-grid->is)/2];
-
   if (params->magnetic_bc == 0) {
     // Perfectly-conducting boundary condition for beta_r */
     
     //beta_r_0 + beta_r_1 = 0
-    wAelbg(5*(grid->is-1) + 0, 5*(grid->is) + 0, matrix, scalefactorb);
-    wAelbg(5*(grid->is-1) + 0, 5*(grid->is-1) + 0, matrix, scalefactorb);
+    wAelbg(5*(grid->is-1) + 0, 5*(grid->is) + 0, matrix, 1.0);
+    wAelbg(5*(grid->is-1) + 0, 5*(grid->is-1) + 0, matrix, 1.0);
 
     //beta_r_N+1 + beta_r_N = 0
-    wAelbg(5*(grid->ie+1), 5*(grid->ie+1), matrix, scalefactorb);
-    wAelbg(5*(grid->ie+1), 5*(grid->ie), matrix, scalefactorb);
+    wAelbg(5*(grid->ie+1), 5*(grid->ie+1), matrix, 1.0);
+    wAelbg(5*(grid->ie+1), 5*(grid->ie), matrix, 1.0);
 	   
     // Perfectly-conducting boundary condition for beta_theta
     
@@ -236,15 +224,12 @@ RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
     facout = (1-0.5*grid->dx)/(1+0.5*grid->dx);
 
     //beta_theta_0 - facin*beta_theta_1 = 0
-    wAelbg(5*(grid->is-1) + 1, 5*(grid->is) + 1, matrix, 
-	   -facin*scalefactorb);
-    wAelbg(5*(grid->is-1) + 1, 5*(grid->is-1) + 1, matrix, scalefactorb);
+    wAelbg(5*(grid->is-1) + 1, 5*(grid->is) + 1, matrix, -facin);
+    wAelbg(5*(grid->is-1) + 1, 5*(grid->is-1) + 1, matrix, 1.0);
 
     //beta_theta_N+1 - facout*beta_theta_N = 0
-    wAelbg(5*(grid->ie+1) + 1, 5*(grid->ie+1) + 1, matrix,
-	   scalefactorb);
-    wAelbg(5*(grid->ie+1) + 1, 5*(grid->ie) + 1, matrix,
-	   -facout*scalefactorb);
+    wAelbg(5*(grid->ie+1) + 1, 5*(grid->ie+1) + 1, matrix, 1.0);
+    wAelbg(5*(grid->ie+1) + 1, 5*(grid->ie) + 1, matrix, -facout);
 
   } else if(params->magnetic_bc == 1) {
     /*
@@ -346,23 +331,23 @@ RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
   // No-slip boundary condition for phi_r, phi_theta  
 
   //phi_theta = 0 at boundary by setting phi_theta_0 + phi_theta_1 = 0
-  wAelbg(5*(grid->is-1) + 3, 5*(grid->is-1) + 3, matrix, scalefactorv);
-  wAelbg(5*(grid->is-1) + 3, 5*(grid->is) + 3, matrix, scalefactorv);
+  wAelbg(5*(grid->is-1) + 3, 5*(grid->is-1) + 3, matrix, 1.0);
+  wAelbg(5*(grid->is-1) + 3, 5*(grid->is) + 3, matrix, 1.0);
 
   //phi_theta_N+1=0, phi_theta_N = 0
-  wAelbg(5*(grid->ie+1) + 3, 5*(grid->ie+1) + 3, matrix, scalefactorv);
-  wAelbg(5*(grid->ie+1) + 3, 5*(grid->ie) + 3, matrix, scalefactorv);
+  wAelbg(5*(grid->ie+1) + 3, 5*(grid->ie+1) + 3, matrix, 1.0);
+  wAelbg(5*(grid->ie+1) + 3, 5*(grid->ie) + 3, matrix, 1.0);
 
 
   //phi_r = 0 = dphi_r/dr at boundary. Set points on both sides of boundary
   //to zero
-  wAelbg(5*(grid->is-1) + 2, 5*(grid->is-1) + 2, matrix, scalefactorv);
+  wAelbg(5*(grid->is-1) + 2, 5*(grid->is-1) + 2, matrix, 1.0);
   //Note that this equation is actually a constraint on dphi_r just inside
   //the boundary.  It is *not* an equation for Pi.
-  wAelbg(5*(grid->is-1) + 4, 5*(grid->is) + 2, matrix, scalefactorv);
+  wAelbg(5*(grid->is-1) + 4, 5*(grid->is) + 2, matrix, 1.0);
   
-  wAelbg(5*(grid->ie+1) + 2, 5*(grid->ie+1) + 2, matrix, scalefactorv);
-  wAelbg(5*(grid->ie+1) + 4, 5*(grid->ie) + 2, matrix, scalefactorv);
+  wAelbg(5*(grid->ie+1) + 2, 5*(grid->ie+1) + 2, matrix, 1.0);
+  wAelbg(5*(grid->ie+1) + 4, 5*(grid->ie) + 2, matrix, 1.0);
 
 
   //Now write 1s on the diagonal for the non-constraint equations
