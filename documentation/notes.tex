@@ -306,21 +306,93 @@ implying $\phi_z=0$ by the incompressibility constraint. Since we have
 already specified that $\phi_r=0$, this means that $\partial_r
 \phi_r=0$ as well.
 
-In the code, the constraints on $\phi_r$ are specified by setting
-$\phi_{r,js-1} = \phi_{r, js} = 0$, and $\phi_{r,je+1} = \phi_{r,je} =
-0$. The constraint on $\phi_\theta$ is specified by satisfying the
-equations $\phi_{\theta,js-1} + \phi_{\theta,js}=0$ and
-$\phi_{\theta,je+1} + \phi_{\theta,je}=0$.
+In the code, the constraints on $\phi_r$ are specified by setting the values in the ghost zones
+\begin{align}
+\phi_{r,js-1} = 0, \quad \phi_{r, js} =& 0
+\\
+\phi_{r,je+1} = 0, \quad \phi_{r,je} = & 0
+\\
+\phi_{\theta,js-1} + \phi_{\theta,js}= &0 
+\\
+\phi_{\theta,je+1} + \phi_{\theta,je}= &0
+\end{align}
 
 \subsection{Magnetic boundary condition: perfectly conducting}
 
-There are two choices for the magnetic boundary condition at the inner
-and outer cylinder: perfectly conducting boundaries, and perfectly
-insulating boundaries.  For the perfectly conducting boundary
-condition, we demand $\beta_r = 0$ and $\partial (r
-\beta_\theta)/\partial r = 0$ at the wall, implying no field
-perpendicular to the conductor, and no tangential component of the
-current density.
+We assume the radial boundaries to be perfect conductors, rotating at a fixed speed. We make use of the boundary condition$^3$
+\begin{equation}
+\hat{n}\times\left(\vec{E}_i - \vec{E}_e\right) = \frac{\vec{v}\cdot\hat{n}}{c}
+ \left(\vec{B}_i - \vec{B}_e\right) = 0
+ \quad \text{for $\vec{v}\cdot\hat{n} = 0$.}
+\end{equation}
+where $\hat{n}$ is the unit vector normal to the conductor, and `$i$'
+and `$e$' indicate interior and exterior values. (Check this
+orientation versus $\hat{n}$.) Since the velocity at the boundary is
+purely azimuthal, where the normal vector is radial, this states that
+the tangential component of the electric field across the boundary is
+continuous.
+
+For stationary conductors, the internal electric field is 0. But we
+are considering a moving conductor, in which an electric field can be
+generated to balance $\vec{v}\times\vec{B}$ in Ohm's law:
+\begin{equation}
+\vec{E} + \frac{1}{c}\vec{c}\times\vec{B}=\frac{4\pi\eta}{c^2}\vec{j}=0
+\quad\text{for $\eta=0$.}
+\end{equation}
+We note that $\vec{v}=r\Omega\hat{\theta}$, and $\vec{B}=B_0\hat{z}$,
+so the electric field in the conductor will be purely in the
+$\hat{r}$-direction, and $\vec{E}\times\hat{n}=0$. So, we still find that the tangential electric field is 0 at the boundary. To find the implications of this on the magnetic field, we dot Faraday's law with $\hat{n}$:
+\begin{equation}
+\left(\nabla\times\vec{E}\right)\cdot\hat{n} = 
+-\frac{1}{c}\frac{\partial\vec{B}\cdot\hat{n}}{\partial t}
+\end{equation}
+The curl of $\vec{E}$ in the $\hat{n}$ comes purely from the
+tangential components of $\vec{E}$, which we have shown are zero. We
+find that $\partial B_r/\partial t = 0$, so $B_r$ is invariant in
+time. Since out initial condition is $B_r=0$, we find $\beta_r=0$ at
+the boundary.
+
+To find the condition on $B_\theta$, we cross Ohm's law with $\hat{n}$:
+\begin{equation}
+\frac{4\pi\eta}{c^2}\vec{j}\times\hat{n} = \vec{E}\times\hat{n} +
+ \frac{1}{c}\vec{v}\times\vec{B}\times\hat{n}=0
+\end{equation}
+Both terms on the right hand side are 0 at the boundary. We showed
+previously that the tangential electric field, $\vec{E}\times\hat{n}$,
+is zero. The $\vec{v}\times\vec{B}\times\hat{n}$ term is 0 because
+$\vec{v}$ is purely azimuthal, and $B_r=0$, so $\vec{v}\times\vec{B}$
+can only be in the radial (normal) direction. This means that there is
+no tangential component of the current density,
+$\vec{j}\times\hat{n}$, at the boundary. From Amp\`{e}re's law, this
+implies that the tangential component of the curl of B is 0:
+\begin{equation}
+\left(\nabla\times\vec{B}\right)\times\hat{n} = 0
+\end{equation}
+Evaluating the axial component of the curl of $\vec{B}$, we see
+\begin{equation}
+\frac{1}{r}\frac{\partial}{\partial r}\left(r B_\theta \right)
+ - \frac{1}{r}\frac{\partial B_r}{\partial \theta} = 0
+\end{equation}
+Since $B_r=0$ at the boundary, we find the boundary condition on
+$B_\theta$, $\partial/\partial r (rB_\theta)= B_\theta +
+r\partial/\partial r B_\theta = 0$.  Written in terms of our discretized
+quantities and logarithmic coordinate $x$:
+\begin{equation}
+\beta_\theta + \frac{\partial}{\partial x}\beta_\theta = 0
+\end{equation}
+
+The values for the magnetic fields in the ghostzones are therefore
+\begin{align}
+\beta_{r, j_s-1} + \beta_{r, j_s} =& 0
+\\
+\beta_{r, j_e+1} + \beta_{r, j_e} =& 0
+\\
+\beta_{\theta, j_s-1} -
+ \frac{(1 + 0.5\Delta x)}{(1 - 0.5\Delta x)}\beta_{\theta, j_s} =& 0
+\\
+\beta_{\theta, j_e+1} -
+ \frac{(1 - 0.5\Delta x)}{(1 + 0.5\Delta x)}\beta_{\theta, j_e} =& 0
+\end{align}
 
 \subsection[Magnetic boundary condition: perfectly insulating]{Magnetic boundary condition: perfectly insulating\protect\footnote{Thanks to Jeremy Goodman for guidance in implementing this boundary condition.}}
 
@@ -592,4 +664,6 @@ finite value across the cylinder gap.
 Rev. Lett. {\bf 104}, 074501 (2010).
 
 \noindent 2. J. Goodman and H. Ji, J. Fluid Mech. {\bf 462}, 365 (2002).
+
+\noindent 3. T. H. Stix, {\emph Waves in Plasmas} (Springer-Verlag, New York, 1992).
 \end{document}
