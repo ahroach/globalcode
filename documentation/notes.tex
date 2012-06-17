@@ -27,18 +27,18 @@ damped eigenmodes.
 We start with the equations of incompressible, nonideal MHD in cgs units:
 
 \begin{align}
-&\dot{{\bf B}} + {\bf v}\cdot\nabla{\bf B} - {\bf B}\cdot\nabla{\bf v}=\eta\nabla^2 {\bf B}
+&\dot{\vec{B}} + \vec{v}\cdot\nabla\vec{B} - \vec{B}\cdot\nabla\vec{v}=\eta\nabla^2 \vec{B}
 \\
-&\dot{{\bf v}}+{\bf v}\cdot\nabla{\bf v}+\frac{1}{\rho}\nabla{P}-\frac{{\bf B}\cdot\nabla{\bf B}}{4\pi\rho}=\nu\nabla^2{\bf v}
+&\dot{\vec{v}}+\vec{v}\cdot\nabla\vec{v}+\frac{1}{\rho}\nabla{P}-\frac{\vec{B}\cdot\nabla\vec{B}}{4\pi\rho}=\nu\nabla^2\vec{v}
 \\
-&\nabla\cdot{\bf B}=0
+&\nabla\cdot\vec{B}=0
 \\
-&\nabla\cdot{\bf v}=0
+&\nabla\cdot\vec{v}=0
 \end{align}
 
 Here $P$ is defined as the sum of the hydrodynamic and magnetic
-pressures, $P=p+{\bf B}^2/8\pi$.We assume a background state with
-zeroth-order ${\bf B}=B_0 \hat{z}$ and ${\bf
+pressures, $P=p+\vec{B}^2/8\pi$.We assume a background state with
+zeroth-order $\vec{B}=B_0 \hat{z}$ and $\vec{
   v}=r\Omega(r)\hat{\theta}$.  First order quantities will be denoted
 by a $\delta$.
 
@@ -151,7 +151,7 @@ $\gamma$, and vary periodically in $\hat{\theta}$ and $\hat{z}$ with
 mode numbers $m$ and $k$, respectively\footnote{The linearized quantities have a time
 behavior that goes as $e^{\gamma t}$. Comparing to the time behavior
 for the form of a wave traveling in the positive direction,
-$e^{i({\bf k} \cdot {\bf x} - \omega t)}$, we see that
+$e^{i(\vec{k} \cdot \vec{x} - \omega t)}$, we see that
 $\mathrm{Re}\{\gamma\} = \mathrm{Im}\{\omega\}$, and
 $\mathrm{Im}\{\gamma\} = -\mathrm{Re}\{\omega\}$. So the growth rate
 of the mode is given by $\mathrm{Re}\{\gamma\}$, and the oscillation
@@ -230,7 +230,7 @@ We will solve the system of equations formed by Equations
 \ref{eqn:globalcode:rind_p}, \ref{eqn:globalcode:tind_p}, \ref{eqn:globalcode:reul_p}, \ref{eqn:globalcode:zeul_p}, and
 \ref{eqn:globalcode:piconeq} for the quantities $\beta_r$, $\beta_\theta$, $\phi_r$,
 $\phi_\theta$, and $\Pi$. $\beta_z$ and $\phi_z$ can be found from
-$\nabla\cdot{\bf B}=0$ and $\nabla\cdot{\bf v}=0$ if desired.
+$\nabla\cdot\vec{B}=0$ and $\nabla\cdot\vec{v}=0$ if desired.
 
 
 \section{Discretization}
@@ -326,15 +326,15 @@ current density.
 
 In the MHD approximation, Amp\`{e}re's law is
 \begin{equation}
-{\bf \nabla} \times {\bf B} = \frac{4\pi}{c}{\bf j}
+\nabla \times \vec{B} = \frac{4\pi}{c}\vec{j}
 \end{equation}
 In the insulating region outside the fluid, the current density is
 zero, so the magnetic field can be written in terms of a scalar
 potential
 \begin{equation}
-{\bf B} = {\bf \nabla}\Phi
+\vec{B} = \nabla\Phi
 \end{equation}
-Since ${\bf \nabla}\cdot{\bf B} = 0$, we know that $\nabla^2 \Phi = 0$.  In cylindrical coordinates, this means
+Since $\nabla\cdot\vec{B} = 0$, we know that $\nabla^2 \Phi = 0$.  In cylindrical coordinates, this means
 \begin{equation}
 \left[\frac{1}{r}\frac{\partial}{\partial r}r\frac{\partial}{\partial r} + \frac{1}{r^2}\frac{\partial^2}{\partial\theta^2} +\frac{\partial^2}{\partial z^2}\right]\Phi = 0
 \end{equation}
@@ -356,7 +356,7 @@ $A_{out} = 0$ in the inner region, and $A_{in} = 0$ in the outer region.
                      A_{out} K_m(k r), &r \ge r_2
                   \end{cases}
 \end{equation}
-We evaluate ${\bf \nabla} \Phi$ to find the components of the field
+We evaluate $\nabla \Phi$ to find the components of the field
 \begin{align}
 B_r = &\frac{\partial \Phi}{\partial r} = e^{i(m\theta + kz)}
  \begin{cases}
