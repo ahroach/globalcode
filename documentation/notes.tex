@@ -319,18 +319,19 @@ In the code, the constraints on $\phi_r$ are specified by setting the values in 
 
 \subsection{Magnetic boundary condition: perfectly conducting}
 
-We assume the radial boundaries to be perfect conductors, rotating at a fixed speed. We make use of the boundary condition$^3$
+For this boundary condition, we consider the radial boundaries to be
+perfectly conducting cylinders, rotating at a fixed speed. We make use
+of the general boundary condition for a fluid with a moving interface$^3$
 \begin{equation}
-\hat{n}\times\left(\vec{E}_i - \vec{E}_e\right) = \frac{\vec{v}\cdot\hat{n}}{c}
- \left(\vec{B}_i - \vec{B}_e\right) = 0
+\hat{n}\times\left(\vec{E}_f - \vec{E}_c\right) = \frac{\vec{v}\cdot\hat{n}}{c}
+ \left(\vec{B}_f - \vec{B}_c\right) = 0
  \quad \text{for $\vec{v}\cdot\hat{n} = 0$.}
 \end{equation}
-where $\hat{n}$ is the unit vector normal to the conductor, and `$i$'
-and `$e$' indicate interior and exterior values. (Check this
-orientation versus $\hat{n}$.) Since the velocity at the boundary is
-purely azimuthal, where the normal vector is radial, this states that
-the tangential component of the electric field across the boundary is
-continuous.
+where $\hat{n}$ is the unit vector normal to the conductor, pointing
+into the fluid, and `$f$' and `$c$' indicate fluid and cylinder
+values. Since the velocity at the boundary is purely azimuthal, where
+the normal vector is radial, this states that the tangential component
+of the electric field across the boundary is continuous.
 
 For stationary conductors, the internal electric field is 0. But we
 are considering a moving conductor, in which an electric field can be
