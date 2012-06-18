@@ -4,7 +4,8 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 
-\title{Notes on an axisymmetric global stability code for the Princeton MRI experiment}
+\title{Notes on a nonaxisymmetric global stability code in axially periodic
+cylindrical geometry}
 \author{Austin Roach}
 
 
@@ -27,9 +28,11 @@ damped eigenmodes.
 We start with the equations of incompressible, nonideal MHD in cgs units:
 
 \begin{align}
-&\dot{\vec{B}} + \vec{v}\cdot\nabla\vec{B} - \vec{B}\cdot\nabla\vec{v}=\eta\nabla^2 \vec{B}
+&\dot{\vec{B}} + \vec{v}\cdot\nabla\vec{B} - \vec{B}\cdot\nabla\vec{v}
+ = \eta\nabla^2 \vec{B}
 \\
-&\dot{\vec{v}}+\vec{v}\cdot\nabla\vec{v}+\frac{1}{\rho}\nabla{P}-\frac{\vec{B}\cdot\nabla\vec{B}}{4\pi\rho}=\nu\nabla^2\vec{v}
+&\dot{\vec{v}}+\vec{v}\cdot\nabla\vec{v}+\frac{1}{\rho}\nabla{P}
+ - \frac{\vec{B}\cdot\nabla\vec{B}}{4\pi\rho}=\nu\nabla^2\vec{v}
 \\
 &\nabla\cdot\vec{B}=0
 \\
@@ -52,95 +55,142 @@ $\partial_r \partial_r^\dagger = \frac{\partial^2}{\partial
 
 The radial component of the induction equation is
 \begin{align}
-\dot{B_r} + v_r \partial_r B_r + \frac{v_\theta}{r}\partial_\theta B_r + v_z \partial_z B_r - B_r \partial_r v_r -\frac{B_\theta}{r}\partial_\theta v_r - B_z \partial_z v_r
+\dot{B_r} + v_r \partial_r B_r + \frac{v_\theta}{r}\partial_\theta B_r
+ + v_z \partial_z B_r - B_r \partial_r v_r
+ -\frac{B_\theta}{r}\partial_\theta v_r - B_z \partial_z v_r
 \nonumber \\
- = \eta\left(\nabla^2 B_r -\frac{2}{r^2}\partial_\theta B_\theta - \frac{1}{r^2}B_r\right)
+= \eta\left(\nabla^2 B_r -\frac{2}{r^2}\partial_\theta B_\theta
+ - \frac{1}{r^2}B_r\right)
 \end{align}
 After linearization, keeping only 1st-order quantities, this becomes
 \begin{equation}
-\delta \dot{B_r} + \Omega \partial_\theta \delta B_r - B_0 \partial_z \delta v_r = \eta\left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta B_r - \frac{2}{r^2}\partial_\theta \delta B_\theta\right]
+\delta \dot{B_r} + \Omega \partial_\theta \delta B_r
+ - B_0 \partial_z \delta v_r = \eta\left[\left(\partial_r \partial_r^\dagger
+ + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta B_r
+ - \frac{2}{r^2}\partial_\theta \delta B_\theta\right]
 \end{equation}
 
 \subsection{Azimuthal induction equation}
 The azimuthal component of the induction equation is
 \begin{align}
-\dot{B_\theta}+v_r \partial_r B_\theta + \frac{v_\theta}{r}\partial_\theta B_\theta + v_z \partial_z B_\theta + \frac{v_\theta}{r}B_r - B_r\partial_r v_\theta - \frac{1}{r}B_\theta \partial_\theta v_\theta
+\dot{B_\theta}+v_r \partial_r B_\theta
+ + \frac{v_\theta}{r}\partial_\theta B_\theta + v_z \partial_z B_\theta
+ + \frac{v_\theta}{r}B_r - B_r\partial_r v_\theta
+ - \frac{1}{r}B_\theta \partial_\theta v_\theta
 \nonumber \\
- - B_z \partial_z v_\theta - \frac{v_r}{r}B_\theta = \eta\left(\nabla^2 B_\theta + \frac{2}{r^2}\partial_\theta B_r - \frac{1}{r^2}B_\theta \right)
+- B_z \partial_z v_\theta - \frac{v_r}{r}B_\theta
+ = \eta\left(\nabla^2 B_\theta + \frac{2}{r^2}\partial_\theta B_r
+ - \frac{1}{r^2}B_\theta \right)
 \end{align}
 After linearization, this becomes
 \begin{align}
-\delta \dot{B_\theta} + \Omega \partial_\theta \delta B_\theta - B_0 \partial_z \delta v_\theta - \delta B_r r \partial_r \Omega=\eta\left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta B_\theta + \frac{2}{r^2}\partial_\theta \delta B_r\right]
+\delta \dot{B_\theta} + \Omega \partial_\theta \delta B_\theta
+ - B_0 \partial_z \delta v_\theta - \delta B_r r \partial_r \Omega
+ = \eta\left[\left(\partial_r \partial_r^\dagger
+ + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta B_\theta
+ + \frac{2}{r^2}\partial_\theta \delta B_r\right]
 \end{align}
 
 \subsection{Axial induction equation}
 The axial component of the induction equation is
 \begin{align}
-\dot{B_z} + v_r \partial_r B_z + \frac{v_\theta}{r}\partial_\theta B_z + v_z \partial_z B_z - B_r \partial_r v_z - \frac{1}{r}B_\theta \partial_\theta v_z - B_z \partial_z v_z
+\dot{B_z} + v_r \partial_r B_z + \frac{v_\theta}{r}\partial_\theta B_z
+ + v_z \partial_z B_z - B_r \partial_r v_z
+ - \frac{1}{r}B_\theta \partial_\theta v_z - B_z \partial_z v_z
 \nonumber \\
-=\eta\left[\frac{1}{r}\partial_r + \partial_r^2 + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]B_z
+=\eta\left[\frac{1}{r}\partial_r + \partial_r^2
+ + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]B_z
 \end{align}
 After linearization this becomes
 \begin{align}
-\delta\dot{B_z} + \Omega\partial_\theta \delta B_z - B_0\partial_z \delta v_z = \eta\left[\partial_r^\dagger \partial_r + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]\delta B_z
+\delta\dot{B_z} + \Omega\partial_\theta \delta B_z - B_0\partial_z \delta v_z
+ = \eta\left[\partial_r^\dagger \partial_r + \frac{1}{r^2}\partial_\theta^2
+ + \partial_z^2\right]\delta B_z
 \end{align}
 
 \subsection{Radial momentum equation}
 
 The radial component of the Euler equation is
 \begin{align}
-\dot{v_r} + v_r \partial_r v_r + \frac{v_\theta}{r}\partial_\theta v_r + v_z \partial_z v_r - \frac{v_\theta^2}{r}+\frac{1}{\rho}\partial_r P 
+\dot{v_r} + v_r \partial_r v_r + \frac{v_\theta}{r}\partial_\theta v_r
+ + v_z \partial_z v_r - \frac{v_\theta^2}{r}+\frac{1}{\rho}\partial_r P 
 \nonumber \\
-- \frac{1}{4\pi\rho}\left(B_r \partial_r B_r + \frac{B_\theta}{r}\partial_\theta B_r + B_z \partial_z B_r - \frac{B_\theta^2}{r}\right)
+- \frac{1}{4\pi\rho}\left(B_r \partial_r B_r
+ + \frac{B_\theta}{r}\partial_\theta B_r + B_z \partial_z B_r
+ - \frac{B_\theta^2}{r}\right)
 \nonumber \\
- = \nu\left(\nabla^2 v_r -\frac{2}{r^2}\partial_\theta v_\theta - \frac{1}{r^2}v_r\right)
+= \nu\left(\nabla^2 v_r -\frac{2}{r^2}\partial_\theta v_\theta
+ - \frac{1}{r^2}v_r\right)
 \end{align}
 After linearization this becomes
 \begin{align}
-\delta\dot{v_r} + \Omega \partial_\theta \delta v_r - 2\Omega\delta v_\theta + \partial_r \frac{\delta P}{\rho} - \frac{B_0}{4\pi\rho}\partial_z \delta B_r
+\delta\dot{v_r} + \Omega \partial_\theta \delta v_r - 2\Omega\delta v_\theta
+ + \partial_r \frac{\delta P}{\rho}
+ - \frac{B_0}{4\pi\rho}\partial_z \delta B_r
 \nonumber \\
-= \nu \left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta v_r - \frac{2}{r^2}\partial_\theta \delta v_\theta\right]
+= \nu \left[\left(\partial_r \partial_r^\dagger
+ + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta v_r
+ - \frac{2}{r^2}\partial_\theta \delta v_\theta\right]
 \end{align}
 
 \subsection{Azimuthal momentum equation}
 The azimuthal component of the Euler equation is
 \begin{align}
-\dot{v_\theta} + v_r \partial_r v_\theta + \frac{v_\theta}{r}\partial_\theta v_\theta + v_z \partial_z v_\theta + \frac{v_\theta v_r}{r} + \frac{1}{\rho}\frac{1}{r}\partial_\theta P 
+\dot{v_\theta} + v_r \partial_r v_\theta
+ + \frac{v_\theta}{r}\partial_\theta v_\theta + v_z \partial_z v_\theta
+ + \frac{v_\theta v_r}{r} + \frac{1}{\rho}\frac{1}{r}\partial_\theta P 
 \nonumber \\
--\frac{1}{4\pi\rho}\left[B_r\partial_r B_\theta + \frac{B_\theta}{r}\partial_\theta B_\theta + B_z \partial_z B_\theta + \frac{B_\theta B_r}{r}\right]
+-\frac{1}{4\pi\rho}\left[B_r\partial_r B_\theta
+ + \frac{B_\theta}{r}\partial_\theta B_\theta + B_z \partial_z B_\theta
+ + \frac{B_\theta B_r}{r}\right]
 \nonumber \\
-= \nu\left(\nabla^2 v_\theta + \frac{2}{r^2}\partial_\theta v_r - \frac{1}{r^2}v_\theta \right)
+= \nu\left(\nabla^2 v_\theta + \frac{2}{r^2}\partial_\theta v_r
+ - \frac{1}{r^2}v_\theta \right)
 \end{align}
 After linearization this becomes
 \begin{align}
-\delta \dot{v_\theta} + \delta v_r \partial_r^\dagger(r\Omega) + \Omega \partial_\theta \delta v_\theta + \frac{1}{r}\partial_\theta \frac{\delta P}{\rho} - \frac{B_0}{4\pi\rho} \partial_z \delta B_\theta
+\delta \dot{v_\theta} + \delta v_r \partial_r^\dagger(r\Omega)
+ + \Omega \partial_\theta \delta v_\theta
+ + \frac{1}{r}\partial_\theta \frac{\delta P}{\rho}
+ - \frac{B_0}{4\pi\rho} \partial_z \delta B_\theta
 \nonumber \\
-= \nu\left[\left(\partial_r \partial_r^\dagger + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta v_\theta + \frac{2}{r^2}\partial_\theta \delta v_r \right]
+= \nu\left[\left(\partial_r \partial_r^\dagger
+ + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right)\delta v_\theta
+ + \frac{2}{r^2}\partial_\theta \delta v_r \right]
 \end{align}
 
 \subsection{Axial momentum equation}
 The axial component of the Euler equation is
 \begin{align}
-\dot{v_z} + v_r \partial_r v_z + \frac{v_\theta}{r}\partial_\theta v_z + v_z \partial_z v_z + \frac{1}{\rho}\partial_z P
+\dot{v_z} + v_r \partial_r v_z + \frac{v_\theta}{r}\partial_\theta v_z
+ + v_z \partial_z v_z + \frac{1}{\rho}\partial_z P
 \nonumber \\
--\frac{1}{4\pi\rho}\left[B_r\partial_r B_z + \frac{B_\theta}{r}\partial_\theta B_z + B_z \partial_z B_z \right]
+-\frac{1}{4\pi\rho}\left[B_r\partial_r B_z
+ + \frac{B_\theta}{r}\partial_\theta B_z + B_z \partial_z B_z \right]
 \nonumber \\
-=\nu\left[\frac{1}{r}\partial_r + \partial_r^2 + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]v_z
+=\nu\left[\frac{1}{r}\partial_r + \partial_r^2
+ + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]v_z
 \end{align}
 After linearization this becomes
 \begin{align}
-\delta\dot{v_z} + \Omega \partial_\theta \delta v_z + \partial_z \frac{\delta P}{\rho} -\frac{B_0}{4\pi\rho} \partial_z \delta B_z = \nu\left[\partial_r^\dagger \partial_r + \frac{1}{r^2}\partial_\theta^2 + \partial_z^2\right]\delta v_z
+\delta\dot{v_z} + \Omega \partial_\theta \delta v_z
+ + \partial_z \frac{\delta P}{\rho} 
+ - \frac{B_0}{4\pi\rho} \partial_z \delta B_z
+ = \nu\left[\partial_r^\dagger \partial_r + \frac{1}{r^2}\partial_\theta^2
+ + \partial_z^2\right]\delta v_z
 \end{align}
 
 \subsection{Equations of constraint}
 
-The equation of incompressibility, $\nabla\cdot\vec{v}=0$ is, with no approximation
+The equation of incompressibility, $\nabla\cdot\vec{v}=0$ is
 \begin{align}
-\partial_r^\dagger \delta v_r + \frac{1}{r}\partial_\theta \delta v_\theta + \partial_z \delta v_z = 0
+\partial_r^\dagger \delta v_r + \frac{1}{r}\partial_\theta \delta v_\theta
+ + \partial_z \delta v_z = 0
 \end{align}
 and $\nabla\cdot\vec{B}=0$ is
 \begin{align}
-\partial_r^\dagger \delta B_r + \frac{1}{r}\partial_\theta \delta B_\theta + \partial_z \delta B_z = 0
+\partial_r^\dagger \delta B_r + \frac{1}{r}\partial_\theta \delta B_\theta
+ + \partial_z \delta B_z = 0
 \end{align}
 
 \section{Forms of perturbations}
@@ -148,10 +198,10 @@ and $\nabla\cdot\vec{B}=0$ is
 These linearized equations will be evaluated to find modes with an
 arbitrary radial dependence that grow exponentially with a growth rate
 $\gamma$, and vary periodically in $\hat{\theta}$ and $\hat{z}$ with
-mode numbers $m$ and $k$, respectively\footnote{The linearized quantities have a time
-behavior that goes as $e^{\gamma t}$. Comparing to the time behavior
-for the form of a wave traveling in the positive direction,
-$e^{i(\vec{k} \cdot \vec{x} - \omega t)}$, we see that
+mode numbers $m$ and $k$, respectively\footnote{The linearized quantities
+have a time behavior that goes as $e^{\gamma t}$. Comparing to the
+time behavior for the form of a wave traveling in the positive
+direction, $e^{i(\vec{k} \cdot \vec{x} - \omega t)}$, we see that
 $\mathrm{Re}\{\gamma\} = \mathrm{Im}\{\omega\}$, and
 $\mathrm{Im}\{\gamma\} = -\mathrm{Re}\{\omega\}$. So the growth rate
 of the mode is given by $\mathrm{Re}\{\gamma\}$, and the oscillation
@@ -161,16 +211,22 @@ components in $\hat{z}$, leading to the following forms for the
 first-order perturbations:
 
 \begin{align}
-&\delta B_r / \sqrt{4\pi\rho} = \operatorname{Re}\{\beta_r (r) e^{\gamma t + im\theta}\cos{kz}\},\quad
-&\delta v_r = \operatorname{Re}\{\phi_r (r) e^{\gamma t + im\theta} \sin{kz}\}
+&\delta B_r / \sqrt{4\pi\rho} = \operatorname{Re}\{\beta_r (r)
+ e^{\gamma t + im\theta}\cos{kz}\},\quad
+&\delta v_r = \operatorname{Re}\{\phi_r (r)
+ e^{\gamma t + im\theta} \sin{kz}\}
 \nonumber \\
-&\delta B_\theta / \sqrt{4\pi\rho} = \operatorname{Re}\{\beta_\theta (r) e^{\gamma t + im\theta}\cos{kz}\},\quad
-&\delta v_\theta = \operatorname{Re}\{\phi_\theta (r) e^{\gamma t + im\theta} \sin{kz}\}
+&\delta B_\theta / \sqrt{4\pi\rho} = \operatorname{Re}\{\beta_\theta (r)
+ e^{\gamma t + im\theta} \cos{kz}\},\quad
+&\delta v_\theta = \operatorname{Re}\{\phi_\theta (r)
+ e^{\gamma t + im\theta} \sin{kz}\}
 \nonumber \\
-&\delta B_z / \sqrt{4\pi\rho} = \operatorname{Re}\{\beta_z (r) e^{\gamma t + im\theta}\sin{kz}\},\quad
-&\delta v_z = \operatorname{Re}\{\phi_z (r) e^{\gamma t + im\theta} \cos{kz}\}
+&\delta B_z / \sqrt{4\pi\rho} = \operatorname{Re}\{\beta_z (r)
+ e^{\gamma t + im\theta} \sin{kz}\},\quad
+&\delta v_z = \operatorname{Re}\{\phi_z (r) e^{\gamma t+im\theta}\cos{kz}\}
 \nonumber \\
-&\delta P / \rho = \operatorname{Re}\{\Pi (r) e^{\gamma t + im\theta} \sin{kz}\}&
+&\delta P/ \rho = \operatorname{Re}\{\Pi (r)
+ e^{\gamma t + im\theta} \sin{kz}\}&
 \end{align}
 
 The quantities $\beta$, $\phi$, and $\Pi$ are complex, holding
@@ -183,22 +239,36 @@ equations in terms of these perturbed quantities. Note that we have
 made use of the Alfv\'{e}n speed, $v_A = B_0/\sqrt{4\pi\rho}$.
 
 \begin{equation}\label{eqn:globalcode:rind_p}
-\gamma \beta_r + im\Omega\beta_r - kv_A\phi_r = \eta\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\beta_r - \frac{2im}{r^2}\beta_\theta\right]
+\gamma \beta_r + im\Omega\beta_r - kv_A\phi_r
+ = \eta\left[\left(\partial_r \partial_r^\dagger
+ - \frac{m^2}{r^2} - k^2\right)\beta_r - \frac{2im}{r^2}\beta_\theta\right]
 \end{equation}
 \begin{equation}\label{eqn:globalcode:tind_p}
-\gamma \beta_\theta + im\Omega\beta_\theta - kv_A \phi_\theta - r(\partial_r \Omega)\beta_r = \eta\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\beta_\theta + \frac{2im}{r^2}\beta_r\right]
+\gamma \beta_\theta + im\Omega\beta_\theta - kv_A \phi_\theta
+ - r(\partial_r \Omega)\beta_r
+ = \eta\left[\left(\partial_r \partial_r^\dagger
+ - \frac{m^2}{r^2} - k^2\right)\beta_\theta + \frac{2im}{r^2}\beta_r\right]
 \end{equation}
 \begin{equation}\label{eqn:globalcode:zind_p}
-\gamma \beta_z + im\Omega\beta_z + kv_A \phi_z = \eta\left[\left(\partial_r^\dagger \partial_r -\frac{m^2}{r^2} - k^2\right)\beta_z\right]
+\gamma \beta_z + im\Omega\beta_z + kv_A \phi_z
+ = \eta\left[\left(\partial_r^\dagger \partial_r
+ -\frac{m^2}{r^2} - k^2\right)\beta_z\right]
 \end{equation}
 \begin{equation}\label{eqn:globalcode:reul_p}
-\gamma \phi_r + im\Omega\phi_r - 2\Omega\phi_\theta + \partial_r \Pi + kv_A\beta_r = \nu\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\phi_r - \frac{2im}{r^2}\phi_\theta\right]
+\gamma \phi_r + im\Omega\phi_r - 2\Omega\phi_\theta + \partial_r \Pi
+ + kv_A\beta_r = \nu\left[\left(\partial_r \partial_r^\dagger
+ - \frac{m^2}{r^2} - k^2\right)\phi_r - \frac{2im}{r^2}\phi_\theta\right]
 \end{equation}
 \begin{equation}\label{eqn:globalcode:teul_p}
-\gamma \phi_\theta + im\Omega\phi_\theta + \phi_r \partial_r^\dagger(r\Omega) + \frac{im}{r}\Pi + kv_A \beta_\theta = \nu\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} - k^2\right)\phi_\theta + \frac{2im}{r^2}\phi_r\right]
+\gamma \phi_\theta + im\Omega\phi_\theta + \phi_r \partial_r^\dagger(r\Omega)
+ + \frac{im}{r}\Pi + kv_A \beta_\theta
+ = \nu\left[\left(\partial_r \partial_r^\dagger - \frac{m^2}{r^2} 
+ - k^2\right)\phi_\theta + \frac{2im}{r^2}\phi_r\right]
 \end{equation}
 \begin{equation}\label{eqn:globalcode:zeul_p}
-\gamma \phi_z + im\Omega{\phi_z} + k\Pi - kv_A \beta_z = \nu\left[\left(\partial_r^\dagger \partial_r - \frac{m^2}{r^2} - k^2\right)\phi_z\right]
+\gamma \phi_z + im\Omega{\phi_z} + k\Pi - kv_A \beta_z
+ = \nu\left[\left(\partial_r^\dagger \partial_r 
+ - \frac{m^2}{r^2} - k^2\right)\phi_z\right]
 \end{equation}
 \begin{equation}\label{eqn:globalcode:inc_p}
 \partial_r^\dagger \phi_r + \frac{im}{r}\phi_\theta - k\phi_z = 0
@@ -216,21 +286,28 @@ Equation~\ref{eqn:globalcode:zeul_p}, and then summing the equations.
 The following relations are useful in casting some of the terms into
 the correct form for elimination by the constraint equations:
 \begin{equation}
-\frac{1}{r}\partial_r \partial_r^\dagger = \partial_r^\dagger \partial_r \frac{1}{r} - \frac{2}{r^3} + \frac{2}{r^2}\partial_r
+\frac{1}{r}\partial_r \partial_r^\dagger
+ = \partial_r^\dagger \partial_r \frac{1}{r}
+ - \frac{2}{r^3} + \frac{2}{r^2}\partial_r
 \end{equation}
 \begin{equation}
-\partial_r^\dagger \frac{1}{r^2} = \frac{1}{r^2} \partial_r^\dagger - \frac{2}{r^3}
+\partial_r^\dagger \frac{1}{r^2}
+ = \frac{1}{r^2} \partial_r^\dagger - \frac{2}{r^3}
 \end{equation}
 The following constraint equation is then produced:
 \begin{equation}\label{eqn:globalcode:piconeq}
-im\left(\frac{2\Omega}{r}+2\partial_r \Omega\right)\phi_r - \partial_r^\dagger\left(2\Omega\phi_\theta\right)+\left(\partial_r^\dagger \partial_r - \frac{m^2}{r^2}-k^2\right)\Pi = 0
+im\left(\frac{2\Omega}{r}+2\partial_r \Omega\right)\phi_r 
+ - \partial_r^\dagger\left(2\Omega\phi_\theta\right)
+ + \left(\partial_r^\dagger \partial_r - \frac{m^2}{r^2}-k^2\right)\Pi = 0
 \end{equation}
 
 We will solve the system of equations formed by Equations
-\ref{eqn:globalcode:rind_p}, \ref{eqn:globalcode:tind_p}, \ref{eqn:globalcode:reul_p}, \ref{eqn:globalcode:zeul_p}, and
-\ref{eqn:globalcode:piconeq} for the quantities $\beta_r$, $\beta_\theta$, $\phi_r$,
-$\phi_\theta$, and $\Pi$. $\beta_z$ and $\phi_z$ can be found from
-$\nabla\cdot\vec{B}=0$ and $\nabla\cdot\vec{v}=0$ if desired.
+\ref{eqn:globalcode:rind_p}, \ref{eqn:globalcode:tind_p},
+\ref{eqn:globalcode:reul_p}, \ref{eqn:globalcode:zeul_p}, and
+\ref{eqn:globalcode:piconeq} for the quantities $\beta_r$,
+$\beta_\theta$, $\phi_r$, $\phi_\theta$, and $\Pi$. $\beta_z$ and
+$\phi_z$ can be found from $\nabla\cdot\vec{B}=0$ and
+$\nabla\cdot\vec{v}=0$ if desired.
 
 
 \section{Discretization}
@@ -261,29 +338,48 @@ gridpoint. $\Delta x$ indicates the size of the grid step.
 
 The following finite difference equations are found:
 \begin{align}
-\gamma\beta_{r, j} = &-(\frac{2\eta}{r_j^2 \Delta x^2} + \frac{\eta}{r_j^2} + \frac{\eta m^2}{r_j^2} + \eta k^2 + im\Omega_j )\beta_{r, j} +\frac{\eta}{r_j^2 \Delta x^2}(\beta_{r, j+1} + \beta_{r, j-1})
+\gamma\beta_{r, j} = &-(\frac{2\eta}{r_j^2 \Delta x^2} + \frac{\eta}{r_j^2}
+ + \frac{\eta m^2}{r_j^2} + \eta k^2 + im\Omega_j )\beta_{r, j}
+ + \frac{\eta}{r_j^2 \Delta x^2}(\beta_{r, j+1} + \beta_{r, j-1})
 \nonumber \\
 &- \frac{2im \eta}{r_j^2}\beta_{\theta,j} + k v_A \phi_{r,j}
 \\
 \nonumber \\
-\gamma\beta_{\theta,j}=&-(\frac{2\eta}{r_j^2 \Delta x^2} + \frac{\eta}{r_j^2} + \frac{\eta m^2}{r_j^2} + \eta k^2 + im\Omega_j)\beta_{\theta, j} +\frac{\eta}{r_j^2 \Delta x^2}(\beta_{\theta, j+1} + \beta_{\theta, j-1})
+\gamma\beta_{\theta,j}=&-(\frac{2\eta}{r_j^2 \Delta x^2} 
+ + \frac{\eta}{r_j^2} + \frac{\eta m^2}{r_j^2} 
+ + \eta k^2 + im\Omega_j)\beta_{\theta, j}
+ + \frac{\eta}{r_j^2 \Delta x^2}(\beta_{\theta, j+1} + \beta_{\theta, j-1})
 \nonumber \\
-&+\left[\frac{\Omega_{j+1}-\Omega_{j-1}}{2\Delta x} + \frac{2im\eta}{r_j^2}\right]\beta_{r,j} + kv_A\phi_{\theta,j}
+&+\left[\frac{\Omega_{j+1}-\Omega_{j-1}}{2\Delta x}
+ + \frac{2im\eta}{r_j^2}\right]\beta_{r,j} + kv_A\phi_{\theta,j}
 \\
 \nonumber \\
-\gamma\phi_{r, j} = &-(\frac{2\nu}{r_j^2 \Delta x^2} + \frac{\nu}{r_j^2} + \frac{\nu m^2}{r_j^2} + \nu k^2 + im\Omega_j)\phi_{r, j} + \frac{\nu}{r_j^2 \Delta x^2}(\phi_{r, j+1} + \phi_{r, j-1})
+\gamma\phi_{r, j} = &-(\frac{2\nu}{r_j^2 \Delta x^2}
+ + \frac{\nu}{r_j^2} + \frac{\nu m^2}{r_j^2} 
+ + \nu k^2 + im\Omega_j)\phi_{r, j}
+ + \frac{\nu}{r_j^2 \Delta x^2}(\phi_{r, j+1} + \phi_{r, j-1})
 \nonumber \\
-&+ \left[2\Omega_{j}-\frac{2im\nu}{r_j^2} \right]\phi_{\theta, j} - kv_A\beta_{r,j} - \frac{1}{2 r_j \Delta x}\left(\Pi_{j+1}-\Pi_{j-1}\right)
+&+ \left[2\Omega_{j}-\frac{2im\nu}{r_j^2} \right]\phi_{\theta, j}
+ - kv_A\beta_{r,j} - \frac{1}{2 r_j \Delta x}\left(\Pi_{j+1}-\Pi_{j-1}\right)
 \\
 \nonumber \\
-\gamma\phi_{\theta, j} = &-(\frac{2\nu}{r_j^2 \Delta x^2} + \frac{\nu}{r_j^2} + \frac{\nu m^2}{r_j^2} + \nu k^2 + im\Omega_j)\phi_{\theta, j} + \frac{\nu}{r_j^2 \Delta x^2}(\phi_{\theta, j+1} + \phi_{\theta, j-1})
+\gamma\phi_{\theta, j} = &-(\frac{2\nu}{r_j^2 \Delta x^2} 
+ + \frac{\nu}{r_j^2} + \frac{\nu m^2}{r_j^2} 
+ + \nu k^2 + im\Omega_j)\phi_{\theta, j}
+ + \frac{\nu}{r_j^2 \Delta x^2}(\phi_{\theta, j+1} + \phi_{\theta, j-1})
 \nonumber \\
-&+ \left[\frac{2im\nu}{r_j^2} - 2\Omega_j - \frac{1}{2\Delta x}\left(\Omega_{j+1}-\Omega_{j-1}\right)\right]\phi_{r,j} - kv_A \beta_{\theta, j} - \frac{im}{r_j}\Pi_{j}
+&+ \left[\frac{2im\nu}{r_j^2} - 2\Omega_j
+ - \frac{1}{2\Delta x}\left(\Omega_{j+1}-\Omega_{j-1}\right)\right]\phi_{r,j}
+ - kv_A \beta_{\theta, j} - \frac{im}{r_j}\Pi_{j}
 \\
 \nonumber \\
-0 = &\left[\frac{2im\Omega_j}{r_j} + \frac{im}{r_j \Delta x}(\Omega_{j+1}-\Omega_{j-1})\right]\phi_{r,j} - \frac{2\Omega_j}{r_j}\phi_{\theta,j} 
+0 = &\left[\frac{2im\Omega_j}{r_j}
+ + \frac{im}{r_j \Delta x}(\Omega_{j+1}-\Omega_{j-1})\right]\phi_{r,j}
+ - \frac{2\Omega_j}{r_j}\phi_{\theta,j} 
 \nonumber \\
-&- \frac{1}{r_j \Delta x}\left(\Omega_{j+1}\phi_{\theta,j+1}-\Omega_{j-1}\phi_{\theta,j-1}\right) - \left[\frac{2}{r_j^2\Delta x^2} + \frac{m^2}{r_j^2}+k^2\right]\Pi_{j}
+&- \frac{1}{r_j \Delta x}\left(\Omega_{j+1}\phi_{\theta,j+1}
+ -\Omega_{j-1}\phi_{\theta,j-1}\right)
+ - \left[\frac{2}{r_j^2\Delta x^2} + \frac{m^2}{r_j^2}+k^2\right]\Pi_{j}
 \nonumber \\
 &+\frac{1}{r_j^2 \Delta x^2}\left(\Pi_{j+1} + \Pi_{j-1}\right)
 \end{align}
@@ -306,7 +402,8 @@ implying $\phi_z=0$ by the incompressibility constraint. Since we have
 already specified that $\phi_r=0$, this means that $\partial_r
 \phi_r=0$ as well.
 
-In the code, the constraints on $\phi_r$ are specified by setting the values in the ghost zones
+In the code, the constraints on $\phi_r$ are specified by setting the
+values in the ghost zones
 \begin{align}
 \phi_{r,js-1} = 0, \quad \phi_{r, js} =& 0
 \\
@@ -323,8 +420,8 @@ For this boundary condition, we consider the radial boundaries to be
 perfectly conducting cylinders, rotating at a fixed speed. We make use
 of the general boundary condition for a fluid with a moving interface$^3$
 \begin{equation}
-\hat{n}\times\left(\vec{E}_f - \vec{E}_c\right) = \frac{\vec{v}\cdot\hat{n}}{c}
- \left(\vec{B}_f - \vec{B}_c\right) = 0
+\hat{n}\times\left(\vec{E}_f - \vec{E}_c\right) = 
+ \frac{\vec{v}\cdot\hat{n}}{c}\left(\vec{B}_f - \vec{B}_c\right) = 0
  \quad \text{for $\vec{v}\cdot\hat{n} = 0$.}
 \end{equation}
 where $\hat{n}$ is the unit vector normal to the conductor, pointing
@@ -342,7 +439,10 @@ generated to balance $\vec{v}\times\vec{B}$ in Ohm's law:
 \end{equation}
 We note that $\vec{v}=r\Omega\hat{\theta}$, and $\vec{B}=B_0\hat{z}$,
 so the electric field in the conductor will be purely in the
-$\hat{r}$-direction, and $\vec{E}\times\hat{n}=0$. So, we still find that the tangential electric field is 0 at the boundary. To find the implications of this on the magnetic field, we dot Faraday's law with $\hat{n}$:
+$\hat{r}$-direction, and $\vec{E}\times\hat{n}=0$. So, we still find
+that the tangential electric field is 0 at the boundary. To find the
+implications of this on the magnetic field, we dot Faraday's law with
+$\hat{n}$:
 \begin{equation}
 \left(\nabla\times\vec{E}\right)\cdot\hat{n} = 
 -\frac{1}{c}\frac{\partial\vec{B}\cdot\hat{n}}{\partial t}
@@ -395,7 +495,10 @@ The values for the magnetic fields in the ghostzones are therefore
  \frac{(1 - 0.5\Delta x)}{(1 + 0.5\Delta x)}\beta_{\theta, j_e} =& 0
 \end{align}
 
-\subsection[Magnetic boundary condition: perfectly insulating]{Magnetic boundary condition: perfectly insulating\protect\footnote{Thanks to Jeremy Goodman for guidance in implementing this boundary condition.}}
+\subsection[Magnetic boundary condition: perfectly insulating]{Magnetic
+boundary condition: perfectly
+insulating\protect\footnote{Thanks to Jeremy Goodman for guidance in
+implementing this boundary condition.}}
 
 In the MHD approximation, Amp\`{e}re's law is
 \begin{equation}
@@ -407,22 +510,27 @@ potential
 \begin{equation}
 \vec{B} = \nabla\Phi
 \end{equation}
-Since $\nabla\cdot\vec{B} = 0$, we know that $\nabla^2 \Phi = 0$.  In cylindrical coordinates, this means
+Since $\nabla\cdot\vec{B} = 0$, we know that $\nabla^2 \Phi = 0$.  In
+cylindrical coordinates, this means
 \begin{equation}
-\left[\frac{1}{r}\frac{\partial}{\partial r}r\frac{\partial}{\partial r} + \frac{1}{r^2}\frac{\partial^2}{\partial\theta^2} +\frac{\partial^2}{\partial z^2}\right]\Phi = 0
+\left[\frac{1}{r}\frac{\partial}{\partial r}r\frac{\partial}{\partial r} 
+ + \frac{1}{r^2}\frac{\partial^2}{\partial\theta^2}
+ + \frac{\partial^2}{\partial z^2}\right]\Phi = 0
 \end{equation}
-If we assume a form for $\Phi$ that goes as $\Phi(r,\theta,z) = e^{i(m\theta + k z)}\tilde{\Phi}(r)$
-this yields a differential equation in $\tilde{\Phi}$
+If we assume a form for $\Phi$ that goes as $\Phi(r,\theta,z) =
+e^{i(m\theta + k z)}\tilde{\Phi}(r)$ this yields a differential
+equation in $\tilde{\Phi}$
 \begin{equation}
-\frac{d^2}{d r^2}\tilde{\Phi} + \frac{1}{r}\frac{d}{dr}\tilde{\Phi} - \left(\frac{m^2}{r^2} + k^2\right)\tilde{\Phi} = 0
+\frac{d^2}{d r^2}\tilde{\Phi} + \frac{1}{r}\frac{d}{dr}\tilde{\Phi} 
+ - \left(\frac{m^2}{r^2} + k^2\right)\tilde{\Phi} = 0
 \end{equation}
 This equation is satisfied by modified Bessel fuctions
 \begin{equation}
 \tilde{\Phi}(r) = A_{in} I_m (k r) + A_{out} K_m (k r)
 \end{equation}
-Because $K_m(kr)\rightarrow \infty$ as $k r
-\rightarrow 0$ and $I_m(kr) \rightarrow \infty$ as $k r \rightarrow \infty$, 
-$A_{out} = 0$ in the inner region, and $A_{in} = 0$ in the outer region.
+Because $K_m(kr)\rightarrow \infty$ as $k r \rightarrow 0$ and
+$I_m(kr) \rightarrow \infty$ as $k r \rightarrow \infty$, $A_{out} =
+0$ in the inner region, and $A_{in} = 0$ in the outer region.
 \begin{equation}
 \tilde{\Phi}(r) = \begin{cases}
                      A_{in} I_m(k r), &r \le r_1 \\
@@ -446,7 +554,11 @@ B_\theta = &\frac{1}{r}\frac{\partial \Phi}{\partial \theta}
            \end{cases}
 \end{align}
 
-We now match the insulating solution to the magnetic field value just inside the domain of interest to find $A_{in}$ and $A_{out}$. Once those constants are known, the value of the magnetic field in the ghost zone can be calculated. Note also the special case when $m=0$, where $B_\theta$ at the boundary.
+We now match the insulating solution to the magnetic field value just
+inside the domain of interest to find $A_{in}$ and $A_{out}$. Once
+those constants are known, the value of the magnetic field in the
+ghost zone can be calculated. Note also the special case when $m=0$,
+where $B_\theta$ at the boundary.
 
 \begin{align}
 \beta_{r, j_s-1} - \beta_{r, j_s}
@@ -666,5 +778,6 @@ Rev. Lett. {\bf 104}, 074501 (2010).
 
 \noindent 2. J. Goodman and H. Ji, J. Fluid Mech. {\bf 462}, 365 (2002).
 
-\noindent 3. T. H. Stix, {\emph Waves in Plasmas} (Springer-Verlag, New York, 1992).
+\noindent 3. T. H. Stix, {\emph Waves in Plasmas} (Springer-Verlag,
+New York, 1992).
 \end{document}
