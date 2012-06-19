@@ -588,32 +588,67 @@ For $m = 0$:
 
 \section{Solving the equations}
 
-These equations form a generalized eigenvalue problem which can be
-solved with off-the-shelf linear algebra routines to find the
-eigenvalues and eigenvectors.  The matrix that is formed by the 5N
-equations (where N is the number of gridpoints) is a band diagonal
-matrix with bandwidth 15, with the ordering of the variables going
-$\beta_{r,0}$, $\beta_{\theta,0}$, $\phi_{r,0}$, $\phi_{\theta,0}$,
-$\Pi_0$, $\beta_{r,1}$, $\beta_{\theta,1}$,...
+The problem is to solve a system of $5N$ equations, where $N$ is the
+number of gridcells including ghost zones. The equations can be cast
+in the form of a generalized eigenvalue problem
+\begin{equation}
+{\bf A}\cdot{\bf x} = \gamma {\bf B}\cdot{\bf x}
+\end{equation}
+where $\gamma$ is the eigenvalue; ${\bf x}$ is the eigenvector made up
+of the components $\beta_r$, $\beta_\theta$, $\phi_r$, $\phi_\theta$,
+and $\Pi$ at each grid cell; ${\bf A}$ is a band-diagonal matrix of
+bandwidth 15 that is made up of the terms in the linearized equations
+and constraint equations; and ${\bf B}$ is a diagonal matrix with a 1
+corresponding to the position of the evolution equation for each of
+the quantities $\beta_r$, $\beta_\theta$, $\phi_r$, and $\phi_\theta$
+in the fluid, and a 0 at the position of each boundary condition
+equation and each constraint equation on $\Pi$.
 
-The number of gridpoints necessary to properly resolve features on the
-viscous scale is on the order of 4000, yielding a 20000x20000 matrix.
-Solving for all of the eigenvalues of this system would require
-prohibitive amounts of computation time.  And in any case, many of the
-eigenvalues correspond to extremely strongly damped, uninteresting
-modes.  \verb@ARPACK@ is used in shift-invert mode to obtain some a
-subset of the eigenvalues.  It takes about 30 minutes to obtain 600
-eigenvalues and eigenvectors on a desktop PC.
+Two methods are used to solve this generalized eigenvalue problem. The
+first solves the full problem for all eigenvalues and
+eigenvectors. Because resolutions of a few thousand grid cells are
+sometimes necessary to fully resolve boundary layers, the calculation
+of all the eigenvalues and eigenvectors can take a long time. A second
+method can be used to solve for a subset of the eigenvalues and
+eigenvectors, saving time in the calculation. In both cases the
+eigenvalues and eigenvectors that are found are sorted are stored in a
+\verb@NetCDF-4@ file for later analysis.
+
+\subsection{Full solution}
+
+The full solution method uses a call to the \verb@LAPACK@ routine
+\verb@ZGGEV@
+\footnote{Note about \verb@FORTRAN@ subroutine. Row-major versus
+column-major form, etc. Possibility of calls from Python, etc.}. 
+The routine does not take advantage of the banded nature
+of the problem and takes in $(5N)^2$ complex values describing the
+matrices ${\bf A}$ and ${\bf B}$, and requires additional memory
+allocations for its work. This is not a very efficient mechanism,
+requiring large values of both time and memory. (Show scaling.) On the
+order of 20-30percent of the eigenvalues are spurious, with infinite
+eigenvalues. These eigenvalues are rejected before saving the
+results.
+
+\subsection{Subset of eigenvalues}
+
+The code has the option to uses the \verb@ARPACK@ routine
+\verb@ZNAUPD@ in shift-invert mode to solve for a subset of the
+eigenvalues. This routine supplies a reverse-communication interface
+for the iterative technique, requesting calls to the \verb@BLAS@
+routine \verb@ZGBMV@ and the \verb@LAPACK@ routine \verb@ZGBTRS@ to do
+its work. Both of these routines can operate on compressed banded
+matrices, requiring less memory than the method to generate the full
+solution.
 
 The choice of $\sigma$, the eigenvalue shift, is very important for
-correct behavior of the code.  $\sigma$ is chosen by an iterative
-technique.  $\sigma$ is intially chosen to be 10 times the inner
-cylinder speed, in order to assure that it will be larger than the
-fastest growing mode.  The system is solved for the first few fastest
-growing modes with a large tolerance.  This only takes a few seconds.
-A step is taken 4/5ths of the way from the old $\sigma$ toward the
-fastest growing eigenvalue determined in the previous step.  The
-tolerance is tightened, and the problem is solved again.  This is
+correct behavior of the \verb@ARPACK@ routine.  $\sigma$ is chosen by
+an iterative technique.  $\sigma$ is intially chosen to be 10 times
+the inner cylinder speed, in order to assure that it will be larger
+than the fastest growing mode.  The system is solved for the first few
+fastest growing modes with a large tolerance.  This only takes a few
+seconds.  A step is taken 4/5ths of the way from the old $\sigma$
+toward the fastest growing eigenvalue determined in the previous step.
+The tolerance is tightened, and the problem is solved again.  This is
 repeated several times to find a $\sigma$ that is close to the fastest
 growing eigenvalue.
 
