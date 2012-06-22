@@ -33,7 +33,6 @@ RESULTS_STRUCT *eigensolve(COMPRESSED_MATRIX *matrix,
   int ido;
   char bmat;
   int bmat_len = 1;
-  char which[2];
   int which_len = 2;
   double complex *resid;
   int ncv;
@@ -382,7 +381,6 @@ RESULTS_STRUCT *eigensolve(COMPRESSED_MATRIX *matrix,
   
   ido = 0;
   bmat = 'G';
-  strcpy(which, "LM");
   resid = malloc(sizeof(double complex)*matrix->n);
   //This value of ncv based on a suggestion in the znaupd documentation
   ncv = arpack_params->nummodes*2 + 4;
@@ -407,7 +405,7 @@ RESULTS_STRUCT *eigensolve(COMPRESSED_MATRIX *matrix,
   while (1) {
     //Note this crazy requirement to pass the length of strings after
     //the string when calling FORTRAN subroutines.
-    znaupd_(&ido, &bmat, &matrix->n, which,
+    znaupd_(&ido, &bmat, &matrix->n, arpack_params->which,
 	    &arpack_params->nummodes, &arpack_params->tol, resid, &ncv, v,
 	    &matrix->n, iparam, ipntr, workd, workl, &lworkl, rwork, &info,
 	    &bmat_len, &which_len); 
@@ -492,10 +490,11 @@ RESULTS_STRUCT *eigensolve(COMPRESSED_MATRIX *matrix,
     //Again, make note of the funny extra length parameters for the
     //character*n
     zneupd_(&rvec, &howmny, select, results->lambda, results->z, &matrix->n,
-	    &arpack_params->sigma, workev, &bmat, &matrix->n, which,
-	    &arpack_params->nummodes, &arpack_params->tol, resid, &ncv,
-	    v, &matrix->n, iparam, ipntr, workd, workl, &lworkl, rwork,
-	    &info, &howmny_len, &bmat_len, &which_len);
+	    &arpack_params->sigma, workev, &bmat, &matrix->n,
+	    arpack_params->which, &arpack_params->nummodes,
+	    &arpack_params->tol, resid, &ncv, v, &matrix->n, iparam, ipntr,
+	    workd, workl, &lworkl, rwork, &info, &howmny_len, &bmat_len,
+	    &which_len);
     if (info != 0) {
       fprintf(stderr, "Error in zneupd.  Info = %i.\n", info);
     }

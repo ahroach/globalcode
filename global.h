@@ -76,6 +76,7 @@ typedef struct {
   double complex sigma;
   double tol;
   int maxiters;
+  char which[5];
 } ARPACK_CONTROL;
 
 

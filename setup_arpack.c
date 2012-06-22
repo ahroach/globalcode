@@ -26,5 +26,19 @@ ARPACK_CONTROL *setup_arpack(char *input_file_name) {
   arpack_params->tol = get_dparam("tol", input_file_name);
   arpack_params->maxiters = get_iparam("maxiters", input_file_name);
 
+  //Make sure the mode specified by "which" is valid. If not, just
+  //default to "LM"
+  get_sparam("which", input_file_name, arpack_params->which);
+  if((strcmp(arpack_params->which,"LM")) &&
+     (strcmp(arpack_params->which,"SM")) &&
+     (strcmp(arpack_params->which,"LR")) &&
+     (strcmp(arpack_params->which,"SR")) &&
+     (strcmp(arpack_params->which,"LI")) &&
+     (strcmp(arpack_params->which,"SI"))) {
+    fprintf(stderr, "Defaulting to 'LM' for value of 'which' in call to ZNAUPD.\n");
+    strcpy(arpack_params->which, "LM");
+
+  }
+
   return arpack_params;
 }
