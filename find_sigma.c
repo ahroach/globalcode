@@ -27,6 +27,7 @@ double complex find_sigma(COMPRESSED_MATRIX *matrix,
     2*abs(rotation->omega[grid->ie]);
   temp_arpack_params->tol = 1e-2;
   temp_arpack_params->maxiters = arpack_params->maxiters;
+  strcpy(temp_arpack_params->which, arpack_params->which);
   for (int i = 0; i < 5; i++) {
     results = eigensolve(matrix, params, grid,
                          rotation, temp_arpack_params);
