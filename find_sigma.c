@@ -23,12 +23,12 @@ double complex find_sigma(COMPRESSED_MATRIX *matrix,
   //Need to make initial value of sigma large enough to not miss any growing
   //modes. Outer rotation rate is brought into this for the cases where    
   //inner cylinder is not rotating.         
-  temp_arpack_params->sigma = 10*abs(rotation->omega[0]) +
-    2*abs(rotation->omega[grid->ie]);
+  temp_arpack_params->sigma = 5*abs(rotation->omega[0]) +
+    5*abs(rotation->omega[grid->ie]);
   temp_arpack_params->tol = 1e-2;
   temp_arpack_params->maxiters = arpack_params->maxiters;
   strcpy(temp_arpack_params->which, arpack_params->which);
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 4; i++) {
     results = eigensolve(matrix, params, grid,
                          rotation, temp_arpack_params);
     if (results->nconv < 1) {
