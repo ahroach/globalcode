@@ -23,9 +23,123 @@ but will extend the analysis to allow examination of nonaxisymmetric
 eigenmodes, eigenmodes with non-ideal Couette rotation profiles, and
 damped eigenmodes.
 
+\section{Nonideal, incompressible MHD}
+
+We wish to find the equations of nonideal, incompressible MHD. We
+start with three of Maxwell's equations plus Ohm's law in CGS units:
+\begin{align}
+&\nabla\times\vec{E} = -\frac{1}{c}\frac{\partial\vec{B}}{\partial t}
+\quad&\text{Faraday's law}
+\label{eqn:globalcode:faradayslaw}
+\\
+&\nabla\times\vec{B} = \frac{1}{c}\frac{\partial\vec{E}}{\partial t} 
+                      + \frac{4\pi}{c}\vec{j}
+\quad&\text{Amp\`{e}re's law}
+\label{eqn:globalcode:ampereslaw}
+\\
+&\nabla\cdot\vec{B} = 0 \quad &\text{No monopoles}
+\label{eqn:globalcode:nomonopoles}
+\\
+&\frac{4\pi\eta}{c^2}\vec{j} = \vec{E} + \frac{1}{c}\vec{v}\times\vec{B}
+\quad&\text{Ohm's law}
+\label{eqn:globalcode:ohmslaw}
+\end{align}
+where $\eta$ is the resistivity in units of cm$^2$/s. We make the
+normal MHD assumption that the displacement current is zero, leading
+to a simplified version of Amp\`{e}re's law
+\begin{equation}
+\nabla\times\vec{B} = \frac{4\pi}{c}\vec{j}
+\label{eqn:globalcode:ampereslawmhd}
+\end{equation}
+
+If we take the curl of Equation~\ref{eqn:globalcode:ohmslaw},
+substitute for $\nabla\times\vec{E}$ in
+Equation~\ref{eqn:globalcode:faradayslaw}, and then substitue for
+$\vec{j}$ from Equation~\ref{eqn:globalcode:ampereslawmhd}, we find
+\begin{equation}
+-\frac{1}{c}\frac{\partial\vec{B}}{\partial t} = 
+\nabla\times\left[\frac{4\pi\eta}{c^2}\vec{j} 
+                  - \frac{1}{c}\vec{v}\times\vec{B}\right]
+= \nabla\times\left[\frac{\eta}{c}\nabla\times\vec{B} 
+                    - \frac{1}{c}\vec{v}\times\vec{B}\right]
+\end{equation}
+We can now rearrange the equation and make use of the vector identity
+$\nabla\times(\nabla\times\vec{B}) = -\nabla^2\vec{B}$, when
+$\nabla\cdot\vec{B}=0$
+\begin{equation}
+\frac{\partial\vec{B}}{\partial t} 
+- \nabla\times\left(\vec{v}\times\vec{B}\right)
+= \eta \nabla^2 \vec{B}
+\label{eqn:globalcode:inductionequation}
+\end{equation}
+This is the magnetic field induction equation in nonideal MHD. In the
+incompressible limit, where
+\begin{equation}
+\nabla\cdot\vec{v}=0
+\label{eqn:globalcode:incompressibility}
+\end{equation}
+the induction equation can be rewritten
+\begin{equation}
+\frac{\partial\vec{B}}{\partial t} + (\vec{v}\cdot\nabla)\vec{B}
+- (\vec{B}\cdot\nabla)\vec{v}
+= \eta \nabla^2 \vec{B}
+\label{eqn:globalcode:incompressibleinductionequation}
+\end{equation}
+
+The momentum equation is found by considering $m\vec{a} = \vec{F}$
+for a fluid element
+\begin{equation}
+\rho\left(\frac{d\vec{v}}{dt}\right) = -\nabla p 
+ + \frac{\vec{j}\times\vec{B}}{c} + \mu\nabla^2 \vec{v}
+\end{equation}
+where $\rho$ is the fluid density, $\mu$ is the dynamic viscosity, and
+$p$ is the hydrodynamic pressure. We know expand the convective
+derivative $d/dt = \partial/\partial t + \vec{v}\cdot\nabla$ and
+divide by $\rho$ to find
+\begin{equation}
+\frac{\partial\vec{v}}{\partial t} + \left(\vec{v}\cdot \nabla\right)\vec{v}
+ = -\frac{1}{\rho}\nabla p + \frac{1}{\rho c}\vec{j}\times\vec{B} 
+ + \nu\nabla^2 \vec{v}
+\end{equation}
+where $\nu = \mu/\rho$ is the kinematic viscosity in units of cm$^2/s$.
+
+We can make a subsitution for $\vec{j}$ in the $\vec{j}\times\vec{B}$
+term using Amp\`{e}re's law
+\begin{align}
+\frac{1}{\rho c}\vec{j}\times\vec{B} 
+ = \frac{1}{4\pi \rho}\left(\nabla\times\vec{B}\right)\times\vec{B} 
+ &= \frac{1}{4\pi \rho}\left[-\left(\nabla\vec{B}\right)\cdot\vec{B} 
+                            +\left(\vec{B}\cdot\nabla\right)\vec{B}\right]
+\nonumber \\
+ &= \frac{1}{4\pi \rho}\left[-\frac{1}{2}\nabla\vec{B}^2 
+                            +\left(\vec{B}\cdot\nabla\right)\vec{B}\right]
+\end{align}
+leading to a new form for the momentum equation
+\begin{equation}
+\frac{\partial \vec{v}}{\partial t} + \left(\vec{v}\cdot\nabla\right)\vec{v}
+ = -\frac{1}{\rho}\nabla p - \frac{1}{8\pi\rho}\nabla\vec{B}^2
+   + \frac{1}{4\pi\rho}\left(\vec{B}\cdot\nabla\right)\vec{B}
+   + \nu \nabla^2 \vec{v}
+\end{equation}
+Finally, we can rewrite the momentum equation in terms of a combined
+hydrodynamic and magnetic pressure $P=p+\vec{B}^2/8\pi$.
+\begin{equation}
+\frac{\partial \vec{v}}{\partial t} + \left(\vec{v}\cdot\nabla\right)\vec{v}
+ = - \frac{1}{\rho}\nabla P 
+   + \frac{1}{4\pi\rho}\left(\vec{B}\cdot\nabla\right)\vec{B}
+   + \nu \nabla^2 \vec{v}
+\label{eqn:globalcode:momentumequation}
+\end{equation}
+
 \section{Linearized equations}
 
-We start with the equations of incompressible, nonideal MHD in cgs units:
+We start with the equations of incompressible, nonideal MHD,
+summarized here from
+Equations~\ref{eqn:globalcode:incompressibleinductionequation},
+~\ref{eqn:globalcode:momentumequation},~\ref{eqn:globalcode:nomonopoles},
+and ~\ref{eqn:globalcode:incompressibility}, where a dot over a
+quantity represents a derivative with respect to time,
+$\partial/\partial t$.
 
 \begin{align}
 &\dot{\vec{B}} + \vec{v}\cdot\nabla\vec{B} - \vec{B}\cdot\nabla\vec{v}
@@ -39,16 +153,14 @@ We start with the equations of incompressible, nonideal MHD in cgs units:
 &\nabla\cdot\vec{v}=0
 \end{align}
 
-Here $P$ is defined as the sum of the hydrodynamic and magnetic
-pressures, $P=p+\vec{B}^2/8\pi$.We assume a background state with
-zeroth-order $\vec{B}=B_0 \hat{z}$ and $\vec{
-  v}=r\Omega(r)\hat{\theta}$.  First order quantities will be denoted
-by a $\delta$.
+We assume a background state with zeroth-order $\vec{B}=B_0
+\hat{z}$ and $\vec{ v}=r\Omega(r)\hat{\theta}$.  First order
+quantities will be denoted by a $\delta$.
 
-We will define two radial derivative operators, $\partial_r \equiv
+We define two radial derivative operators, $\partial_r \equiv
 \frac{\partial}{\partial r}$ and $\partial_{r}^\dagger \equiv
-\frac{\partial}{\partial r}+\frac{1}{r}$.  The combination
-$\partial_r \partial_r^\dagger = \frac{\partial^2}{\partial
+\frac{\partial}{\partial r}+\frac{1}{r}$.  The combination $\partial_r
+\partial_r^\dagger = \frac{\partial^2}{\partial
   r^2}-\frac{1}{r^2}+\frac{1}{r}\partial_r$.
 
 \subsection{Radial induction equation}
