@@ -338,34 +338,35 @@ gridpoint. $\Delta x$ indicates the size of the grid step.
 
 The following finite difference equations are found:
 \begin{align}
-\gamma\beta_{r, j} = &-(\frac{2\eta}{r_j^2 \Delta x^2} + \frac{\eta}{r_j^2}
- + \frac{\eta m^2}{r_j^2} + \eta k^2 + im\Omega_j )\beta_{r, j}
+\gamma\beta_{r, j} = &-\left(\frac{2\eta}{r_j^2 \Delta x^2} 
+ + \frac{\eta}{r_j^2}
+ + \frac{\eta m^2}{r_j^2} + \eta k^2 + im\Omega_j \right)\beta_{r, j}
  + \frac{\eta}{r_j^2 \Delta x^2}(\beta_{r, j+1} + \beta_{r, j-1})
 \nonumber \\
 &- \frac{2im \eta}{r_j^2}\beta_{\theta,j} + k v_A \phi_{r,j}
 \\
 \nonumber \\
-\gamma\beta_{\theta,j}=&-(\frac{2\eta}{r_j^2 \Delta x^2} 
+\gamma\beta_{\theta,j}=&-\left(\frac{2\eta}{r_j^2 \Delta x^2} 
  + \frac{\eta}{r_j^2} + \frac{\eta m^2}{r_j^2} 
- + \eta k^2 + im\Omega_j)\beta_{\theta, j}
+ + \eta k^2 + im\Omega_j \right)\beta_{\theta, j}
  + \frac{\eta}{r_j^2 \Delta x^2}(\beta_{\theta, j+1} + \beta_{\theta, j-1})
 \nonumber \\
 &+\left[\frac{\Omega_{j+1}-\Omega_{j-1}}{2\Delta x}
  + \frac{2im\eta}{r_j^2}\right]\beta_{r,j} + kv_A\phi_{\theta,j}
 \\
 \nonumber \\
-\gamma\phi_{r, j} = &-(\frac{2\nu}{r_j^2 \Delta x^2}
+\gamma\phi_{r, j} = &-\left(\frac{2\nu}{r_j^2 \Delta x^2}
  + \frac{\nu}{r_j^2} + \frac{\nu m^2}{r_j^2} 
- + \nu k^2 + im\Omega_j)\phi_{r, j}
+ + \nu k^2 + im\Omega_j \right)\phi_{r, j}
  + \frac{\nu}{r_j^2 \Delta x^2}(\phi_{r, j+1} + \phi_{r, j-1})
 \nonumber \\
 &+ \left[2\Omega_{j}-\frac{2im\nu}{r_j^2} \right]\phi_{\theta, j}
  - kv_A\beta_{r,j} - \frac{1}{2 r_j \Delta x}\left(\Pi_{j+1}-\Pi_{j-1}\right)
 \\
 \nonumber \\
-\gamma\phi_{\theta, j} = &-(\frac{2\nu}{r_j^2 \Delta x^2} 
+\gamma\phi_{\theta, j} = &-\left(\frac{2\nu}{r_j^2 \Delta x^2} 
  + \frac{\nu}{r_j^2} + \frac{\nu m^2}{r_j^2} 
- + \nu k^2 + im\Omega_j)\phi_{\theta, j}
+ + \nu k^2 + im\Omega_j\right)\phi_{\theta, j}
  + \frac{\nu}{r_j^2 \Delta x^2}(\phi_{\theta, j+1} + \phi_{\theta, j-1})
 \nonumber \\
 &+ \left[\frac{2im\nu}{r_j^2} - 2\Omega_j
