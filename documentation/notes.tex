@@ -649,49 +649,72 @@ for the iterative technique, requesting calls to the \verb@BLAS@
 routine \verb@ZGBMV@ and the \verb@LAPACK@ routine \verb@ZGBTRS@ to do
 its work. Both of these routines can operate on compressed banded
 matrices, requiring less memory than the method to generate the full
-solution. \verb@ARPACK@ is a library that can be used to find a
-number of extremal eigenvalues. This we are generally interested in
-the largest growing modes, at first glance this seems to be a perfect
-setup. Unfortunately, the \verb@ZNAUPD@ problem can only directly
-solve for the largest growing modes if the matrix $B$ in the
+solution. \verb@ARPACK@ is a library that can be used to find a number
+of extremal eigenvalues meeting several different criteria: smallest
+magnitude, largest magnitude, largest real part, smallest real part,
+largest imaginary part, or smallest imaginary part.. This we are
+generally interested in the largest growing modes, at first glance it
+should be as easy as using the \verb@ARPACK@ routine to find the modes
+with the largest real part. Unfortunately, the \verb@ZNAUPD@ problem
+can only directly solve for the eigenvalues if the matrix $B$ in the
 eigenvalue problem is positive definite. In our case, it is positive
 semi-definite (made up of `1's and `0's on the diagonal), and so we
 are forced to use the routine in shift-invert mode, where a set of
 eigenvalues $\lambda$ can be found that are related to the original
 eigenvalues of the problem by $\lambda = 1/(\gamma-\sigma)$, where
-$\sigma$ is a user-specified shift. This can be rewritten as
+$\sigma$ is a user-specified shift. This can be rewritten
 \begin{equation}
-\lambda = \frac{\mathrm{Re}\{\gamma-\sigma\} - i\mathrm{Im\{\gamma-\sigma\}}}
-               {|\gamma-\sigma|^2}
+\lambda = \frac{1}{\gamma-\sigma} = \frac{\mathrm{Re}\{\gamma-\sigma\} 
+                                          - i\mathrm{Im\{\gamma-\sigma\}}}
+                                         {|\gamma-\sigma|^2}
 \end{equation}
 
 The choice of $\sigma$, the eigenvalue shift, is very important for
 correct behavior of the \verb@ARPACK@ routine, since it determines
-which eigenvalues will be returned. To guarantee that we generate the
-largest-growing eigenvalues $\gamma$, we would have to search for the
-eigenvalues $\lambda$ of largest magnitude with $\sigma$ specified as
-a very large real number. Unfortunately, as the value $\sigma$ gets
+which part of the eigenvalue spectrum will be returned. We are
+interested in the eigenvalues with the largest real part of $\gamma$.
+To select the largest-growing eigenvalues $\gamma$, we can ask for the
+eigenvalues $\lambda$ with the largest magnitude, for a shift $\sigma$
+with a very large real part, much larger than its imaginary part or
+either part of $\gamma$. In other words, $\sigma =
+\mathrm{Re}\{\sigma\}^{(0)} + \epsilon\mathrm{Im}\{\sigma\}^{(1)}$,
+and $\gamma = \epsilon\mathrm{Re}\{\gamma\}^{(1)} +
+\epsilon\mathrm{Im}\{\gamma\}^{(1)}$ where $\epsilon$ is a small
+parameter, and the superscripts $^{(0)}$ and ${(1)}$ denote zeroth-
+and first-order quantities, respectively. In this case, the magnitude
+of $\lambda$, neglecting second-order terms, is
+\begin{equation}
+|\lambda| = \frac{1}{\sqrt{\left(\gamma-\sigma\right)
+                           \left(\gamma^*-\sigma^*\right)}}
+\approx \frac{1}{\sqrt{\left(\mathrm{Re}\{\sigma\}\right)^2 
+                       - 2\mathrm{Re}\{\sigma\}\mathrm{Re}\{\gamma\}}}
+\end{equation}
+which is maximized for the largest $\mathrm{Re}\{\gamma\}$
+
+We are guaranteed to get the largest growing eigenvalues if we choose
+a very large, real $\sigma$. Unfortunately, as the value $\sigma$ gets
 farther from the eigenvalues of interest, the routine becomes much
-more efficient. So, $\sigma$ is chosen by an iterative technique.
-$\sigma_0$ is initially chosen to be 5 times the inner cylinder speed
-+ 5 times the outer cylinder speed, in order to assure that it will be
-larger than the fastest growing mode, and the problem is solved with a
-relatively large specified tolerance of $10^{-2}$. Next, a new value
-of $\sigma_1$ is determined based on the largest-growing eigenvalue
-$\gamma_0$, $\sigma_1 = 0.1\sigma_0 + 0.9\gamma_0$, and the
+more inefficient, leading to increased computation time and larger
+errors in the computed eigenvalues. So, $\sigma$ is chosen by an
+iterative technique, using a large real $\sigma$ at first to make sure
+we find the fastest-growing eigenvalues, and then adjusting the value
+closer to the eigenvalues of interest. The initial value $\sigma_0 =
+5\Omega_{ic} + 5\Omega_{oc}$, since the largest growth rate and
+frequency of any mode are expected to be of order $\Omega_{ic}$ in the
+absence of very large Alfv\`{e}n frequencies. The problem is solved
+with a relatively large tolerance of $10^{-2}$. Next, a new value of
+$\sigma_1$ is determined based on the largest-growing computed
+eigenvalue $\gamma_0$, $\sigma_1 = 0.1\sigma_0 + 0.9\gamma_0$, and the
 tolerance is halved. This process is repeated four times, and the
 resulting $\sigma$ is then used to solve the problem at machine
 tolerance.
 
-While using the \verb@ARPACK@ subroutine results in greatly improved
-performance, as shown in Figure~\ref{fig:globalcode:timings}, it comes
-with some danger because of the importance of the choice of
-$\sigma$. If it is chosen incorrectly, and is possible that some
-eigenvalues of interest will be missed, or that spurious eigenvalues
-will be generated, as is the case when $\sigma$ is almost exactly the
-same value as one of the eigenvalues. Because of this, it is advisable
-to verify some of the runs with the results from a full eigenvalue
-calculation.
+Using the \verb@ARPACK@ subroutine results in greatly improved
+performance, as shown in Figure~\ref{fig:globalcode:timings}. But
+there is a danger of picking eigenvalues from the incorrect part of
+the spectrum with a bad choice of $\sigma$. Because of this, it is
+advisable to verify some of the runs with the results of a full
+eigenvalue calculation.
 
 \section{Benchmarking}
 
