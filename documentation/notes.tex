@@ -618,44 +618,80 @@ eigenvalues and eigenvectors that are found are sorted are stored in a
 
 The full solution method uses a call to the \verb@LAPACK@ routine
 \verb@ZGGEV@
-\footnote{Note about \verb@FORTRAN@ subroutine. Row-major versus
-column-major form, etc. Possibility of calls from Python, etc.}. 
-The routine does not take advantage of the banded nature
-of the problem and takes in $(5N)^2$ complex values describing the
-matrices ${\bf A}$ and ${\bf B}$, and requires additional memory
-allocations for its work. This is not a very efficient mechanism,
-requiring large values of both time and memory. (Show scaling.) On the
-order of 20-30percent of the eigenvalues are spurious, with infinite
-eigenvalues. These eigenvalues are rejected before saving the
-results.
+\footnote{Note about FORTRAN subroutine. Row-major versus column-major
+  form, etc. Possibility of calls from Python, etc.}.  The routine
+does not take advantage of the banded nature of the problem and takes
+in $(5N)^2$ complex values describing the matrices ${\bf A}$ and ${\bf
+  B}$, and requires additional memory allocation for its work. This is
+not a very efficient mechanism, requiring large values of both time
+and memory, as shown in Figure~\ref{fig:globalcode:timings}. On the
+order of 20-30\% of the eigenvalues are spurious, with infinite
+eigenvalues. These eigenvalues are rejected before saving the results.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.80\textwidth]{timings}
+\caption[Execution time and memory scaling for global eigenvalue
+  code]{Execution time and memory scaling for several different modes
+  of operation of the global eigenvalue code. Solving the full problem
+  for all eigenvalues becomes prohibitively difficult for large
+  numbers of grid cells. Using the ARPACK subroutines results in
+  dramatically more efficient operation, at the cost of increased
+  complexity in setting up the problem.}
+\label{fig:globalcode:timings}
+\end{figure}
 
 \subsection{Subset of eigenvalues}
 
-The code has the option to uses the \verb@ARPACK@ routine
-\verb@ZNAUPD@ in shift-invert mode to solve for a subset of the
-eigenvalues. This routine supplies a reverse-communication interface
+The code has the option to use the \verb@ARPACK@ routine
+\verb@ZNAUPD@. This routine supplies a reverse-communication interface
 for the iterative technique, requesting calls to the \verb@BLAS@
 routine \verb@ZGBMV@ and the \verb@LAPACK@ routine \verb@ZGBTRS@ to do
 its work. Both of these routines can operate on compressed banded
 matrices, requiring less memory than the method to generate the full
-solution.
+solution. \verb@ARPACK@ is a library that can be used to find a
+number of extremal eigenvalues. This we are generally interested in
+the largest growing modes, at first glance this seems to be a perfect
+setup. Unfortunately, the \verb@ZNAUPD@ problem can only directly
+solve for the largest growing modes if the matrix $B$ in the
+eigenvalue problem is positive definite. In our case, it is positive
+semi-definite (made up of `1's and `0's on the diagonal), and so we
+are forced to use the routine in shift-invert mode, where a set of
+eigenvalues $\lambda$ can be found that are related to the original
+eigenvalues of the problem by $\lambda = 1/(\gamma-\sigma)$, where
+$\sigma$ is a user-specified shift. This can be rewritten as
+\begin{equation}
+\lambda = \frac{\mathrm{Re}\{\gamma-\sigma\} - i\mathrm{Im\{\gamma-\sigma\}}}
+               {|\gamma-\sigma|^2}
+\end{equation}
 
 The choice of $\sigma$, the eigenvalue shift, is very important for
-correct behavior of the \verb@ARPACK@ routine.  $\sigma$ is chosen by
-an iterative technique.  $\sigma$ is intially chosen to be 10 times
-the inner cylinder speed, in order to assure that it will be larger
-than the fastest growing mode.  The system is solved for the first few
-fastest growing modes with a large tolerance.  This only takes a few
-seconds.  A step is taken 4/5ths of the way from the old $\sigma$
-toward the fastest growing eigenvalue determined in the previous step.
-The tolerance is tightened, and the problem is solved again.  This is
-repeated several times to find a $\sigma$ that is close to the fastest
-growing eigenvalue.
+correct behavior of the \verb@ARPACK@ routine, since it determines
+which eigenvalues will be returned. To guarantee that we generate the
+largest-growing eigenvalues $\gamma$, we would have to search for the
+eigenvalues $\lambda$ of largest magnitude with $\sigma$ specified as
+a very large real number. Unfortunately, as the value $\sigma$ gets
+farther from the eigenvalues of interest, the routine becomes much
+more efficient. So, $\sigma$ is chosen by an iterative technique.
+$\sigma_0$ is initially chosen to be 5 times the inner cylinder speed
++ 5 times the outer cylinder speed, in order to assure that it will be
+larger than the fastest growing mode, and the problem is solved with a
+relatively large specified tolerance of $10^{-2}$. Next, a new value
+of $\sigma_1$ is determined based on the largest-growing eigenvalue
+$\gamma_0$, $\sigma_1 = 0.1\sigma_0 + 0.9\gamma_0$, and the
+tolerance is halved. This process is repeated four times, and the
+resulting $\sigma$ is then used to solve the problem at machine
+tolerance.
 
-It is important that $\sigma$ not be too close to the eigenvalue.
-Runs in which $\sigma$ was set to be exactly the eigenvalue from the
-last iteration of the $\sigma$-finding routine resulted in numerical
-problems, specifically the generation of spurious eigenvalues.
+While using the \verb@ARPACK@ subroutine results in greatly improved
+performance, as shown in Figure~\ref{fig:globalcode:timings}, it comes
+with some danger because of the importance of the choice of
+$\sigma$. If it is chosen incorrectly, and is possible that some
+eigenvalues of interest will be missed, or that spurious eigenvalues
+will be generated, as is the case when $\sigma$ is almost exactly the
+same value as one of the eigenvalues. Because of this, it is advisable
+to verify some of the runs with the results from a full eigenvalue
+calculation.
 
 \section{Benchmarking}
 
@@ -727,15 +763,23 @@ completely decoupled from the inertial modes since $v_{A}=0$.
 
 \subsection{Axisymmetric MRI modes}
 
-The code was used to solve the problem of the slightly unstable
-eigenmode from the paper of Goodman and Ji.  In this case, the inner
-cylinder radius is 5cm, the outer cylinder radius is 15cm, $k$ is 0.05
-1/cm, the applied field is 3000 gauss, and $\rho$, $\nu$, and $\theta$
-of the fluid are those of liquid gallium: 6.0 g/cm$^3$, 3.2e-3
-cm$^2$/sec, and 2.0e3 cm$^2$/sec.  The magnetic boundary condition is
-insulating, and the background rotation profile is an ideal Couette
-profile with $\Omega$ of 290 rad/sec at the inner cylinder, and 35
-rad/sec at the outer cylinder.
+The code was used to solve the problem of the marginally unstable
+eigenmode from the paper of Goodman and Ji with the following parameters
+\begin{align*}
+&\Omega_1 = 2720\,\mathrm{rpm} = 284.84\,\mathrm{rad/s},\quad
+    &\nu = 3.2\times10^{-3}\,\mathrm{cm^2/s}
+\\
+&\Omega_2 = 328.4\,\mathrm{rpm} = 34.39\,\mathrm{rad/s},\quad
+    &\eta = 2.0\times10^{3}\,\mathrm{cm^2/s}
+\\
+&r_1 = 5\,\mathrm{cm},\quad &\rho = 6.0\,\mathrm{g/cm^3}
+\\
+&r_2 = 15\,\mathrm{cm},\quad &B_0 = 3000\, \mathrm{gauss}
+\\
+&k = 2\pi n/h = 2\pi*0.5/10\,\mathrm{cm} = 0.314\,\mathrm{cm^{-1}}
+\\
+&N = 4000\,\mathrm{grid\,cells},\quad &\mathrm{Insulating\,boundaries}
+\end{align*}
 
 The spectrum of eigenvalues for the axisymmetric case, m=0, is shown
 in figure~\ref{fig:goodmanm0eigenvalues}.  The unstable mode is shown
