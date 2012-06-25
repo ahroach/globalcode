@@ -5,9 +5,10 @@ import matplotlib.pyplot as pyplot
 import numpy
 import scipy.io.netcdf as netcdf
 
+benchmarkdir = "/home/MRI/globalcode/benchmarks_v2/"
 
 def plot_growth_rate_convergence(filename="growth_rate_convergence.eps"):
-    datapath = "/home/MRI/globalcode/benchmarks_v2/goodman_mri_m0_arpack_resscan/"
+    datapath = benchmarkdir + "goodman_mri_m0_arpack_resscan/"
     grs = []
     n = []
 
@@ -123,7 +124,7 @@ def plot_timings(filename="timings.eps"):
     fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
 
 def plot_goodman_mri_insulating_mode(filename="goodman_mri_insulating_mode.eps"):
-    datapath="/home/MRI/globalcode/benchmarks_v2/goodman_mri/"
+    datapath = benchmarkdir + "goodman_mri/"
 
     ncfile = netcdf.netcdf_file(datapath + "m0.nc", 'r')
 
