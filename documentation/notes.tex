@@ -764,7 +764,8 @@ completely decoupled from the inertial modes since $v_{A}=0$.
 \subsection{Axisymmetric MRI modes}
 
 The code was used to solve the problem of the marginally unstable
-eigenmode from the paper of Goodman and Ji with the following parameters
+eigenmode in an ideal Couette background from the paper of Goodman and
+Ji with the following parameters
 \begin{align*}
 &\Omega_1 = 2720\,\mathrm{rpm} = 284.84\,\mathrm{rad/s},\quad
     &\nu = 3.2\times10^{-3}\,\mathrm{cm^2/s}
@@ -782,9 +783,9 @@ eigenmode from the paper of Goodman and Ji with the following parameters
 \end{align*}
 
 The spectrum of eigenvalues for the axisymmetric case, m=0, is shown
-in figure~\ref{fig:goodmanm0eigenvalues}.  The unstable mode is shown
-in figure~\ref{fig:goodmanm0unstablemode}.  This mode matches that
-found in Goodman and Ji's paper.
+in figure~\ref{fig:goodmanm0eigenvalues}. The unstable mode is shown
+in figure~\ref{fig:globalcode:goodman_mri_insulating_mode}. This mode
+matches that found in Goodman and Ji's paper.
 
 The unstable mode has a $k_r$ such that a half-wavelength of the mode
 spans the gap between the two cylinders.  The other, damped modes of
@@ -805,9 +806,11 @@ $k_r$, are shown in figure~\ref{fig:goodmanm0typicalmodes}.
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=0.80\textwidth]{goodman_m0_unstable_mode.eps}
-\caption{Unstable MRI mode}
-\label{fig:goodmanm0unstablemode}
+\includegraphics[width=0.80\textwidth]{goodman_mri_insulating_mode}
+\caption[Marginally unstable axisymmetric MRI mode]{Marginally
+  unstable axisymmetric MRI mode. Compare to figure 2{b} from Goodman
+  and Ji.}
+\label{fig:globalcode:goodman_mri_insulating_mode}
 \end{center}
 \end{figure}
 
