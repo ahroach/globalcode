@@ -15,9 +15,6 @@ int main(int ac, char **av)
 {
   char input_file_name[256];
   char driver_name[256];
-  int batch_run;
-  int fullmode;
-
 
   /* Get input file from the command line*/
   
@@ -42,7 +39,7 @@ int main(int ac, char **av)
   } else if (!strcmp(driver_name, "arpack")) {
     arpack_driver(input_file_name);
   } else {
-    sprintf(stderr, "Error: unrecognized 'driver' in input file.\n");
+    fprintf(stderr, "Error: unrecognized 'driver' in input file.\n");
   }
 
   return 0;
