@@ -14,6 +14,7 @@
 int main(int ac, char **av)
 {
   char input_file_name[256];
+  char driver_name[256];
   int batch_run;
   int fullmode;
 
@@ -30,15 +31,18 @@ int main(int ac, char **av)
   //Now figure out if we're running in full mode or batch mode
   //or if we should just fall back to the standard ARPACK mode.
 
-  fullmode = get_iparam("full", input_file_name);
-  batch_run = get_iparam("batch", input_file_name);
+  //Find out which driver we're using, and pass off to the appropriate
+  //handler function
+  get_sparam("driver", input_file_name, driver_name);
 
-  if (fullmode != 0) {
+  if (!strcmp(driver_name, "full")) {
     fullmode_handler(input_file_name);
-  } else if (batch_run != 0) {
+  } else if (!strcmp(driver_name, "batch")) {
     batchmode_handler(input_file_name);
-  } else {
+  } else if (!strcmp(driver_name, "arpack")) {
     arpack_handler(input_file_name);
+  } else {
+    sprintf(stderr, "Error: unrecognized 'driver' in input file.\n");
   }
 
   return 0;
