@@ -8,7 +8,6 @@
 
 void batch_driver(char *input_file_name)
 {
-  int iterate;
   char profiletype[256];
 
   PARAMS_STRUCT *params;
