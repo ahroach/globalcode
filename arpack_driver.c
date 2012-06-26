@@ -6,7 +6,7 @@
 #include "global.h"
 
 
-void arpack_handler(char *input_file_name)
+void arpack_driver(char *input_file_name)
 {
   char profiletype[256];
 

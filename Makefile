@@ -16,9 +16,9 @@ OBJS = main.o \
        create_matrix.o \
        setup_arpack.o \
        find_sigma.o \
-       arpack_handler.o \
-       batchmode_handler.o \
-       fullmode_handler.o \
+       arpack_driver.o \
+       batch_driver.o \
+       full_driver.o \
        couette.o \
        shearlayer.o \
        output.o \

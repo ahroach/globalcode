@@ -6,7 +6,7 @@
 #include "global.h"
 
 
-void batchmode_handler(char *input_file_name)
+void batch_driver(char *input_file_name)
 {
   int iterate;
   char profiletype[256];
@@ -56,8 +56,6 @@ void batchmode_handler(char *input_file_name)
   //Setup the arpack parameters
   arpack_params = setup_arpack(input_file_name);
 
-  iterate = get_iparam("iterate", input_file_name);
-
   //Now set up all of the batch mode parameters
 
   batch_B0_init = get_dparam("batch_B0_init", input_file_name);
@@ -78,7 +76,7 @@ void batchmode_handler(char *input_file_name)
     params->va = params->B0/sqrt(4.0*PI*params->rho);
     params->kva = params->k*params->va;
     fprintf(stdout, "Running batch mode with B = %g Gauss\n", params->B0);
-    if (iterate == 1) {
+    if (arpack_params->iterate == 1) {
       arpack_params->sigma = find_sigma(matrix, params, grid, rotation,
 					arpack_params);
     }

@@ -6,7 +6,7 @@
 #include "global.h"
 
 
-void fullmode_handler(char *input_file_name)
+void full_driver(char *input_file_name)
 {
   char profiletype[256];
 

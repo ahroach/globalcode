@@ -86,9 +86,9 @@ double get_dparam(char paramname[], char filename[]);
 void get_sparam(char paramname[], char filename[], char destination[]);
 void probgen(char input_file_name[], PARAMS_STRUCT *params);
 
-void arpack_handler(char *input_file_name);
-void fullmode_handler(char *input_file_name);
-void batchmode_handler(char *input_file_name);
+void arpack_driver(char *input_file_name);
+void full_driver(char *input_file_name);
+void batch_driver(char *input_file_name);
 
 ARPACK_CONTROL *setup_arpack(char *input_file_name);
 double complex find_sigma(COMPRESSED_MATRIX *matrix,

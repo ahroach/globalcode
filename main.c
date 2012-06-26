@@ -36,11 +36,11 @@ int main(int ac, char **av)
   get_sparam("driver", input_file_name, driver_name);
 
   if (!strcmp(driver_name, "full")) {
-    fullmode_handler(input_file_name);
+    full_driver(input_file_name);
   } else if (!strcmp(driver_name, "batch")) {
-    batchmode_handler(input_file_name);
+    batch_driver(input_file_name);
   } else if (!strcmp(driver_name, "arpack")) {
-    arpack_handler(input_file_name);
+    arpack_driver(input_file_name);
   } else {
     sprintf(stderr, "Error: unrecognized 'driver' in input file.\n");
   }
