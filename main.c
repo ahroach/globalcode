@@ -38,6 +38,8 @@ int main(int ac, char **av)
     batch_driver(input_file_name);
   } else if (!strcmp(driver_name, "arpack")) {
     arpack_driver(input_file_name);
+  } else if (!strcmp(driver_name, "shearlayerkcrit")) {
+    shearlayerkcrit_driver(input_file_name);
   } else {
     fprintf(stderr, "Error: unrecognized 'driver' in input file.\n");
   }

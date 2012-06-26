@@ -89,6 +89,7 @@ void probgen(char input_file_name[], PARAMS_STRUCT *params);
 void arpack_driver(char *input_file_name);
 void full_driver(char *input_file_name);
 void batch_driver(char *input_file_name);
+void shearlayerkcrit_driver(char *input_file_name);
 
 ARPACK_CONTROL *setup_arpack(char *input_file_name);
 double complex find_sigma(COMPRESSED_MATRIX *matrix,

@@ -19,6 +19,7 @@ OBJS = main.o \
        arpack_driver.o \
        batch_driver.o \
        full_driver.o \
+       shearlayerkcrit_driver.o \
        couette.o \
        shearlayer.o \
        output.o \
