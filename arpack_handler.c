@@ -8,7 +8,6 @@
 
 void arpack_handler(char *input_file_name)
 {
-  int iterate;
   char profiletype[256];
 
   PARAMS_STRUCT *params;
@@ -47,10 +46,8 @@ void arpack_handler(char *input_file_name)
   //Setup the arpack parameters
   arpack_params = setup_arpack(input_file_name);
 
-  iterate = get_iparam("iterate", input_file_name);
-
   //Just run this once, and output the eigenvalues and eigenvectors          
-  if (iterate == 1) {
+  if (arpack_params->iterate == 1) {
     arpack_params->sigma = find_sigma(matrix, params, grid, rotation,
 				      arpack_params);
   }

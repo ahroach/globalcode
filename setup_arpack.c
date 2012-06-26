@@ -25,6 +25,7 @@ ARPACK_CONTROL *setup_arpack(char *input_file_name) {
   arpack_params->sigma = arpack_params->sigma + I*imagpart;
   arpack_params->tol = get_dparam("tol", input_file_name);
   arpack_params->maxiters = get_iparam("maxiters", input_file_name);
+  arpack_params->iterate = get_iparam("iterate", input_file_name);
 
   //Make sure the mode specified by "which" is valid. If not, just
   //default to "LM"

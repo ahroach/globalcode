@@ -75,6 +75,7 @@ typedef struct {
   int nummodes;
   double complex sigma;
   double tol;
+  int iterate;
   int maxiters;
   char which[5];
 } ARPACK_CONTROL;
