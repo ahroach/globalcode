@@ -29,7 +29,7 @@ void shearlayerkcrit_driver(char *input_file_name)
   RESULTS_STRUCT *results;
   OUTPUT_CONTROL *output_control;
 
-  double shear_width, shear_radius, M;
+  double shear_width, shear_radius, E;
 
   //Parameters needed for the root-finding routine
   int status;
@@ -49,12 +49,13 @@ void shearlayerkcrit_driver(char *input_file_name)
   grid = gridgen(params);
 
   //Set up the rotation profile of a shear layer. Derive the width
-  //from the Hartmann number
+  //from the Ekman number, E=\nu/\Omega r^2, width = rE^(1/4)
+  //Use r = (r2-r1) and Omega = (Omega1-Omega2)/2.
 
   shear_radius = get_dparam("shear_radius", input_file_name);
-  M = (params->B0*(params->r2-params->r1) / 
-       sqrt(4*PI*params->rho*params->eta*params->nu));
-  shear_width = 2.0/sqrt(M);
+  E = params->nu/(0.5*fabs(params->omega1 - params->omega2) * 
+		  pow((params->r2-params->r1),2));
+  shear_width = (params->r2-params->r1)*pow(E, 0.25);
   printf("Using shear layer width %g cm\n", shear_width);
   rotation = shearlayer(params, grid, shear_width, shear_radius);
   
@@ -87,8 +88,8 @@ void shearlayerkcrit_driver(char *input_file_name)
 
   //Set the initial bounds for the search. Use the k specified by
   //the input file for the lower bound on k.
-  k_low = 0.1*2*PI/shear_width;
-  k_high = 1e3*k_low;
+  k_low = 0.001*2*PI/shear_width;
+  k_high = 1e5*k_low;
   gsl_root_fsolver_set(s, &F, k_low, k_high);
 
   //Now iterate!
