@@ -120,6 +120,7 @@ void shearlayerkcrit_driver(char *input_file_name)
 	status = gsl_min_fminimizer_iterate(smin);
 	//Make sure that we didn't thrown an error in the iteration routine
 	if (status != GSL_SUCCESS) {
+	  fprintf(stderr, "Aborted attempt to find k_peak.\n");
 	  break;
 	}
 	
@@ -135,6 +136,8 @@ void shearlayerkcrit_driver(char *input_file_name)
     while (status == GSL_CONTINUE && iter < max_iter);
     //Save the peak growth rate for printing later, then free the solver
     gr_peak = -gsl_min_fminimizer_f_minimum(smin);
+  } else {
+    fprintf(stderr, "Aborted attempt to find k_peak.\n");
   }
   gsl_min_fminimizer_free(smin);
 
@@ -179,6 +182,7 @@ void shearlayerkcrit_driver(char *input_file_name)
 	status = gsl_root_fsolver_iterate(sroot);
 	//Make sure that we didn't thrown an error in the iteration routine
 	if (status != GSL_SUCCESS) {
+	  fprintf(stderr, "Aborted attempt to find k_min.\n");
 	  break;
 	}
 	
@@ -192,6 +196,8 @@ void shearlayerkcrit_driver(char *input_file_name)
 	}
       }
     while (status == GSL_CONTINUE && iter < max_iter);
+  } else {
+    fprintf(stderr, "Aborted attempt to find k_min.\n");
   }
   gsl_root_fsolver_free (sroot);
 
@@ -233,6 +239,7 @@ void shearlayerkcrit_driver(char *input_file_name)
 	status = gsl_root_fsolver_iterate(sroot);
 	//Make sure that we didn't thrown an error in the iteration routine
 	if (status != GSL_SUCCESS) {
+	  fprintf(stderr, "Aborted attempt to find k_max.\n");
 	  break;
 	}
 	
@@ -246,6 +253,8 @@ void shearlayerkcrit_driver(char *input_file_name)
 	}
       }
     while (status == GSL_CONTINUE && iter < max_iter);
+  } else {
+    fprintf(stderr, "Aborted attempt to find k_max.\n");
   }
   gsl_root_fsolver_free (sroot);
     
