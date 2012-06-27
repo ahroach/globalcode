@@ -176,7 +176,6 @@ void shearlayerkcrit_driver(char *input_file_name)
     do 
       {
 	iter++;
-	printf("iter = %i\n", iter);
 	status = gsl_root_fsolver_iterate(sroot);
 	//Make sure that we didn't thrown an error in the iteration routine
 	if (status != GSL_SUCCESS) {
