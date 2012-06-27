@@ -129,7 +129,7 @@ void shearlayerkcrit_driver(char *input_file_name)
 	k_high = gsl_min_fminimizer_x_upper(smin);
 	status = gsl_min_test_interval(k_low, k_high, errabs, errrel);
 	
-	if(status == GSL_SUCCESS) {
+	if(status == GSL_SUCCESS && params->VERBOSE) {
 	  printf("Converged with k_peak=%g\n", params->k);
 	}
       }
@@ -191,7 +191,7 @@ void shearlayerkcrit_driver(char *input_file_name)
 	k_high = gsl_root_fsolver_x_upper(sroot);
 	status = gsl_root_test_interval(k_low, k_high, errabs, errrel);
 	
-	if(status == GSL_SUCCESS) {
+	if(status == GSL_SUCCESS && params->VERBOSE) {
 	  printf("Converged with k_min=%g\n", params->k);
 	}
       }
@@ -248,7 +248,7 @@ void shearlayerkcrit_driver(char *input_file_name)
 	k_high = gsl_root_fsolver_x_upper(sroot);
 	status = gsl_root_test_interval(k_low, k_high, errabs, errrel);
 	
-	if(status == GSL_SUCCESS) {
+	if(status == GSL_SUCCESS && params->VERBOSE) {
 	  printf("Converged with k_max=%g\n", params->k);
 	}
       }
