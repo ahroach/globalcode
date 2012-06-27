@@ -20,6 +20,9 @@ struct FUNCTION_PARAMS
 
 double mindampingrate(double k, void *params);
 
+void err_handler(const char *reason, const char *file, int line,
+		 int gsl_errno);
+
 void shearlayerkcrit_driver(char *input_file_name)
 {
   PARAMS_STRUCT *params;
@@ -94,6 +97,7 @@ void shearlayerkcrit_driver(char *input_file_name)
   F.function = &mindampingrate;
   F.params = &function_params;
 
+  gsl_set_error_handler(&err_handler);
 
   /* Now we find the peak of the growth rate, by minimizing the
      damping rate. We set what we hope are reasonable numbers
@@ -105,26 +109,33 @@ void shearlayerkcrit_driver(char *input_file_name)
   k_guess = params->k;
   Tmin = gsl_min_fminimizer_brent;
   smin = gsl_min_fminimizer_alloc(Tmin);
-  gsl_min_fminimizer_set(smin, &F, k_guess, k_low, k_high);
-
-  //Now iterate!
-  iter = 0;
-  do 
-    {
-      iter++;
-      status = gsl_min_fminimizer_iterate(smin);
-      params->k = gsl_min_fminimizer_x_minimum(smin);
-      k_low = gsl_min_fminimizer_x_lower(smin);
-      k_high = gsl_min_fminimizer_x_upper(smin);
-      status = gsl_min_test_interval(k_low, k_high, errabs, errrel);
-      
-      if(status == GSL_SUCCESS) {
-	printf("Converged with k_peak=%g\n", params->k);
+  status = gsl_min_fminimizer_set(smin, &F, k_guess, k_low, k_high);
+  //Make sure that we didn't thrown an error on initialization
+  if (status == GSL_SUCCESS) {
+    //Now iterate!
+    iter = 0;
+    do 
+      {
+	iter++;
+	status = gsl_min_fminimizer_iterate(smin);
+	//Make sure that we didn't thrown an error in the iteration routine
+	if (status != GSL_SUCCESS) {
+	  break;
+	}
+	
+	params->k = gsl_min_fminimizer_x_minimum(smin);
+	k_low = gsl_min_fminimizer_x_lower(smin);
+	k_high = gsl_min_fminimizer_x_upper(smin);
+	status = gsl_min_test_interval(k_low, k_high, errabs, errrel);
+	
+	if(status == GSL_SUCCESS) {
+	  printf("Converged with k_peak=%g\n", params->k);
+	}
       }
-    }
-  while (status == GSL_CONTINUE && iter < max_iter);
-  //Save the peak growth rate for printing later, then free the solver
-  gr_peak = -gsl_min_fminimizer_f_minimum(smin);
+    while (status == GSL_CONTINUE && iter < max_iter);
+    //Save the peak growth rate for printing later, then free the solver
+    gr_peak = -gsl_min_fminimizer_f_minimum(smin);
+  }
   gsl_min_fminimizer_free(smin);
 
   //Check to make sure we converged. If not, don't save the results.
@@ -157,24 +168,32 @@ void shearlayerkcrit_driver(char *input_file_name)
   //so search from 0 up to k_peak.
   k_low = 0;
   k_high = k_peak;
-  gsl_root_fsolver_set(sroot, &F, k_low, k_high);
-
-  //Now iterate!
-  iter = 0;
-  do 
-    {
-      iter++;
-      status = gsl_root_fsolver_iterate(sroot);
-      params->k = gsl_root_fsolver_root(sroot);
-      k_low = gsl_root_fsolver_x_lower(sroot);
-      k_high = gsl_root_fsolver_x_upper(sroot);
-      status = gsl_root_test_interval(k_low, k_high, errabs, errrel);
-      
-      if(status == GSL_SUCCESS) {
-	printf("Converged with k_min=%g\n", params->k);
+  status = gsl_root_fsolver_set(sroot, &F, k_low, k_high);
+  //Make sure that we didn't thrown an error on initialization
+  if (status == GSL_SUCCESS) {
+    //Now iterate!
+    iter = 0;
+    do 
+      {
+	iter++;
+	printf("iter = %i\n", iter);
+	status = gsl_root_fsolver_iterate(sroot);
+	//Make sure that we didn't thrown an error in the iteration routine
+	if (status != GSL_SUCCESS) {
+	  break;
+	}
+	
+	params->k = gsl_root_fsolver_root(sroot);
+	k_low = gsl_root_fsolver_x_lower(sroot);
+	k_high = gsl_root_fsolver_x_upper(sroot);
+	status = gsl_root_test_interval(k_low, k_high, errabs, errrel);
+	
+	if(status == GSL_SUCCESS) {
+	  printf("Converged with k_min=%g\n", params->k);
+	}
       }
-    }
-  while (status == GSL_CONTINUE && iter < max_iter);
+    while (status == GSL_CONTINUE && iter < max_iter);
+  }
   gsl_root_fsolver_free (sroot);
 
   //Check to make sure we converged. If not, don't save the results.
@@ -204,26 +223,33 @@ void shearlayerkcrit_driver(char *input_file_name)
   //so search from k_peak to a large number
   k_low = k_peak;
   k_high = 10000;
-  gsl_root_fsolver_set(sroot, &F, k_low, k_high);
-
-  //Now iterate!
-  iter = 0;
-  do 
-    {
-      iter++;
-      status = gsl_root_fsolver_iterate(sroot);
-      params->k = gsl_root_fsolver_root(sroot);
-      k_low = gsl_root_fsolver_x_lower(sroot);
-      k_high = gsl_root_fsolver_x_upper(sroot);
-      status = gsl_root_test_interval(k_low, k_high, errabs, errrel);
-      
-      if(status == GSL_SUCCESS) {
-	printf("Converged with k_max=%g\n", params->k);
+  status = gsl_root_fsolver_set(sroot, &F, k_low, k_high);
+  //Make sure that we didn't thrown an error on initialization
+  if (status == GSL_SUCCESS) {
+    //Now iterate!
+    iter = 0;
+    do 
+      {
+	iter++;
+	status = gsl_root_fsolver_iterate(sroot);
+	//Make sure that we didn't thrown an error in the iteration routine
+	if (status != GSL_SUCCESS) {
+	  break;
+	}
+	
+	params->k = gsl_root_fsolver_root(sroot);
+	k_low = gsl_root_fsolver_x_lower(sroot);
+	k_high = gsl_root_fsolver_x_upper(sroot);
+	status = gsl_root_test_interval(k_low, k_high, errabs, errrel);
+	
+	if(status == GSL_SUCCESS) {
+	  printf("Converged with k_max=%g\n", params->k);
+	}
       }
-    }
-  while (status == GSL_CONTINUE && iter < max_iter);
+    while (status == GSL_CONTINUE && iter < max_iter);
+  }
   gsl_root_fsolver_free (sroot);
-
+    
   //Check to make sure we converged. If not, don't save the results.
   if (status == GSL_SUCCESS) {
     k_max = params->k;
@@ -327,5 +353,14 @@ double mindampingrate(double k, void *fnparams)
   return -max_gr;
 }
  
+
+void err_handler(const char *reason, const char *file, int line,
+		 int gsl_errno)
+{
+  fprintf(stderr, "GSL error number %i in file %s at line %i\n", gsl_errno,
+	  file, line);
+  fprintf(stderr, "Reason: %s\n", reason);
+  return;
+}
 
   
