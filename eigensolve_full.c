@@ -29,7 +29,6 @@ RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
   double k2 = pow(params->k,2);
   double kva = params->kva;
   double complex facin, facout;
-  double Im, Imp1, Km, Kmp1;
 
   RESULTS_STRUCT *results;
   double complex tmpeigenvalue;
@@ -232,45 +231,6 @@ RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
     wAelbg(5*(grid->ie+1) + 1, 5*(grid->ie) + 1, matrix, -facout);
 
   } else if(params->magnetic_bc == 1) {
-    /*
-    //beta_theta = 0 at inner boundary
-    wAelbg(5*(grid->is-1) + 1, 5*(grid->is-1) + 1, matrix, scalefactorb);
-    wAelbg(5*(grid->is-1) + 1, 5*(grid->is) + 1, matrix, scalefactorb);
-
-    //beta_theta = 0 at outer boundary
-    wAelbg(5*(grid->ie+1) + 1, 5*(grid->ie+1) + 1, matrix, scalefactorb);
-    wAelbg(5*(grid->ie+1) + 1, 5*(grid->ie) + 1, matrix, scalefactorb);
-
-    //Condition on beta_r
-    Im = gsl_sf_bessel_In(params->m, params->k*params->r1);
-    Imp1 = gsl_sf_bessel_In((params->m + 1), params->k*params->r1);
-
-    Km = gsl_sf_bessel_Kn(params->m, params->k*params->r2);
-    Kmp1 = gsl_sf_bessel_Kn((params->m + 1), params->k*params->r2);
-
-    facin = 0.5*grid->dx
-      *(params->r1*((k2 + m2/pow(params->r1, 2))/params->k)
-	*Im/(Imp1 + (params->m/(params->k*params->r1))*Im) - 1.0);
-
-    facout = 0.5*grid->dx
-      *(params->r2*((k2 + m2/pow(params->r2, 2))/params->k)
-	*Km/(-Kmp1 + (params->m/(params->k*params->r2))*Km) - 1.0);
-
-    tempscalefactor = scalefactorb/facin;
-
-    wAelbg(5*(grid->is-1) + 0, 5*(grid->is-1) + 0, matrix, 
-	   tempscalefactor*(facin + 1.0));
-    wAelbg(5*(grid->is-1) + 0, 5*(grid->is) + 0, matrix,
-	   tempscalefactor*(facin - 1.0));
-    
-    tempscalefactor = scalefactorb/facout;
-
-    wAelbg(5*(grid->ie+1) + 0, 5*(grid->ie+1) + 0, matrix,
-	   tempscalefactor*(facout - 1.0));
-    wAelbg(5*(grid->ie+1) + 0, 5*(grid->ie) + 0, matrix,
-	   tempscalefactor*(facout + 1.0));
-    */
-
     double constin1, constin2, constout1, constout2;
 
     //match beta_r to insulating solution
