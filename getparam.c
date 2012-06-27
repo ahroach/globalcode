@@ -51,7 +51,7 @@ double get_dparam(char paramname[], char filename[])
   char inputstring[256];
   char searchstring[256];
   char scanstring[256];
-  double returnvalue;
+  double returnvalue = 0;
   int success = 0;
 
   strcpy(searchstring, paramname);
@@ -89,7 +89,7 @@ void get_sparam(char paramname[], char filename[], char destination[])
   char inputstring[256];
   char searchstring[256];
   char scanstring[256];
-  char returnstring[256];
+  char returnstring[256] = "";
   int success = 0;
 
   strcpy(searchstring, paramname);
