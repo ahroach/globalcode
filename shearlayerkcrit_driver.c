@@ -66,11 +66,14 @@ void shearlayerkcrit_driver(char *input_file_name)
   printf("Using shear layer width %g cm\n", shear_width);
   rotation = shearlayer(params, grid, shear_width, shear_radius);
   
-  //Set up the matrix strcture for the computations.
+  //Set up the matrix structure for the computations.
   matrix = create_matrix(5*grid->numcells);
 
   //Setup the ARPACK parameters
   arpack_params = setup_arpack(input_file_name);
+
+  //Setup the output control structure
+  output_control = malloc(sizeof(OUTPUT_CONTROL));
 
   //Pull the error params from the input file to decide when
   //we have converged
@@ -131,7 +134,6 @@ void shearlayerkcrit_driver(char *input_file_name)
     results = eigensolve(matrix, params, grid, rotation, arpack_params);
     
     //Setup the structures needed to output the data files, and write them.
-    output_control = malloc(sizeof(OUTPUT_CONTROL));
     get_sparam("basefilename", input_file_name, output_control->basefilename);
     strcat(output_control->basefilename, "_kpeak");
     wnetcdf(params, grid, rotation, output_control, arpack_params, results);
