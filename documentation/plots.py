@@ -10,7 +10,9 @@ benchmarkdir = "/home/MRI/globalcode/benchmarks_v2/"
 def plot_growth_rate_convergence(filename="growth_rate_convergence.eps"):
     datapath = benchmarkdir + "goodman_mri_m0_arpack_resscan/"
     grs = []
+    grs_full = []
     n = []
+    n_full = []
 
     ncfile = netcdf.netcdf_file(datapath + "m0_100.nc", 'r')
     grs.append(ncfile.variables['lambda'][0][0])
@@ -62,13 +64,67 @@ def plot_growth_rate_convergence(filename="growth_rate_convergence.eps"):
     n.append(8000)
     ncfile.close()
 
+    ncfile = netcdf.netcdf_file(datapath + "m0_16000.nc", 'r')
+    grs.append(ncfile.variables['lambda'][0][0])
+    n.append(16000)
+    ncfile.close()
+
+    ncfile = netcdf.netcdf_file(datapath + "m0_32000.nc", 'r')
+    grs.append(ncfile.variables['lambda'][0][0])
+    n.append(32000)
+    ncfile.close()
+
+    ncfile = netcdf.netcdf_file(datapath + "m0_100_full.nc", 'r')
+    grs_full.append(ncfile.variables['lambda'][0][0])
+    n_full.append(100)
+    ncfile.close()
+
+    ncfile = netcdf.netcdf_file(datapath + "m0_200_full.nc", 'r')
+    grs_full.append(ncfile.variables['lambda'][0][0])
+    n_full.append(200)
+    ncfile.close()
+
+    ncfile = netcdf.netcdf_file(datapath + "m0_400_full.nc", 'r')
+    grs_full.append(ncfile.variables['lambda'][0][0])
+    n_full.append(400)
+    ncfile.close()
+
+    ncfile = netcdf.netcdf_file(datapath + "m0_500_full.nc", 'r')
+    grs_full.append(ncfile.variables['lambda'][0][0])
+    n_full.append(500)
+    ncfile.close()
+
+    ncfile = netcdf.netcdf_file(datapath + "m0_600_full.nc", 'r')
+    grs_full.append(ncfile.variables['lambda'][0][0])
+    n_full.append(600)
+    ncfile.close()
+
+    ncfile = netcdf.netcdf_file(datapath + "m0_800_full.nc", 'r')
+    grs_full.append(ncfile.variables['lambda'][0][0])
+    n_full.append(800)
+    ncfile.close()
+
+    ncfile = netcdf.netcdf_file(datapath + "m0_1000_full.nc", 'r')
+    grs_full.append(ncfile.variables['lambda'][0][0])
+    n_full.append(1000)
+    ncfile.close()
+
+    ncfile = netcdf.netcdf_file(datapath + "m0_2000_full.nc", 'r')
+    grs_full.append(ncfile.variables['lambda'][0][0])
+    n_full.append(2000)
+    ncfile.close()
+
+    relerr = abs((numpy.array(grs[:-1])-grs[-1])/grs[-1])
+    relerr_full = abs((numpy.array(grs_full)-grs[-1])/grs[-1]) 
+
     fig = pyplot.figure()
     ax = fig.add_subplot(1,1,1)
-    ax.plot(n, grs, '*-')
-    ax.semilogx()
-    ax.set_xlabel("Number of grid cells")
-    ax.set_ylabel("Growth rate")
-
+    ax.loglog()
+    ax.plot(n_full, relerr_full, "rs-", ms=9, label="Full solution")
+    ax.plot(n[:-1], relerr, 'b*-', label="ARPACK")
+    ax.legend(loc='upper right')
+    ax.set_xlabel("N (number of grid cells)")
+    ax.set_ylabel(r"$|\gamma_N - \gamma_{32000}|/\gamma_{32000}$")
     fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
 
 def plot_timings(filename="timings.eps"):
