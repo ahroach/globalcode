@@ -5,6 +5,7 @@
 #include <complex.h>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
+#include <gsl/gsl_min.h>
 #include <gsl/gsl_roots.h>
 #include "global.h"
 
@@ -34,9 +35,15 @@ void shearlayerkcrit_driver(char *input_file_name)
   //Parameters needed for the root-finding routine
   int status;
   int iter=0, max_iter=50;
-  const gsl_root_fsolver_type *T;
-  gsl_root_fsolver *s;
-  double k_low, k_high;
+  const gsl_root_fsolver_type *Troot;
+  const gsl_min_fminimizer_type *Tmin;
+  gsl_root_fsolver *sroot;
+  gsl_min_fminimizer *smin;
+  double k_low, k_high, k_guess;
+  double k_min = NAN;
+  double k_max = NAN;
+  double k_peak = NAN;
+  double gr_peak;
   double errabs, errrel;
   gsl_function F;
   struct FUNCTION_PARAMS function_params;
@@ -81,60 +88,160 @@ void shearlayerkcrit_driver(char *input_file_name)
   //the gsl_function
   F.function = &mindampingrate;
   F.params = &function_params;
-  
-  //Set up the root solver
-  T = gsl_root_fsolver_brent;
-  s = gsl_root_fsolver_alloc(T);
 
-  //Set the initial bounds for the search. Use the k specified by
-  //the input file for the lower bound on k.
-  k_low = 0.001*2*PI/shear_width;
-  k_high = 1e5*k_low;
-  gsl_root_fsolver_set(s, &F, k_low, k_high);
+
+  /* Now we find the peak of the growth rate, by minimizing the
+     damping rate. We set what we hope are reasonable numbers
+     for the bounds and initial guess.
+  */
+
+  k_low = 0.01;
+  k_high = 1000;
+  k_guess = params->k;
+  Tmin = gsl_min_fminimizer_brent;
+  smin = gsl_min_fminimizer_alloc(Tmin);
+  gsl_min_fminimizer_set(smin, &F, k_guess, k_low, k_high);
 
   //Now iterate!
+  iter = 0;
   do 
     {
       iter++;
-      status = gsl_root_fsolver_iterate(s);
-      params->k = gsl_root_fsolver_root(s);
-      k_low = gsl_root_fsolver_x_lower(s);
-      k_high = gsl_root_fsolver_x_upper(s);
-      status = gsl_root_test_interval(k_low, k_high, errabs, errrel);
+      status = gsl_min_fminimizer_iterate(smin);
+      params->k = gsl_min_fminimizer_x_minimum(smin);
+      k_low = gsl_min_fminimizer_x_lower(smin);
+      k_high = gsl_min_fminimizer_x_upper(smin);
+      status = gsl_min_test_interval(k_low, k_high, errabs, errrel);
       
       if(status == GSL_SUCCESS) {
-	printf("Converged with k=%g\n", params->k);
+	printf("Converged with k_peak=%g\n", params->k);
       }
     }
   while (status == GSL_CONTINUE && iter < max_iter);
-
-  gsl_root_fsolver_free (s);
+  //Save the peak growth rate for printing later, then free the solver
+  gr_peak = -gsl_min_fminimizer_f_minimum(smin);
+  gsl_min_fminimizer_free(smin);
 
   //Check to make sure we converged. If not, don't save the results.
-  if (status != GSL_SUCCESS) {
-    return;
+  if (status == GSL_SUCCESS) {
+    k_peak = params->k;
+    //Now do a normal run with the chosen k
+    arpack_params->sigma = find_sigma(matrix, params, grid, rotation,
+				      arpack_params);
+    results = eigensolve(matrix, params, grid, rotation, arpack_params);
+    
+    //Setup the structures needed to output the data files, and write them.
+    output_control = malloc(sizeof(OUTPUT_CONTROL));
+    get_sparam("basefilename", input_file_name, output_control->basefilename);
+    strcat(output_control->basefilename, "_kpeak");
+    wnetcdf(params, grid, rotation, output_control, arpack_params, results);
+    
+    free(results->lambda);
+    free(results->z);
+    free(results->residual);
+    free(results);
   }
 
-  //Now do a normal run with the chosen k
-  //Unfortunately, I don't think I can trust the results from the
-  //last call to mindampingrate(), because I don't know that the last
-  //evaluation of the function by the root-finding routine
-  //is guaranteed to occur at the optimized k.
-  arpack_params->sigma = find_sigma(matrix, params, grid, rotation,
-				    arpack_params);
-  results = eigensolve(matrix, params, grid, rotation, arpack_params);
-  
-  //Setup the structures needed to output the data files, and write them.
-  output_control = malloc(sizeof(OUTPUT_CONTROL));
-  output_control->filenum = 0;
-  get_sparam("basefilename", input_file_name, output_control->basefilename);
 
-  wnetcdf(params, grid, rotation, output_control, arpack_params, results);
+  /* Now do a root finding search for k_min. */
 
-  free(results->lambda);
-  free(results->z);
-  free(results->residual);
-  free(results);
+  //Set up the root solver.
+  Troot = gsl_root_fsolver_brent;
+  sroot = gsl_root_fsolver_alloc(Troot);
+
+  //Set the initial bounds for the search. We're searching for k_min,
+  //so search from 0 up to k_peak.
+  k_low = 0;
+  k_high = k_peak;
+  gsl_root_fsolver_set(sroot, &F, k_low, k_high);
+
+  //Now iterate!
+  iter = 0;
+  do 
+    {
+      iter++;
+      status = gsl_root_fsolver_iterate(sroot);
+      params->k = gsl_root_fsolver_root(sroot);
+      k_low = gsl_root_fsolver_x_lower(sroot);
+      k_high = gsl_root_fsolver_x_upper(sroot);
+      status = gsl_root_test_interval(k_low, k_high, errabs, errrel);
+      
+      if(status == GSL_SUCCESS) {
+	printf("Converged with k_min=%g\n", params->k);
+      }
+    }
+  while (status == GSL_CONTINUE && iter < max_iter);
+  gsl_root_fsolver_free (sroot);
+
+  //Check to make sure we converged. If not, don't save the results.
+  if (status == GSL_SUCCESS) {
+    k_min = params->k;
+    //Now do a normal run with the chosen k
+    arpack_params->sigma = find_sigma(matrix, params, grid, rotation,
+				      arpack_params);
+    results = eigensolve(matrix, params, grid, rotation, arpack_params);
+    
+    //Set the new file name, and write the output
+    get_sparam("basefilename", input_file_name, output_control->basefilename);
+    strcat(output_control->basefilename, "_kmin");
+    wnetcdf(params, grid, rotation, output_control, arpack_params, results);
+    
+    free(results->lambda);
+    free(results->z);
+    free(results->residual);
+    free(results);
+  }
+
+
+  /* Now move on to solving for k_max. */
+  sroot = gsl_root_fsolver_alloc(Troot);
+
+  //Set the initial bounds for the search. We're searching for k_max,
+  //so search from k_peak to a large number
+  k_low = k_peak;
+  k_high = 10000;
+  gsl_root_fsolver_set(sroot, &F, k_low, k_high);
+
+  //Now iterate!
+  iter = 0;
+  do 
+    {
+      iter++;
+      status = gsl_root_fsolver_iterate(sroot);
+      params->k = gsl_root_fsolver_root(sroot);
+      k_low = gsl_root_fsolver_x_lower(sroot);
+      k_high = gsl_root_fsolver_x_upper(sroot);
+      status = gsl_root_test_interval(k_low, k_high, errabs, errrel);
+      
+      if(status == GSL_SUCCESS) {
+	printf("Converged with k_max=%g\n", params->k);
+      }
+    }
+  while (status == GSL_CONTINUE && iter < max_iter);
+  gsl_root_fsolver_free (sroot);
+
+  //Check to make sure we converged. If not, don't save the results.
+  if (status == GSL_SUCCESS) {
+    k_max = params->k;
+    //Now do a normal run with the chosen k
+    arpack_params->sigma = find_sigma(matrix, params, grid, rotation,
+				      arpack_params);
+    results = eigensolve(matrix, params, grid, rotation, arpack_params);
+    
+    //Set the new file name, and write the output
+    get_sparam("basefilename", input_file_name, output_control->basefilename);
+    strcat(output_control->basefilename, "_kmax");
+    wnetcdf(params, grid, rotation, output_control, arpack_params, results);
+    
+    free(results->lambda);
+    free(results->z);
+    free(results->residual);
+    free(results);
+  }
+
+  printf("Found k_min = %g, k_peak = %g, k_max = %g\n", k_min, k_peak, k_max);
+  printf("Peak growth rate: %g\n", gr_peak);
+
   free(matrix->A);
   free(matrix->B);
   free(matrix->Bb);
@@ -146,6 +253,7 @@ void shearlayerkcrit_driver(char *input_file_name)
   free(grid);
   free(rotation->omega);
   free(rotation);
+  free(output_control);
 
   return;
 }
