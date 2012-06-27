@@ -38,7 +38,7 @@ int get_iparam(char paramname[], char filename[])
   }
 
   if(!success) {
-    fprintf(stderr, "Error reading value %s from input file.\n", paramname);
+    fprintf(stderr, "Error reading value '%s' from input file.\n", paramname);
   }
 
   fclose(inputfile);
@@ -76,7 +76,7 @@ double get_dparam(char paramname[], char filename[])
   }
 
   if(!success) {
-    fprintf(stderr, "Error reading value %s from input file.\n", paramname);
+    fprintf(stderr, "Error reading value '%s' from input file.\n", paramname);
   }
 
   fclose(inputfile);
@@ -114,7 +114,7 @@ void get_sparam(char paramname[], char filename[], char destination[])
   }
 
   if(!success) {
-    fprintf(stderr, "Error reading value %s from input file.\n", paramname);
+    fprintf(stderr, "Error reading value '%s' from input file.\n", paramname);
   }
 
   fclose(inputfile);
