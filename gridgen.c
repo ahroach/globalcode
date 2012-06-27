@@ -33,8 +33,10 @@ GRID_STRUCT *gridgen(PARAMS_STRUCT *params) {
   double dx2inv = 1.0/pow(dx,2);
   double m2 = pow(params->m, 2);
   double k2 = pow(params->k, 2);
-  printf("dx = %g\n", dx);
-
+  if(params->VERBOSE) {
+    printf("dx = %g\n", dx);
+  }
+  
   /* Generate the logarithmic grid */
   for(int i=0;i<=grid->numcells-1;i++) {
     grid->r[i]=exp(x1+(i-0.5)*dx);

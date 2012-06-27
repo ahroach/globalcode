@@ -432,9 +432,11 @@ RESULTS_STRUCT *eigensolve(COMPRESSED_MATRIX *matrix,
   //Look at some information from this run
   results->itersused = iparam[2];
   results->nconv = iparam[4];
-  fprintf(stdout, "Run completed.\n%i Arnoldi update iterations taken of %i maximum.\n", results->itersused, arpack_params->maxiters);
-  fprintf(stdout, "%i converged Ritz values, of %i requested.\n",
-	  results->nconv, arpack_params->nummodes);
+  if(params->VERBOSE) {
+    fprintf(stdout, "Run completed.\n%i Arnoldi update iterations taken of %i maximum.\n", results->itersused, arpack_params->maxiters);
+    fprintf(stdout, "%i converged Ritz values, of %i requested.\n",
+	    results->nconv, arpack_params->nummodes);
+  }
   
 
   // Either there is convergence, or there is an error

@@ -369,7 +369,7 @@ RESULTS_STRUCT *eigensolve_full(COMPRESSED_MATRIX *matrix,
 	 &lwork, rwork, &info);
   
   if (info != 0) {
-    printf("Error: ZGGEV returned %i.\n", info);
+    fprintf(stderr, "Error: ZGGEV returned %i.\n", info);
   }
 
 

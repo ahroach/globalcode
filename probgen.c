@@ -41,8 +41,9 @@ void probgen(char input_file_name[], PARAMS_STRUCT *params) {
   params->Ha = params->B0*sqrt(params->r1*(params->r2-params->r1))/
     sqrt(4.0*PI*params->rho*params->nu*params->eta);
 
-  /* Print information for user verification */
+  params->VERBOSE = get_iparam("verbose", input_file_name);
 
+  /* Print information for user verification */
   fprintf(stdout,"\nMRI Nonaxisymmetric Global Stability Code\n\n");
   fprintf(stdout,"Nu = %g cm^2/sec\n", params->nu);
   fprintf(stdout,"Eta = %g cm^2/sec\n", params->eta);

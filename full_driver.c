@@ -51,13 +51,14 @@ void full_driver(char *input_file_name)
   arpack_params->maxiters = -1;
   arpack_params->nummodes = -1;
 
-  fprintf(stdout, "Entering main loop\n");
+  if(params->VERBOSE) {
+    fprintf(stdout, "Entering main loop\n");
+  }
 
   results = eigensolve_full(matrix, params, grid, rotation, arpack_params);
 
   //Setup the things needed to output data files           
   output_control = malloc(sizeof(OUTPUT_CONTROL));
-  output_control->filenum = 0;
   get_sparam("basefilename", input_file_name, output_control->basefilename);
 
   wnetcdf(params, grid, rotation, output_control, arpack_params, results);
@@ -78,6 +79,7 @@ void full_driver(char *input_file_name)
   free(grid);
   free(rotation->omega);
   free(rotation);
+  free(output_control);
 
   return;
 }

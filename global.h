@@ -24,6 +24,7 @@ typedef struct {
   double zetabar;
   int numcells;
   int magnetic_bc; //0 for perfectly conducting B.C., 1 for insulating
+  int VERBOSE;
 } PARAMS_STRUCT;
 
 typedef struct {

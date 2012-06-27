@@ -74,13 +74,17 @@ void batch_driver(char *input_file_name)
     params->B0 = batch_B0_init + B0_stepsize*i;
     params->va = params->B0/sqrt(4.0*PI*params->rho);
     params->kva = params->k*params->va;
-    fprintf(stdout, "Running batch mode with B = %g Gauss\n", params->B0);
+    if(params->VERBOSE) {
+      fprintf(stdout, "Running batch mode with B = %g Gauss\n", params->B0);
+    }
     if (arpack_params->iterate == 1) {
       arpack_params->sigma = find_sigma(matrix, params, grid, rotation,
 					arpack_params);
     }
 
-    fprintf(stdout, "Entering main routine\n");
+    if(params->VERBOSE) {
+      fprintf(stdout, "Entering main routine\n");
+    }
     results = eigensolve(matrix, params, grid, rotation, arpack_params);
 
     outputfile = fopen(output_file_path, "a");

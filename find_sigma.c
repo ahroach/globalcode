@@ -41,16 +41,20 @@ double complex find_sigma(COMPRESSED_MATRIX *matrix,
           max_eigenvalue = results->lambda[j];
         }
       }
-      fprintf(stdout, "Max eigenvalue of %g + I*%g found\n",
-              creal(max_eigenvalue), cimag(max_eigenvalue));
+      if(params->VERBOSE) {
+	fprintf(stdout, "Max eigenvalue of %g + I*%g found\n",
+		creal(max_eigenvalue), cimag(max_eigenvalue));
+      }
 
       //Now reset the parameters and run again.
       temp_arpack_params->tol = temp_arpack_params->tol*.5;
       temp_arpack_params->sigma = 0.1*temp_arpack_params->sigma
         + 0.9*max_eigenvalue;
-      fprintf(stdout, "Choosing new sigma %g + I*%g\n",
-              creal(temp_arpack_params->sigma),
-              cimag(temp_arpack_params->sigma));
+      if(params->VERBOSE) {
+	fprintf(stdout, "Choosing new sigma %g + I*%g\n",
+		creal(temp_arpack_params->sigma),
+		cimag(temp_arpack_params->sigma));
+      }
     }
     free(results->lambda);
     free(results->z);
