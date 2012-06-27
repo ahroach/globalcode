@@ -17,7 +17,7 @@ struct FUNCTION_PARAMS
   ARPACK_CONTROL *arpack_params;
 };
 
-double growthrate(double k, void *params);
+double mindampingrate(double k, void *params);
 
 void shearlayerkcrit_driver(char *input_file_name)
 {
@@ -79,7 +79,7 @@ void shearlayerkcrit_driver(char *input_file_name)
   
   //Assign the evaluation function and params structure to
   //the gsl_function
-  F.function = &growthrate;
+  F.function = &mindampingrate;
   F.params = &function_params;
   
   //Set up the root solver
@@ -117,7 +117,7 @@ void shearlayerkcrit_driver(char *input_file_name)
 
   //Now do a normal run with the chosen k
   //Unfortunately, I don't think I can trust the results from the
-  //last call to growthrate(), because I don't know that the last
+  //last call to mindampingrate(), because I don't know that the last
   //evaluation of the function by the root-finding routine
   //is guaranteed to occur at the optimized k.
   arpack_params->sigma = find_sigma(matrix, params, grid, rotation,
@@ -151,8 +151,17 @@ void shearlayerkcrit_driver(char *input_file_name)
 }
  
 
-double growthrate(double k, void *fnparams)
+double mindampingrate(double k, void *fnparams)
 {
+  /* This function calculates the minimumdamping rate for given k and
+     params. Because all of our routines are set up to calculate
+     growth rate, gamma, we find the maximum growth rate, and then
+     return the negative of that as the minimum damping rate. This
+     form is required since we want to find the peak growth rate, but
+     it's easiest to use a function minimizer to find the minimum
+     damping rate.
+  */
+
   //Get a pointer casting the params as a function_params structure
   //so I can address the elements.
   struct FUNCTION_PARAMS *p = (struct FUNCTION_PARAMS *) fnparams;
@@ -203,7 +212,7 @@ double growthrate(double k, void *fnparams)
   free(results->z);
   free(results);
 
-  return max_gr;
+  return -max_gr;
 }
  
 
