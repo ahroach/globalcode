@@ -64,11 +64,14 @@ void shearlayerkcrit_driver(char *input_file_name)
   //Use r = (r2-r1) and Omega = (Omega1-Omega2)/2.
 
   shear_radius = get_dparam("shear_radius", input_file_name);
+  /*
   width_prefactor = get_dparam("width_prefactor", input_file_name);
   E = params->nu/(0.5*fabs(params->omega1 - params->omega2) * 
 		  pow((params->r2-params->r1),2));
   shear_width = width_prefactor*(params->r2-params->r1)*pow(E, 0.25);
   printf("Using shear layer width %g cm\n", shear_width);
+  */
+  shear_width = get_dparam("shear_width", input_file_name);
   rotation = shearlayer(params, grid, shear_width, shear_radius);
   
   //Set up the matrix structure for the computations.
