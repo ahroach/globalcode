@@ -14,6 +14,7 @@ int get_iparam(char paramname[], char filename[])
   char searchstring[256];
   char scanstring[256];
   int returnvalue = 0;
+  int success = 0;
   
   strcpy(searchstring, paramname);
   strcat(searchstring, "=");
@@ -31,8 +32,13 @@ int get_iparam(char paramname[], char filename[])
     if((strstr(inputstring, searchstring) != NULL) &&
        (strstr(inputstring, searchstring) - inputstring) == 0) {
       sscanf(inputstring, scanstring, &returnvalue);
+      success = 1;
       break;
     }
+  }
+
+  if(!success) {
+    fprintf(stderr, "Error reading value %s from input file.\n", paramname);
   }
 
   fclose(inputfile);
@@ -46,6 +52,7 @@ double get_dparam(char paramname[], char filename[])
   char searchstring[256];
   char scanstring[256];
   double returnvalue;
+  int success = 0;
 
   strcpy(searchstring, paramname);
   strcat(searchstring, "=");
@@ -63,8 +70,13 @@ double get_dparam(char paramname[], char filename[])
     if((strstr(inputstring, searchstring) != NULL) &&
        (strstr(inputstring, searchstring) - inputstring) == 0) {
       sscanf(inputstring, scanstring, &returnvalue);
+      success = 1;
       break;
     }
+  }
+
+  if(!success) {
+    fprintf(stderr, "Error reading value %s from input file.\n", paramname);
   }
 
   fclose(inputfile);
@@ -78,6 +90,7 @@ void get_sparam(char paramname[], char filename[], char destination[])
   char searchstring[256];
   char scanstring[256];
   char returnstring[256];
+  int success = 0;
 
   strcpy(searchstring, paramname);
   strcat(searchstring, "=");
@@ -95,8 +108,13 @@ void get_sparam(char paramname[], char filename[], char destination[])
     if((strstr(inputstring, searchstring) != NULL) &&
        (strstr(inputstring, searchstring) - inputstring) == 0) {
       sscanf(inputstring, scanstring, returnstring);
+      success = 1;
       break;
     }
+  }
+
+  if(!success) {
+    fprintf(stderr, "Error reading value %s from input file.\n", paramname);
   }
 
   fclose(inputfile);
