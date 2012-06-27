@@ -46,7 +46,6 @@ typedef struct {
 } ROTATION_STRUCT;
 
 typedef struct {
-  int filenum;
   char basefilename[256];
 } OUTPUT_CONTROL;
 
