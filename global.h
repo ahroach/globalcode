@@ -102,9 +102,6 @@ ROTATION_STRUCT *couette(PARAMS_STRUCT *params, GRID_STRUCT *grid);
 ROTATION_STRUCT *dataprofile(PARAMS_STRUCT *params, GRID_STRUCT *grid);
 ROTATION_STRUCT *shearlayer(PARAMS_STRUCT *params, GRID_STRUCT *grid,
 			    double shear_width, double shear_radius);
-void output(PARAMS_STRUCT *params, GRID_STRUCT *grid,
-	    ROTATION_STRUCT *rotation, OUTPUT_CONTROL *output_control,
-	    double complex *state, double complex gr);
 void wAelem(int i, int j, COMPRESSED_MATRIX *matrix, double complex value);
 void pAelem(int i, int j, COMPRESSED_MATRIX *matrix);
 void wBelem(int i, int j, COMPRESSED_MATRIX *matrix, double complex value);

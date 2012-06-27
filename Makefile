@@ -22,7 +22,6 @@ OBJS = main.o \
        shearlayerkcrit_driver.o \
        couette.o \
        shearlayer.o \
-       output.o \
        writematrix.o \
        eigensolve.o \
        eigensolve_full.o \
