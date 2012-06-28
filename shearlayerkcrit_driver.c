@@ -147,6 +147,15 @@ void shearlayerkcrit_driver(char *input_file_name)
   //Check to make sure we converged. If not, don't save the results.
   if (status == GSL_SUCCESS) {
     k_peak = params->k;
+
+    //Make sure everything is set up correctly for normal run
+    params->kva = params->k*params->va;
+    free(grid->r);
+    free(grid->x);
+    free(grid->r2inv);
+    free(grid);
+    grid = gridgen(params);
+
     //Now do a normal run with the chosen k
     arpack_params->sigma = find_sigma(matrix, params, grid, rotation,
 				      arpack_params);
@@ -207,6 +216,15 @@ void shearlayerkcrit_driver(char *input_file_name)
   //Check to make sure we converged. If not, don't save the results.
   if (status == GSL_SUCCESS) {
     k_min = params->k;
+
+    //Make sure everything is set up correctly for the normal run
+    params->kva = params->k*params->va;
+    free(grid->r);
+    free(grid->x);
+    free(grid->r2inv);
+    free(grid);
+    grid = gridgen(params);
+
     //Now do a normal run with the chosen k
     arpack_params->sigma = find_sigma(matrix, params, grid, rotation,
 				      arpack_params);
@@ -264,6 +282,15 @@ void shearlayerkcrit_driver(char *input_file_name)
   //Check to make sure we converged. If not, don't save the results.
   if (status == GSL_SUCCESS) {
     k_max = params->k;
+
+    //Make sure everything is set up correctly for the normal run
+    params->kva = params->k*params->va;
+    free(grid->r);
+    free(grid->x);
+    free(grid->r2inv);
+    free(grid);
+    grid = gridgen(params);
+
     //Now do a normal run with the chosen k
     arpack_params->sigma = find_sigma(matrix, params, grid, rotation,
 				      arpack_params);
@@ -329,6 +356,7 @@ double mindampingrate(double k, void *fnparams)
 
   //Now change k in the params
   params->k = k;
+  params->kva = params->k*params->va;
   
   //And I have to recalculate the quantities in the grid,
   //since I have the matrix elements of the diffuse terms in there
