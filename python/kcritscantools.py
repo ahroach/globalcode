@@ -77,6 +77,9 @@ def plot_quantities_const_omega(rule, omega1):
     ax2.legend(loc='best')
     ax1.axvline(Bcrit(omega1), color='k')
     ax2.axvline(Bcrit(omega1), color='k')
+    ax2.set_xlabel("B [gauss]")
+    ax1.set_ylabel(r"$k_z$ [1/cm]")
+    ax2.set_ylabel(r"Re{$\gamma$} [1/s]")
 
 def elsasser(omega, B):
     rho = 6.36 #Density in g/cm^3
