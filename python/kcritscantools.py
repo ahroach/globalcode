@@ -10,7 +10,11 @@ def grab_data(rule):
 
     filebases = []
     for i in range(0, len(files)):
-        filebase = re.split('_', files[i])[0]
+        #Grab the part after the / of any path, and before the _k*.nc
+        filebase = re.split('_', 
+                            re.split('/', files[i])[-1]
+                            )[0]
+        #If we haven't seen this base before, keep it around.
         if not(filebases.count(filebase)):
             filebases.append(filebase)
     
@@ -90,11 +94,13 @@ def grab_data_kscan(rule):
     data =  numpy.ones(numfiles, dtype = [('kz', float), ('B', float),
                                           ('gr', float)])
 
-    for i in range(0,numfiles):
+    for i in range(0,numfiles):        
+        #Make sure there's not a path stuck on the front of this.
+        fname = re.split('/', files[i])[-1]
         data[i]['kz'] = float(re.split('B',
-                                       re.split('k', files[i])[1])[0])
+                                       re.split('k', fname)[1])[0])
         data[i]['B'] = float(re.split('.nc',
-                                      re.split('B', files[i])[1])[0])
+                                      re.split('B', fname)[1])[0])
 
         ncfile = netcdf.netcdf_file(files[i], 'r')
         data[i]['gr'] = ncfile.variables['lambda'][0,0]
