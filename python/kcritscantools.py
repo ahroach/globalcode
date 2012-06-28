@@ -81,9 +81,9 @@ def plot_quantities_const_omega(rule, omega1):
 def elsasser(omega, B):
     rho = 6.36 #Density in g/cm^3
     eta = 2.43e3 #Resistivity in cm^2/s
-    return B**2/(4*numpy.pi*eta*rho*omega)
+    return B**2/(4*numpy.pi*eta*rho*(omega*2*numpy.pi/60))
 
 def Bcrit(omega, elsasser=1):
     rho = 6.36 #Density in g/cm^3
     eta = 2.43e3 #Resistivity in cm^2/s
-    return numpy.sqrt(4*numpy.pi*eta*rho*omega*elsasser)
+    return numpy.sqrt(4*numpy.pi*eta*rho*(omega*2*numpy.pi/60)*elsasser)
