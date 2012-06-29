@@ -25,14 +25,18 @@ def grab_data(rule):
                                           ('kpeak', float),
                                           ('peakgr', float)])
 
+    path = ""
+    for dir in (re.split('/', files[0])[0:-1]):
+        path = path + dir + '/'
+
     for i in range(0,numbases):
         data[i]['omega1'] = float(re.split('B',
                                            re.split('w', filebases[i])[1])[0])
         data[i]['B'] = float(re.split('B', filebases[i])[1])
 
-        kminname = filebases[i] + "_kmin.nc"
-        kmaxname = filebases[i] + "_kmax.nc"
-        kpeakname = filebases[i] + "_kpeak.nc"
+        kminname = path + filebases[i] + "_kmin.nc"
+        kmaxname = path + filebases[i] + "_kmax.nc"
+        kpeakname = path + filebases[i] + "_kpeak.nc"
         
         if(os.path.exists(kminname)):
             ncfile = netcdf.netcdf_file(kminname, 'r')
