@@ -137,7 +137,9 @@ def plot_kscan_curves(rule):
     ax.set_xlabel(r"$k_z$ [1/cm]")
     ax.set_ylabel(r"Re[$\gamma$] [1/s]")
     ax.autoscale(axis='y', tight=True)
-    ax.set_ylim(bottom=-5)
+    ytop = ax.set_ylim()[1]
+    if (ytop > 0):
+        ax.set_ylim(bottom=-0.2*ytop)
     ax.set_xscale('log')
     ax.legend(loc='best')
 
