@@ -178,6 +178,65 @@ def plot_kscan_curves(rule):
     ax.set_xscale('log')
     ax.legend(loc='best')
 
+
+def grab_data_kscan_omega2(rule):
+    files = glob.glob(rule)
+
+    numfiles = len(files)
+
+    data =  numpy.ones(numfiles, dtype = [('kz', float), ('omega2', float),
+                                          ('gr', float)])
+
+    for i in range(0,numfiles):        
+        #Make sure there's not a path stuck on the front of this.
+        fname = re.split('/', files[i])[-1]
+        data[i]['kz'] = float(re.split('W',
+                                       re.split('k', fname)[1])[0])
+        data[i]['omega2'] = float(re.split('.nc',
+                                      re.split('W', fname)[1])[0])
+
+        ncfile = netcdf.netcdf_file(files[i], 'r')
+        data[i]['gr'] = ncfile.variables['lambda'][0,0]
+        ncfile.close()
+
+    #Sort the array so things are nicer
+    data = numpy.sort(data, order=['omega2', 'kz'])
+    
+    return data
+
+def plot_kscan_curves_omega2(rule):
+    data = grab_data_kscan_omega2(rule)
+    
+    omega2s = []
+
+    #Find the unique omega2s.
+    for i in range (0, data.size):
+        if not(omega2s.count(data[i]['omega2'])):
+            omega2s.append(data[i]['omega2'])
+    
+    #Now for each omega, find the indexes that correspond to it.
+    omega2idx = []
+    for i in range(0, len(omega2s)):
+        omega2idx.append(numpy.equal(data[:]['omega2'],
+                                     omega2s[i]*numpy.ones(data.size)))
+    
+    #Now plot each of these.
+    fig = pyplot.figure()
+    ax = fig.add_subplot(111)
+    for i in range(0, len(omega2s)):
+        ax.plot(data[omega2idx[i]]['kz'], data[omega2idx[i]]['gr'],
+                '.-', label=r"$\Omega_2$=%g rpm" % omega2s[i])
+    
+    ax.set_xlabel(r"$k_z$ [1/cm]")
+    ax.set_ylabel(r"Re[$\gamma$] [1/s]")
+    ax.autoscale(axis='y', tight=True)
+    ytop = ax.set_ylim()[1]
+    if (ytop > 0):
+        ax.set_ylim(bottom=-0.2*ytop)
+    ax.set_xscale('log')
+    ax.legend(loc='best')
+
+
 def elsasser(omega, B):
     rho = 6.36 #Density in g/cm^3
     eta = 2.43e3 #Resistivity in cm^2/s
