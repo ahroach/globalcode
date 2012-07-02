@@ -175,6 +175,7 @@ void shearlayerkcrit_driver(char *input_file_name)
 
   /* Now do a root finding search for k_min. */
 
+  /*
   //Set up the root solver.
   Troot = gsl_root_fsolver_brent;
   sroot = gsl_root_fsolver_alloc(Troot);
@@ -240,9 +241,10 @@ void shearlayerkcrit_driver(char *input_file_name)
     free(results->residual);
     free(results);
   }
-
+  */
 
   /* Now move on to solving for k_max. */
+  Troot = gsl_root_fsolver_brent;
   sroot = gsl_root_fsolver_alloc(Troot);
 
   //Set the initial bounds for the search. We're searching for k_max,
