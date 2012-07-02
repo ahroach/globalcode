@@ -277,10 +277,13 @@ def plot_width_dependence(rule):
                                     ('growthrate', float)])
     for i in range(0, numfiles):
         ncfile = netcdf.netcdf_file(files[i], 'r')
+        filename = re.split('/', files[i])[-1]
         #Now grab width out of the title string
-        data[i]['width'] = float(re.split('d', re.split('m', files[i])[0])[1])
+        data[i]['width'] = float(re.split('d', re.split('m',
+                                                        filename)[0])[1])
         #Now grab m out of the file name
-        data[i]['m'] = int(re.split('m', re.split('.nc', files[i])[0])[1])
+        data[i]['m'] = int(re.split('m', re.split('.nc',
+                                                  filename)[0])[1])
         data[i]['growthrate'] = ncfile.variables['lambda'][0,0]
         ncfile.close()
 
