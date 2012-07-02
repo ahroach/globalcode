@@ -66,28 +66,59 @@ def grab_data(rule):
         
     return data
 
-def plot_quantities_const_omega(rule, omega1):
+def plot_quantities_const_omega(rule, *omegas):
+    if len(omegas) <= 0:
+        print "Need to specify at least one omega."
+        return
+
     data = grab_data(rule)
-    idxs = numpy.equal(data[:]['omega1'], omega1*numpy.ones(data.size))
+    idxs = []
+    axs = []
     
-    fig = pyplot.figure()
-    ax1 = fig.add_subplot(2,1,1)
-    ax2 = fig.add_subplot(2,1,2)
+    numomegas = len(omegas)
+    fig = pyplot.figure(figsize=(8, 4*numomegas))
+    fig.subplots_adjust(hspace=0.5)
 
-    ax1.plot(data[idxs]['B'], data[idxs]['kmin'], '.-', label=r"$k_{min}$")
-    ax1.plot(data[idxs]['B'], data[idxs]['kmax'], '.-', label=r"$k_{max}$")
-    ax1.plot(data[idxs]['B'], data[idxs]['kpeak'], '.-', label=r"$k_{peak}$")
+    for i in range(0, len(omegas)):
+        tempax = []
+        idxs.append(numpy.equal(data[:]['omega1'],
+                                omegas[i]*numpy.ones(data.size)))
+        if(i == 0):
+            tempax.append(fig.add_subplot(2*numomegas, 1, i*2 + 1))
+            tempax.append(fig.add_subplot(2*numomegas, 1, i*2 + 2,
+                                          sharex = tempax[0]))
+        else:
+            tempax.append(fig.add_subplot(2*numomegas, 1, i*2 + 1,
+                                          sharex = axs[0][0]))
+            tempax.append(fig.add_subplot(2*numomegas, 1, i*2 + 2,
+                                          sharex = axs[0][0]))
+                
+    
+        axs.append(tempax)
 
-    ax2.plot(data[idxs]['B'], data[idxs]['peakgr'], '.-', label="peak gr")
-    ax1.loglog()
-    ax2.set_xscale('log')
-    ax1.legend(loc='best')
-    ax2.legend(loc='best')
-    ax1.axvline(Bcrit(omega1), color='k')
-    ax2.axvline(Bcrit(omega1), color='k')
-    ax2.set_xlabel("B [gauss]")
-    ax1.set_ylabel(r"$k_z$ [1/cm]")
-    ax2.set_ylabel(r"Re{$\gamma$} [1/s]")
+    for i in range(0, len(omegas)):
+        axs[i][0].plot(data[idxs[i]]['B'], data[idxs[i]]['kmax'],
+                       '.-', label=r"$k_{max}$")
+        axs[i][0].plot(data[idxs[i]]['B'], data[idxs[i]]['kpeak'],
+                       '.-', label=r"$k_{peak}$")
+        axs[i][1].plot(data[idxs[i]]['B'], data[idxs[i]]['peakgr'],
+                       '.-', label="peak gr")
+        axs[i][0].loglog()
+        axs[i][1].set_xscale('log')
+        axs[i][0].axvline(Bcrit(omegas[i]), color='k')
+        axs[i][1].axvline(Bcrit(omegas[i]), color='k')
+        axs[i][0].text(0.1, 0.1, r"$\Omega$= %g rpm" % omegas[i],
+                       transform = axs[i][0].transAxes)
+        axs[i][1].text(0.1, 0.1, r"$\Omega$= %g rpm" % omegas[i],
+                       transform = axs[i][1].transAxes)
+        axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
+        axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
+        axs[i][0].axhline(2*numpy.pi, color='k')
+        
+    axs[0][0].legend(loc='upper right')
+    axs[0][1].legend(loc='upper right')
+
+    axs[-1][1].set_xlabel("B [gauss]")
 
 
 def grab_data_kscan(rule):
