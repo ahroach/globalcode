@@ -120,6 +120,123 @@ def plot_quantities_const_omega(rule, *omegas):
 
     axs[-1][1].set_xlabel("B [gauss]")
 
+def grab_data_omega2(rule):
+    files = glob.glob(rule)
+
+    filebases = []
+    for i in range(0, len(files)):
+        #Grab the part after the / of any path, and before the _k*.nc
+        filebase = re.split('_', 
+                            re.split('/', files[i])[-1]
+                            )[0]
+        #If we haven't seen this base before, keep it around.
+        if not(filebases.count(filebase)):
+            filebases.append(filebase)
+    
+    numbases = len(filebases)
+
+    data =  numpy.ones(numbases, dtype = [('omega1', float), ('omega2', float),
+                                          ('deltaomega', float),
+                                          ('kmin', float), ('kmax', float),
+                                          ('kpeak', float),
+                                          ('peakgr', float)])
+
+    path = ""
+    for dir in (re.split('/', files[0])[0:-1]):
+        path = path + dir + '/'
+
+    for i in range(0,numbases):
+        data[i]['omega1'] = float(re.split('W',
+                                           re.split('w', filebases[i])[1])[0])
+        data[i]['omega2'] = float(re.split('W', filebases[i])[1])
+        data[i]['deltaomega'] = data[i]['omega1'] - data[i]['omega2']
+        
+        kminname = path + filebases[i] + "_kmin.nc"
+        kmaxname = path + filebases[i] + "_kmax.nc"
+        kpeakname = path + filebases[i] + "_kpeak.nc"
+        
+        if(os.path.exists(kminname)):
+            ncfile = netcdf.netcdf_file(kminname, 'r')
+            data[i]['kmin'] = ncfile.kz
+            ncfile.close()
+        else:
+            data[i]['kmin'] = numpy.nan
+
+        if(os.path.exists(kmaxname)):
+            ncfile = netcdf.netcdf_file(kmaxname, 'r')
+            data[i]['kmax'] = ncfile.kz
+            ncfile.close()
+        else:
+            data[i]['kmax'] = numpy.nan
+
+        if(os.path.exists(kpeakname)):
+            ncfile = netcdf.netcdf_file(kpeakname, 'r')
+            data[i]['kpeak'] = ncfile.kz
+            data[i]['peakgr'] = ncfile.variables['lambda'][0,0]
+            ncfile.close()
+        else:
+            data[i]['kpeak'] = numpy.nan
+            data[i]['peakgr'] = numpy.nan
+
+    #Sort the array so things are nicer
+    data = numpy.sort(data, order=['deltaomega', 'omega2'])
+        
+    return data
+
+
+def plot_quantities_const_deltaomega(rule, *deltaomegas):
+    if len(deltaomegas) <= 0:
+        print "Need to specify at least one omega."
+        return
+
+    data = grab_data_omega2(rule)
+    idxs = []
+    axs = []
+    
+    numdeltaomegas = len(deltaomegas)
+    fig = pyplot.figure(figsize=(8, 4*numdeltaomegas + 2))
+    fig.subplots_adjust(hspace=0.5)
+
+    for i in range(0, len(deltaomegas)):
+        tempax = []
+        idxs.append(numpy.equal(data[:]['deltaomega'],
+                                deltaomegas[i]*numpy.ones(data.size)))
+        if(i == 0):
+            tempax.append(fig.add_subplot(2*numdeltaomegas, 1, i*2 + 1))
+            tempax.append(fig.add_subplot(2*numdeltaomegas, 1, i*2 + 2,
+                                          sharex = tempax[0]))
+        else:
+            tempax.append(fig.add_subplot(2*numdeltaomegas, 1, i*2 + 1,
+                                          sharex = axs[0][0]))
+            tempax.append(fig.add_subplot(2*numdeltaomegas, 1, i*2 + 2,
+                                          sharex = axs[0][0]))
+                
+    
+        axs.append(tempax)
+
+    for i in range(0, len(deltaomegas)):
+        axs[i][0].plot(data[idxs[i]]['omega2'], data[idxs[i]]['kmax'],
+                       '.-', label=r"$k_{max}$")
+        axs[i][0].plot(data[idxs[i]]['omega2'], data[idxs[i]]['kpeak'],
+                       '.-', label=r"$k_{peak}$")
+        axs[i][1].plot(data[idxs[i]]['omega2'], data[idxs[i]]['peakgr'],
+                       '.-', label="peak gr")
+        axs[i][0].loglog()
+        axs[i][1].set_xscale('log')
+        axs[i][0].text(0.1, 0.1, r"$\Delta\Omega$= %g rpm" % deltaomegas[i],
+                       transform = axs[i][0].transAxes)
+        axs[i][1].text(0.1, 0.1, r"$\Delta\Omega$= %g rpm" % deltaomegas[i],
+                       transform = axs[i][1].transAxes)
+        axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
+        axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
+        axs[i][0].axhline(2*numpy.pi, color='k')
+        
+    axs[0][0].legend(loc='upper right')
+    axs[0][1].legend(loc='upper right')
+    
+    axs[-1][1].set_xlabel(r"$\Omega_2$ [rpm]")
+    
+
 
 def grab_data_kscan(rule):
     files = glob.glob(rule)
