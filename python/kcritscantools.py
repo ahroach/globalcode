@@ -120,6 +120,61 @@ def plot_quantities_const_omega(rule, *omegas):
 
     axs[-1][1].set_xlabel("B [gauss]")
 
+
+def plot_quantities_const_B(rule, *Bs):
+    if len(Bs) <= 0:
+        print "Need to specify at least one B."
+        return
+
+    data = grab_data(rule)
+    idxs = []
+    axs = []
+    
+    numBs = len(Bs)
+    fig = pyplot.figure(figsize=(8, 4*numBs))
+    fig.subplots_adjust(hspace=0.5)
+
+    for i in range(0, len(Bs)):
+        tempax = []
+        idxs.append(numpy.equal(data[:]['B'],
+                                Bs[i]*numpy.ones(data.size)))
+        if(i == 0):
+            tempax.append(fig.add_subplot(2*numBs, 1, i*2 + 1))
+            tempax.append(fig.add_subplot(2*numBs, 1, i*2 + 2,
+                                          sharex = tempax[0]))
+        else:
+            tempax.append(fig.add_subplot(2*numBs, 1, i*2 + 1,
+                                          sharex = axs[0][0]))
+            tempax.append(fig.add_subplot(2*numBs, 1, i*2 + 2,
+                                          sharex = axs[0][0]))
+                
+    
+        axs.append(tempax)
+
+    for i in range(0, len(Bs)):
+        axs[i][0].plot(data[idxs[i]]['omega1'], data[idxs[i]]['kmax'],
+                       '.-', label=r"$k_{max}$")
+        axs[i][0].plot(data[idxs[i]]['omega1'], data[idxs[i]]['kpeak'],
+                       '.-', label=r"$k_{peak}$")
+        axs[i][1].plot(data[idxs[i]]['omega1'], data[idxs[i]]['peakgr'],
+                       '.-', label="peak gr")
+        axs[i][0].loglog()
+        axs[i][1].set_xscale('log')
+        axs[i][0].text(0.1, 0.1, r"$B$= %g gauss" % Bs[i],
+                       transform = axs[i][0].transAxes)
+        axs[i][1].text(0.1, 0.1, r"$B$= %g gauss" % Bs[i],
+                       transform = axs[i][1].transAxes)
+        axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
+        axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
+        axs[i][0].axhline(2*numpy.pi, color='k')
+        
+    axs[0][0].legend(loc='upper right')
+    axs[0][1].legend(loc='upper right')
+
+    axs[-1][1].set_xlabel(r"$\Omega_1$ [gauss]")
+
+
+
 def grab_data_omega2(rule):
     files = glob.glob(rule)
 
