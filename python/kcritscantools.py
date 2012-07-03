@@ -235,7 +235,59 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
     axs[0][1].legend(loc='upper right')
     
     axs[-1][1].set_xlabel(r"$\Omega_2$ [rpm]")
+
+
+def plot_quantities_const_omega2(rule, *omega2s):
+    if len(omega2s) <= 0:
+        print "Need to specify at least one omega."
+        return
+
+    data = grab_data_omega2(rule)
+    idxs = []
+    axs = []
     
+    numomega2s = len(omega2s)
+    fig = pyplot.figure(figsize=(8, 4*numomega2s + 2))
+    fig.subplots_adjust(hspace=0.5)
+
+    for i in range(0, len(omega2s)):
+        tempax = []
+        idxs.append(numpy.equal(data[:]['omega2'],
+                                omega2s[i]*numpy.ones(data.size)))
+        if(i == 0):
+            tempax.append(fig.add_subplot(2*numomega2s, 1, i*2 + 1))
+            tempax.append(fig.add_subplot(2*numomega2s, 1, i*2 + 2,
+                                          sharex = tempax[0]))
+        else:
+            tempax.append(fig.add_subplot(2*numomega2s, 1, i*2 + 1,
+                                          sharex = axs[0][0]))
+            tempax.append(fig.add_subplot(2*numomega2s, 1, i*2 + 2,
+                                          sharex = axs[0][0]))
+                
+    
+        axs.append(tempax)
+
+    for i in range(0, len(omega2s)):
+        axs[i][0].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['kmax'],
+                       '.-', label=r"$k_{max}$")
+        axs[i][0].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['kpeak'],
+                       '.-', label=r"$k_{peak}$")
+        axs[i][1].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['peakgr'],
+                       '.-', label="peak gr")
+        axs[i][0].loglog()
+        axs[i][1].set_xscale('log')
+        axs[i][0].text(0.1, 0.1, r"$\Omega_2$= %g rpm" % omega2s[i],
+                       transform = axs[i][0].transAxes)
+        axs[i][1].text(0.1, 0.1, r"$\Omega_2$= %g rpm" % omega2s[i],
+                       transform = axs[i][1].transAxes)
+        axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
+        axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
+        axs[i][0].axhline(2*numpy.pi, color='k')
+        
+    axs[0][0].legend(loc='upper right')
+    axs[0][1].legend(loc='upper right')
+    
+    axs[-1][1].set_xlabel(r"$\Delta\Omega$ [rpm]")
 
 
 def grab_data_kscan(rule):
