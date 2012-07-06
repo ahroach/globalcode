@@ -763,7 +763,7 @@ def plot_mode_power_spectrum(filename, mode):
     k, fourier = get_mode_fft(filename, mode)
     power = fourier*fourier.conjugate()/(2.0*pi)
     titlestring = "Mode %d, GR = %.6g + %.6g*i 1/s" % (mode, ncfile.variables['lambda'][mode,0], ncfile.variables['lambda'][mode,1])
-    semilogy(k, power, '.-')
+    loglog(k, power, '.-')
     title(titlestring)
     xlabel("k_r [1/cm]")
     ylabel("Power spectrum of vr")
@@ -778,8 +778,8 @@ def plot_mode_power_spectrum(filename, mode):
 def get_mode_fft(filename, mode):
     ncfile = netcdf.netcdf_file(filename, 'r')
     
-    vr_mag = ncfile.variables['vt'][mode,:,0]
-    vr_arg = ncfile.variables['vt'][mode,:,1]
+    vr_mag = ncfile.variables['vr'][mode,:,0]
+    vr_arg = ncfile.variables['vr'][mode,:,1]
 
     #Calculate the real part along a chord
     vr_real = zeros(vr_mag.size)
@@ -792,7 +792,7 @@ def get_mode_fft(filename, mode):
 
     fourier = fft(vr_real)
     spatialstep = (ncfile.r2 - ncfile.r1)/ncfile.numcells
-    n = ncfile.numcells[0]
+    n = ncfile.numcells
     k = fftfreq(n, d=spatialstep)
 
     fourier = fftshift(fourier)
@@ -830,7 +830,7 @@ def get_mode_attributes_mequalzero(filename, mode):
     #max_k = trimmedk[max_element]
 
     #k = max_k
-    k = find_kr(filename, mode, 'vr')
+    k = find_kr(filename, mode, 'vr', localized=0)
     
     data = {'growthrate': growthrate, 'frequency': frequency, 'peak_radius': peak_radius, 'peak_width': peak_width, 'k': k, 'omega_at_peak': local_omega}
     return data
@@ -982,7 +982,7 @@ def plot_dispersion_relation_range(filename, krmin, krmax):
     ylabel("Real frequency [1/sec]")
 
 
-def find_kr(filename, mode, component='vt'):
+def find_kr(filename, mode, component='vt', localized=1):
     #Use this with caution on the magnetic field components! Boundary
     #conditions might give them DC offsets, which would effect the averaging
     #below. B_r seems especially afflicted.
@@ -998,29 +998,40 @@ def find_kr(filename, mode, component='vt'):
     del ncfile
     
     phase = unwrap(phase)
-    #We will use a area-weighted, magnitude-weighted average of the change
-    #in phase per unit radius squared, since k**2 is typically what's most
-    #important for the damping
-    #\int{dr 2\pi r A |\partial \phi / \partial r|^2} / \int{dr 2 \pi rA}
-    #where A is the magnitude at a point i
-    #Yielding eventually
-    #\sum_{i}A_i r_i (\phi_{i+1}-\phi{i})^2/(r[i+1]-r[i]) /
-    #\sum_{i}(r_{i+1}-r_{i}) r_i A_{i}
 
-    num = 0.0
-    denom = 0.0
+    if (localized == 1):
+        #We will use a area-weighted, magnitude-weighted average of the change
+        #in phase per unit radius squared, since k**2 is typically what's most
+        #important for the damping
+        #\int{dr 2\pi r A |\partial \phi / \partial r|^2} / \int{dr 2 \pi rA}
+        #where A is the magnitude at a point i
+        #Yielding eventually
+        #\sum_{i}A_i r_i (\phi_{i+1}-\phi{i})^2/(r[i+1]-r[i]) /
+        #\sum_{i}(r_{i+1}-r_{i}) r_i A_{i}
 
-    for i in range(0,r.size-1):
-        num = num + mag[i]*r[i]*(phase[i+1]-phase[i])**2/(r[i+1]-r[i])
-        denom = denom + mag[i]*r[i]*(r[i+1]-r[i])
+        num = 0.0
+        denom = 0.0
 
-    kr = sqrt(num/denom)
+        for i in range(0,r.size-1):
+            num = num + mag[i]*r[i]*(phase[i+1]-phase[i])**2/(r[i+1]-r[i])
+            denom = denom + mag[i]*r[i]*(r[i+1]-r[i])
+
+        kr = sqrt(num/denom)
     
-    #Average wavelength = 2\pi/kr
-    l = 2*pi/kr
+        #Average wavelength = 2\pi/kr
+        l = 2*pi/kr
 
-    #print "kr = " + str(kr) + ", \lambda = " + str(l)
-
+        #print "kr = " + str(kr) + ", \lambda = " + str(l)
+    else:
+        #If this isn't a localized mode, we should be able to pick out
+        #k_r relatively easily by just looking at the peak in the power
+        #spectrum. We exclude a couple of points near k = 0 to avoid
+        #issues with DC offset or meaningless slow variation.
+        k, fourier = get_mode_fft(filename, mode)
+        power = fourier*fourier.conjugate()/(2.0*pi)
+        midpoint = size(power)/2
+        kr = k[power[midpoint+1:-1].argmax() + midpoint + 1]
+    
     return kr
 
     
