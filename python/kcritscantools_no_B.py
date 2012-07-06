@@ -298,3 +298,32 @@ def Bcrit(omega, elsasser=1):
     rho = 6.36 #Density in g/cm^3
     eta = 2.43e3 #Resistivity in cm^2/s
     return numpy.sqrt(4*numpy.pi*eta*rho*(omega*2*numpy.pi/60)*elsasser)
+
+def plot_omega2crit_scaling():
+    #Note that these measurements were all made by hand from the plots!
+    deltaomegas = numpy.array((5, 10, 50, 100, 200, 400, 600, 800))
+    omega_75 = numpy.array((2.9, 6.0, 32, 64, 126, 264, 396, 528))
+    omega_50 = numpy.array((3.3, 7.1, 34, 73, 146, 299, 450, 600))
+    omega_25 = numpy.array((3.6, 7.6, 36, 79, 154, 310, 467, 620))
+    omega_10 = numpy.array((3.8, 7.8, 38, 81, 160, 315, 474, 630))
+
+    rossby235 = deltaomegas/2.35
+
+    fig = pyplot.figure()
+    ax = fig.add_subplot(1,1,1)
+    ax.loglog()
+    ax.plot(deltaomegas, rossby235, 'k-',
+            label=r"$\Delta\Omega/\Omega=2.35$", lw=2)
+    ax.plot(deltaomegas, omega_75, 'bs-',
+            label=r"$\gamma=0.75\Delta\Omega$")
+    ax.plot(deltaomegas, omega_50, 'go-',
+            label=r"$\gamma=0.50\Delta\Omega$")
+    ax.plot(deltaomegas, omega_25, 'r*-',
+            label=r"$\gamma=0.25\Delta\Omega$")
+    ax.plot(deltaomegas, omega_10, 'cp-',
+            label=r"$\gamma=0.10\Delta\Omega$")
+    
+    ax.set_xlabel(r"$\Delta\Omega$ [rpm]")
+    ax.set_ylabel(r"$\Omega_2$ [rpm]")
+    ax.legend(loc='upper left')
+    ax.set_xlim(3,1000)
