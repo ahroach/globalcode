@@ -318,14 +318,16 @@ def plot_Bcrit_scaling():
     ax.plot(omega1s, elsasserone, 'k-',
             label=r"$\Lambda=1$", lw=2)
     ax.plot(omega1s, omega_75, 'bs-',
-            label=r"$\gamma=0.75\Omega_{ic}$")
+            label=r"$\gamma=0.75\Omega_{1}$")
     ax.plot(omega1s, omega_50, 'go-',
-            label=r"$\gamma=0.50\Omega_{ic}$")
+            label=r"$\gamma=0.50\Omega_{1}$")
     ax.plot(omega1s, omega_25, 'r*-',
-            label=r"$\gamma=0.25\Omega_{ic}$")
+            label=r"$\gamma=0.25\Omega_{1}$")
     ax.plot(omega1s, omega_10, 'cp-',
-            label=r"$\gamma=0.10\Omega_{ic}$")
+            label=r"$\gamma=0.10\Omega_{1}$")
     
-    ax.set_xlabel(r"$\Omega_{ic}$ [rpm]")
+    ax.set_xlabel(r"$\Omega_{1}$ [rpm]")
     ax.set_ylabel(r"$B$ [gauss]")
     ax.legend(loc='upper left')
+
+    ax.set_ylim(40, 10000)
