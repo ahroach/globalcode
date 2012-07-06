@@ -298,3 +298,34 @@ def Bcrit(omega, elsasser=1):
     rho = 6.36 #Density in g/cm^3
     eta = 2.43e3 #Resistivity in cm^2/s
     return numpy.sqrt(4*numpy.pi*eta*rho*(omega*2*numpy.pi/60)*elsasser)
+
+def plot_Bcrit_scaling():
+    #Note that these measurements were all made by hand from the plots!
+    omega1s = numpy.array((1, 5, 10, 50, 100, 200, 400, 600, 800))
+    omega_75 = numpy.array((60.4, 169, 248, 610, 868,
+                            1258, 1793, 2213, 2584))
+    omega_50 = numpy.array((99.8, 240, 352, 805, 1156,
+                            1641, 2330, 2861, 3342))
+    omega_25 = numpy.array((131, 318, 455, 1073, 1566,
+                            2237, 3211, 4032, 4642))
+    omega_10 = numpy.array((169, 400, 630, 1580, 2426,
+                            3500, 4975, 6304, 7400))
+    elsasserone = numpy.array([Bcrit(omega) for omega in omega1s])
+
+    fig = pyplot.figure()
+    ax = fig.add_subplot(1,1,1)
+    ax.loglog()
+    ax.plot(omega1s, elsasserone, 'k-',
+            label=r"$\Lambda=1$", lw=2)
+    ax.plot(omega1s, omega_75, 'bs-',
+            label=r"$\gamma=0.75\Omega_{ic}$")
+    ax.plot(omega1s, omega_50, 'go-',
+            label=r"$\gamma=0.50\Omega_{ic}$")
+    ax.plot(omega1s, omega_25, 'r*-',
+            label=r"$\gamma=0.25\Omega_{ic}$")
+    ax.plot(omega1s, omega_10, 'cp-',
+            label=r"$\gamma=0.10\Omega_{ic}$")
+    
+    ax.set_xlabel(r"$\Omega_{ic}$ [rpm]")
+    ax.set_ylabel(r"$B$ [gauss]")
+    ax.legend(loc='upper left')
