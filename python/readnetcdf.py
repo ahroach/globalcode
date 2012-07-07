@@ -622,20 +622,20 @@ def plot_component_contour(filename, component, mode_number, showcolorbar=0,
     print "Regrid complete"
 
 
-    contourf(xi, yi, zi.T, 50)
+    cf=gca().contourf(xi, yi, zi.T, 50)
 
-    xlim(-ncfile.r2, ncfile.r2)
-    ylim(-ncfile.r2, ncfile.r2)
+    gca().set_xlim(-ncfile.r2, ncfile.r2)
+    gca().set_ylim(-ncfile.r2, ncfile.r2)
     if(axisequalize):
-        axes().set_aspect('equal')
+        gca().set_aspect('equal')
 
-    xlabel("x [cm]")
-    ylabel("y [cm]")
+    gca().set_xlabel("x [cm]")
+    gca().set_ylabel("y [cm]")
     titlestring = "%s for mode %d, GR = %.6g + %.6g*i 1/s" % (component, mode_number, ncfile.variables['lambda'][mode_number,0], ncfile.variables['lambda'][mode_number,1])
     if(showtitle):
         title(titlestring)
     if(showcolorbar):
-        colorbar()
+        gca().get_figure().colorbar(mappable=cf,  ax=gca())
     ncfile.close()
     del ncfile
 
