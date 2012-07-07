@@ -125,7 +125,6 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
                        transform = axs[i][1].transAxes)
         axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
         axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
-        axs[i][0].axhline(2*numpy.pi, color='k')
         
     axs[0][0].legend(loc='upper right')
     axs[0][1].legend(loc='upper right')
@@ -178,7 +177,6 @@ def plot_quantities_const_B(rule, *Bs):
                        transform = axs[i][1].transAxes)
         axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
         axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
-        axs[i][0].axhline(2*numpy.pi, color='k')
         
     axs[0][0].legend(loc='upper right')
     axs[0][1].legend(loc='upper right')
