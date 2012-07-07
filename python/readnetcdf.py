@@ -269,7 +269,7 @@ def plot_all_components(filename, mode_number):
     del ncfile
 
 
-def plot_width_dependence(rule):
+def plot_shear_dependence(rule):
     files = glob.glob(rule)
     numfiles = len(files)
 
@@ -317,6 +317,67 @@ def plot_width_dependence(rule):
     ax.set_xscale('log')
     ylabel("Growth rate [1/sec]")
     xlabel("Steepness (1/layer width) [1/cm]")
+    grid(b='on')
+
+    
+    legend(loc='best')
+
+
+def plot_width_dependence(rule):
+    files = glob.glob(rule)
+    numfiles = len(files)
+
+    data = zeros(numfiles, dtype = [('width', float), ('m', int),
+                                    ('growthrate', float)])
+    for i in range(0, numfiles):
+        ncfile = netcdf.netcdf_file(files[i], 'r')
+        filename = re.split('/', files[i])[-1]
+        #Now grab width out of the title string
+        data[i]['width'] = float(re.split('d', re.split('m',
+                                                        filename)[0])[1])
+        #Now grab m out of the file name
+        data[i]['m'] = int(re.split('m', re.split('.nc',
+                                                  filename)[0])[1])
+        data[i]['growthrate'] = ncfile.variables['lambda'][0,0]
+        ncfile.close()
+
+    #Sort the data array so that things plot correctly later.
+    data = sort(data, order=['width', 'm'])
+
+    #Figure out the indices for the different azimuthal mode numbers
+    m0indices = equal(data[:]['m'], 0*ones(numfiles))
+    m1indices = equal(data[:]['m'], 1*ones(numfiles))
+    m2indices = equal(data[:]['m'], 2*ones(numfiles))
+    m3indices = equal(data[:]['m'], 3*ones(numfiles))
+    m4indices = equal(data[:]['m'], 4*ones(numfiles))
+    m5indices = equal(data[:]['m'], 5*ones(numfiles))
+    m6indices = equal(data[:]['m'], 6*ones(numfiles))
+    m7indices = equal(data[:]['m'], 7*ones(numfiles))
+    m8indices = equal(data[:]['m'], 8*ones(numfiles))
+
+    ax = subplot(111)
+    #Now plot all of the azimuthal mode numbers as separate lines
+    plot(data[m0indices]['width'], data[m0indices]['growthrate'],
+         '.-', label="m=0")
+    plot(data[m1indices]['width'], data[m1indices]['growthrate'],
+         '.-', label="m=1")
+    plot(data[m2indices]['width'], data[m2indices]['growthrate'],
+         '.-', label="m=2")
+    plot(data[m3indices]['width'], data[m3indices]['growthrate'],
+         '.-', label="m=3")
+    plot(data[m4indices]['width'], data[m4indices]['growthrate'],
+         '.-', label="m=4")
+    plot(data[m5indices]['width'], data[m5indices]['growthrate'],
+         '.-', label="m=5")
+    plot(data[m6indices]['width'], data[m6indices]['growthrate'],
+         '.-', label="m=6")
+    plot(data[m7indices]['width'], data[m7indices]['growthrate'],
+         '.-', label="m=7")
+    plot(data[m8indices]['width'], data[m8indices]['growthrate'],
+         '.-', label="m=8")
+    ax.set_xscale('log')
+    ylabel("Growth rate [1/sec]")
+    xlabel("Shear layer half-width [cm]")
     grid(b='on')
 
     
