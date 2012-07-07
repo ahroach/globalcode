@@ -405,25 +405,41 @@ def plot_velocity_contours(filename, mode_number):
 
 def plot_avg_torque(filename, mode_number):
     ncfile = netcdf.netcdf_file(filename, 'r')
+
     vr_mag = ncfile.variables['vr'][mode_number,:,0]
     vr_phase = ncfile.variables['vr'][mode_number,:,1]
     vt_mag = ncfile.variables['vt'][mode_number,:,0]
     vt_phase = ncfile.variables['vt'][mode_number,:,1]
+    ncells = ncfile.numcells
     
     var_r = ncfile.variables['r'][:]
     m = ncfile.m
     ncfile.close()
     del ncfile
 
+    #First let's renormalize vr and vt so that the expected value of
+    #any given element is 1.
+    x = sqrt((vr_mag*vr_mag).sum()
+             + (vt_mag*vt_mag).sum())
+    scalefac = sqrt(2*ncells)/x
+    vr_mag = vr_mag*scalefac
+    vt_mag = vt_mag*scalefac
+
+    #Now calculate the average torque
     avg_torque = zeros(var_r.size)
 
     for i in range(0, var_r.size):
         avg_torque[i] = 0.5*(vr_mag[i]*vt_mag[i]*
                              (cos(vr_phase[i]-vt_phase[i])))
     
-    plot(var_r, avg_torque, 'b-', label="Torque")
-    ylabel("Torque [arb]")
-    ax2 = twinx()
+    ax1=gca()
+    ax1.plot(var_r, vr_mag, 'r-', label=r"$|v_r|$")
+    ax1.plot(var_r, vt_mag, 'g-', label=r"$|v_{\theta}|$")
+    ax1.plot(var_r, avg_torque, 'b-', label="Torque")
+
+    ax1.set_ylabel("Velocity, Torque [arb.]")
+
+    ax2 = ax1.twinx()
     phasedifference = vt_phase-vr_phase
     for i in range(0,phasedifference.size):
         if phasedifference[i] > pi:
@@ -431,12 +447,16 @@ def plot_avg_torque(filename, mode_number):
         if phasedifference[i] < -pi:
             phasedifference[i] = phasedifference[i] + 2.0*pi
     
-    plot(var_r, phasedifference, 'g-', label="Phase Difference")
-    ylabel("Phase(v_t) - Phase(v_r) [rad]")
-    ylim(-pi,pi)
-    axhline(pi/2.0, color='black')
-    axhline(-pi/2.0, color='black')
-    legend()
+    ax2.plot(var_r, phasedifference, 'c-', label=r"$\Delta$phase")
+    ax2.set_ylabel(r"Arg($v_{\theta}$) - Arg($v_r$) [rad]")
+    ax2.set_ylim(-pi,pi)
+    ax2.axhline(pi/2.0, color='black')
+    ax2.axhline(-pi/2.0, color='black')
+
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    legend(lines1 + lines2, labels1 + labels2,
+           loc='upper right', ncol=2)
 
 
 def plot_torque(filename, mode_number):
