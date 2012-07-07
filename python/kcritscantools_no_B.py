@@ -280,7 +280,7 @@ def plot_gr_contour(rule):
     ax = fig.add_subplot(1,1,1)
 
     cf = ax.contourf(deltaomegas, omega2s, normgrs, 50)
-    ax.scatter(data[:]['deltaomega'], data[:]['omega2'], s=5, c='k')
+    ax.scatter(data[:]['deltaomega'], data[:]['omega2'], s=1, c='k')
     cb = fig.colorbar(cf, ax=ax)
     cb.set_label(r"$\gamma/\Delta\Omega$", rotation=270)
     ax.set_xlabel(r"$\Delta\Omega$ [RPM]")
