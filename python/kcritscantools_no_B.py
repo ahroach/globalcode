@@ -28,7 +28,7 @@ def grab_data(rule):
     filebases = []
     for i in range(0, len(files)):
         #Grab the part after the / of any path, and before the _k*.nc
-        filebase = re.split('\.input', 
+        filebase = re.split('_', 
                             re.split('/', files[i])[-1]
                             )[0]
         #If we haven't seen this base before, keep it around.
@@ -94,6 +94,16 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
     data = grab_data(rule)
     idxs = []
     axs = []
+
+    #We want to be sure that we plot a growth rate for all omega2s,
+    #even if the growthrate there was 0 so that there's no output
+    #file. So, first find all the omega2s that we use.
+
+    omega2s = []
+    for point in data:
+        if(omega2s.count(point['omega2']) == 0):
+            omega2s.append(point['omega2'])
+    omega2s.sort()
     
     numdeltaomegas = len(deltaomegas)
     fig = pyplot.figure(figsize=(8, 4*numdeltaomegas + 2))
@@ -121,10 +131,22 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
                        'r.-', label=r"$k_{max}$")
         axs[i][0].plot(data[idxs[i]]['omega2'], data[idxs[i]]['kpeak'],
                        'g.-', label=r"$k_{peak}$")
-        axs[i][1].plot(data[idxs[i]]['omega2'], data[idxs[i]]['peakgr'],
+        #Special treatment from the growth rate, where we want to make
+        #sure that we plot all zeros.
+        zerogromega2s = []
+        for omega2 in omega2s:
+            if (list(data[idxs[i]]['omega2']).count(omega2) == 0):
+                zerogromega2s.append(omega2)
+        print zerogromega2s
+        axs[i][1].plot(numpy.concatenate((data[idxs[i]]['omega2'],
+                                          numpy.array(zerogromega2s))),
+                       numpy.concatenate((data[idxs[i]]['peakgr'],
+                                          numpy.zeros(len(zerogromega2s)))),
                        'b.-', label="peak gr")
         axs[i][0].loglog()
         axs[i][1].set_xscale('log')
+        axs[i][0].axvline(deltaomegas[i]/2.35, color='k')
+        axs[i][1].axvline(deltaomegas[i]/2.35, color='k')
         axs[i][0].text(0.1, 0.1, r"$\Delta\Omega$= %g rpm" % deltaomegas[i],
                        transform = axs[i][0].transAxes)
         axs[i][1].text(0.1, 0.1, r"$\Delta\Omega$= %g rpm" % deltaomegas[i],
