@@ -290,40 +290,24 @@ def plot_shear_dependence(rule):
     #Sort the data array so that things plot correctly later.
     data = sort(data, order=['width', 'm'])
 
-    #Figure out the indices for the different azimuthal mode numbers
-    m0indices = equal(data[:]['m'], 0*ones(numfiles))
-    m1indices = equal(data[:]['m'], 1*ones(numfiles))
-    m2indices = equal(data[:]['m'], 2*ones(numfiles))
-    m3indices = equal(data[:]['m'], 3*ones(numfiles))
-    m4indices = equal(data[:]['m'], 4*ones(numfiles))
-    m5indices = equal(data[:]['m'], 5*ones(numfiles))
-    m6indices = equal(data[:]['m'], 6*ones(numfiles))
-    m7indices = equal(data[:]['m'], 7*ones(numfiles))
-    m8indices = equal(data[:]['m'], 8*ones(numfiles))
+    #Find the list of unique ms
+    ms = []
+    for point in data:
+        if(ms.count(point['m']) == 0):
+            ms.append(point['m'])
+    ms.sort()
 
     invwidth = 1/data[:]['width']
 
     fig = figure()
     ax = fig.add_subplot(111)
     #Now plot all of the azimuthal mode numbers as separate lines
-    ax.plot(invwidth[m0indices], data[m0indices]['growthrate'],
-            '.-', label="m=0")
-    ax.plot(invwidth[m1indices], data[m1indices]['growthrate'],
-            '.-', label="m=1")
-    ax.plot(invwidth[m2indices], data[m2indices]['growthrate'],
-            '.-', label="m=2")
-    ax.plot(invwidth[m3indices], data[m3indices]['growthrate'],
-            '.-', label="m=3")
-    ax.plot(invwidth[m4indices], data[m4indices]['growthrate'],
-            '.-', label="m=4")
-    ax.plot(invwidth[m5indices], data[m5indices]['growthrate'],
-            '.-', label="m=5")
-    ax.plot(invwidth[m6indices], data[m6indices]['growthrate'],
-            '.-', label="m=6")
-    ax.plot(invwidth[m7indices], data[m7indices]['growthrate'],
-            '.-', label="m=7")
-    ax.plot(invwidth[m8indices], data[m8indices]['growthrate'],
-            '.-', label="m=8")
+    #Now plot all of the azimuthal mode numbers as separate lines
+    for m in ms:
+        indices = equal(data[:]['m'], m*ones(numfiles))
+        ax.plot(invwidth[indices], data[indices]['growthrate'],
+                '.-', label="m=%i" % m)
+
     ax.set_xscale('log')
     ax.set_ylabel("Growth rate [1/sec]")
     ax.set_xlabel("Steepness (1/layer width) [1/cm]")
@@ -351,38 +335,22 @@ def plot_width_dependence(rule):
     #Sort the data array so that things plot correctly later.
     data = sort(data, order=['width', 'm'])
 
-    #Figure out the indices for the different azimuthal mode numbers
-    m0indices = equal(data[:]['m'], 0*ones(numfiles))
-    m1indices = equal(data[:]['m'], 1*ones(numfiles))
-    m2indices = equal(data[:]['m'], 2*ones(numfiles))
-    m3indices = equal(data[:]['m'], 3*ones(numfiles))
-    m4indices = equal(data[:]['m'], 4*ones(numfiles))
-    m5indices = equal(data[:]['m'], 5*ones(numfiles))
-    m6indices = equal(data[:]['m'], 6*ones(numfiles))
-    m7indices = equal(data[:]['m'], 7*ones(numfiles))
-    m8indices = equal(data[:]['m'], 8*ones(numfiles))
+
+    #Find the list of unique ms
+    ms = []
+    for point in data:
+        if(ms.count(point['m']) == 0):
+            ms.append(point['m'])
+    ms.sort()
 
     fig = figure()
     ax = fig.add_subplot(111)
     #Now plot all of the azimuthal mode numbers as separate lines
-    ax.plot(data[m0indices]['width'], data[m0indices]['growthrate'],
-            '.-', label="m=0")
-    ax.plot(data[m1indices]['width'], data[m1indices]['growthrate'],
-            '.-', label="m=1")
-    ax.plot(data[m2indices]['width'], data[m2indices]['growthrate'],
-            '.-', label="m=2")
-    ax.plot(data[m3indices]['width'], data[m3indices]['growthrate'],
-            '.-', label="m=3")
-    ax.plot(data[m4indices]['width'], data[m4indices]['growthrate'],
-            '.-', label="m=4")
-    ax.plot(data[m5indices]['width'], data[m5indices]['growthrate'],
-            '.-', label="m=5")
-    ax.plot(data[m6indices]['width'], data[m6indices]['growthrate'],
-            '.-', label="m=6")
-    ax.plot(data[m7indices]['width'], data[m7indices]['growthrate'],
-            '.-', label="m=7")
-    ax.plot(data[m8indices]['width'], data[m8indices]['growthrate'],
-            '.-', label="m=8")
+    for m in ms:
+        indices = equal(data[:]['m'], m*ones(numfiles))
+        ax.plot(data[indices]['width'], data[indices]['growthrate'],
+                '.-', label="m=%i" % m)
+
     ax.set_xscale('log')
     ax.set_ylabel("Growth rate [1/sec]")
     ax.set_xlabel("Shear layer half-width [cm]")
