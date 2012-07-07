@@ -110,11 +110,11 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
 
     for i in range(0, len(deltaomegas)):
         axs[i][0].plot(data[idxs[i]]['B'], data[idxs[i]]['kmax'],
-                       '.-', label=r"$k_{max}$")
+                       'r.-', label=r"$k_{max}$")
         axs[i][0].plot(data[idxs[i]]['B'], data[idxs[i]]['kpeak'],
-                       '.-', label=r"$k_{peak}$")
+                       'g.-', label=r"$k_{peak}$")
         axs[i][1].plot(data[idxs[i]]['B'], data[idxs[i]]['peakgr'],
-                       '.-', label="peak gr")
+                       'b.-', label="peak gr")
         axs[i][0].loglog()
         axs[i][1].set_xscale('log')
         axs[i][0].axvline(Bcrit(deltaomegas[i]), color='k')
@@ -165,11 +165,11 @@ def plot_quantities_const_B(rule, *Bs):
 
     for i in range(0, len(Bs)):
         axs[i][0].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['kmax'],
-                       '.-', label=r"$k_{max}$")
+                       'r.-', label=r"$k_{max}$")
         axs[i][0].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['kpeak'],
-                       '.-', label=r"$k_{peak}$")
+                       'g.-', label=r"$k_{peak}$")
         axs[i][1].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['peakgr'],
-                       '.-', label="peak gr")
+                       'b.-', label="peak gr")
         axs[i][0].loglog()
         axs[i][1].set_xscale('log')
         axs[i][0].text(0.1, 0.1, r"$B$= %g gauss" % Bs[i],
