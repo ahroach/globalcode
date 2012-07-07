@@ -303,25 +303,32 @@ def plot_shear_dependence(rule):
 
     invwidth = 1/data[:]['width']
 
-    ax = subplot(111)
+    fig = figure()
+    ax = fig.add_subplot(111)
     #Now plot all of the azimuthal mode numbers as separate lines
-    plot(invwidth[m0indices], data[m0indices]['growthrate'], '.-', label="m=0")
-    plot(invwidth[m1indices], data[m1indices]['growthrate'], '.-', label="m=1")
-    plot(invwidth[m2indices], data[m2indices]['growthrate'], '.-', label="m=2")
-    plot(invwidth[m3indices], data[m3indices]['growthrate'], '.-', label="m=3")
-    plot(invwidth[m4indices], data[m4indices]['growthrate'], '.-', label="m=4")
-    plot(invwidth[m5indices], data[m5indices]['growthrate'], '.-', label="m=5")
-    plot(invwidth[m6indices], data[m6indices]['growthrate'], '.-', label="m=6")
-    plot(invwidth[m7indices], data[m7indices]['growthrate'], '.-', label="m=7")
-    plot(invwidth[m8indices], data[m8indices]['growthrate'], '.-', label="m=8")
+    ax.plot(invwidth[m0indices], data[m0indices]['growthrate'],
+            '.-', label="m=0")
+    ax.plot(invwidth[m1indices], data[m1indices]['growthrate'],
+            '.-', label="m=1")
+    ax.plot(invwidth[m2indices], data[m2indices]['growthrate'],
+            '.-', label="m=2")
+    ax.plot(invwidth[m3indices], data[m3indices]['growthrate'],
+            '.-', label="m=3")
+    ax.plot(invwidth[m4indices], data[m4indices]['growthrate'],
+            '.-', label="m=4")
+    ax.plot(invwidth[m5indices], data[m5indices]['growthrate'],
+            '.-', label="m=5")
+    ax.plot(invwidth[m6indices], data[m6indices]['growthrate'],
+            '.-', label="m=6")
+    ax.plot(invwidth[m7indices], data[m7indices]['growthrate'],
+            '.-', label="m=7")
+    ax.plot(invwidth[m8indices], data[m8indices]['growthrate'],
+            '.-', label="m=8")
     ax.set_xscale('log')
-    ylabel("Growth rate [1/sec]")
-    xlabel("Steepness (1/layer width) [1/cm]")
-    grid(b='on')
-
-    
-    legend(loc='best')
-
+    ax.set_ylabel("Growth rate [1/sec]")
+    ax.set_xlabel("Steepness (1/layer width) [1/cm]")
+    ax.legend(loc='upper left')
+    ax.axhline(0, color='k')
 
 def plot_width_dependence(rule):
     files = glob.glob(rule)
@@ -355,35 +362,32 @@ def plot_width_dependence(rule):
     m7indices = equal(data[:]['m'], 7*ones(numfiles))
     m8indices = equal(data[:]['m'], 8*ones(numfiles))
 
-    ax = subplot(111)
+    fig = figure()
+    ax = fig.add_subplot(111)
     #Now plot all of the azimuthal mode numbers as separate lines
-    plot(data[m0indices]['width'], data[m0indices]['growthrate'],
-         '.-', label="m=0")
-    plot(data[m1indices]['width'], data[m1indices]['growthrate'],
-         '.-', label="m=1")
-    plot(data[m2indices]['width'], data[m2indices]['growthrate'],
-         '.-', label="m=2")
-    plot(data[m3indices]['width'], data[m3indices]['growthrate'],
-         '.-', label="m=3")
-    plot(data[m4indices]['width'], data[m4indices]['growthrate'],
-         '.-', label="m=4")
-    plot(data[m5indices]['width'], data[m5indices]['growthrate'],
-         '.-', label="m=5")
-    plot(data[m6indices]['width'], data[m6indices]['growthrate'],
-         '.-', label="m=6")
-    plot(data[m7indices]['width'], data[m7indices]['growthrate'],
-         '.-', label="m=7")
-    plot(data[m8indices]['width'], data[m8indices]['growthrate'],
-         '.-', label="m=8")
+    ax.plot(data[m0indices]['width'], data[m0indices]['growthrate'],
+            '.-', label="m=0")
+    ax.plot(data[m1indices]['width'], data[m1indices]['growthrate'],
+            '.-', label="m=1")
+    ax.plot(data[m2indices]['width'], data[m2indices]['growthrate'],
+            '.-', label="m=2")
+    ax.plot(data[m3indices]['width'], data[m3indices]['growthrate'],
+            '.-', label="m=3")
+    ax.plot(data[m4indices]['width'], data[m4indices]['growthrate'],
+            '.-', label="m=4")
+    ax.plot(data[m5indices]['width'], data[m5indices]['growthrate'],
+            '.-', label="m=5")
+    ax.plot(data[m6indices]['width'], data[m6indices]['growthrate'],
+            '.-', label="m=6")
+    ax.plot(data[m7indices]['width'], data[m7indices]['growthrate'],
+            '.-', label="m=7")
+    ax.plot(data[m8indices]['width'], data[m8indices]['growthrate'],
+            '.-', label="m=8")
     ax.set_xscale('log')
-    ylabel("Growth rate [1/sec]")
-    xlabel("Shear layer half-width [cm]")
-    grid(b='on')
-
-    
-    legend(loc='best')
-    
-
+    ax.set_ylabel("Growth rate [1/sec]")
+    ax.set_xlabel("Shear layer half-width [cm]")
+    ax.legend(loc='best')
+    ax.axhline(0, color='k')
 
 def find_vz_deriv(filename, mode_number):
     ncfile = netcdf.netcdf_file(filename, 'r')
