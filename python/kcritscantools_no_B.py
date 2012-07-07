@@ -28,13 +28,13 @@ def grab_data(rule):
     filebases = []
     for i in range(0, len(files)):
         #Grab the part after the / of any path, and before the _k*.nc
-        filebase = re.split('_', 
+        filebase = re.split('\.input', 
                             re.split('/', files[i])[-1]
                             )[0]
         #If we haven't seen this base before, keep it around.
         if not(filebases.count(filebase)):
             filebases.append(filebase)
-    
+
     numbases = len(filebases)
 
     data =  numpy.ones(numbases, dtype = [('omega1', float), ('omega2', float),
@@ -78,7 +78,7 @@ def grab_data(rule):
             ncfile.close()
         else:
             data[i]['kpeak'] = numpy.nan
-            data[i]['peakgr'] = numpy.nan
+            data[i]['peakgr'] = 0
 
     #Sort the array so things are nicer
     data = numpy.sort(data, order=['deltaomega', 'omega2'])
