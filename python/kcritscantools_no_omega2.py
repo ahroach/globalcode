@@ -125,9 +125,9 @@ def plot_quantities_const_omega1(rule, *omegas):
         axs[i][1].set_xscale('log')
         axs[i][0].axvline(Bcrit(omegas[i]), color='k')
         axs[i][1].axvline(Bcrit(omegas[i]), color='k')
-        axs[i][0].text(0.1, 0.1, r"$\Omega$= %g rpm" % omegas[i],
+        axs[i][0].text(0.1, 0.1, r"$\Omega_{ic}$= %g rpm" % omegas[i],
                        transform = axs[i][0].transAxes)
-        axs[i][1].text(0.1, 0.1, r"$\Omega$= %g rpm" % omegas[i],
+        axs[i][1].text(0.1, 0.1, r"$\Omega_{ic}$= %g rpm" % omegas[i],
                        transform = axs[i][1].transAxes)
         axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
         axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
@@ -187,7 +187,7 @@ def plot_quantities_const_B(rule, *Bs):
     axs[0][0].legend(loc='upper right')
     axs[0][1].legend(loc='upper right')
 
-    axs[-1][1].set_xlabel(r"$\Omega_1$ [RPM]")
+    axs[-1][1].set_xlabel(r"$\Omega_{ic}$ [rpm]")
 
 
 def grab_data_kscan(rule):
@@ -282,8 +282,8 @@ def plot_gr_contour(rule):
     cf = ax.contourf(omega1s, Bs, normgrs, 50)
     ax.scatter(data[:]['omega1'], data[:]['B'], s=2, c='k')
     cb = fig.colorbar(cf, ax=ax)
-    cb.set_label(r"$\gamma/\Delta\Omega$", rotation=270)
-    ax.set_xlabel(r"$\Omega_{ic}$ [RPM]")
+    cb.set_label(r"Re{$\gamma$}/($\Omega_{ic}-\Omega_{oc}$)", rotation=270)
+    ax.set_xlabel(r"$\Omega_{ic}$ [rpm]")
     ax.set_ylabel("B [gauss]")
 
 
@@ -316,15 +316,15 @@ def plot_Bcrit_scaling():
     ax.plot(omega1s, elsasserone, 'k-',
             label=r"$\Lambda=1$", lw=2)
     ax.plot(omega1s, omega_75, 'bs-',
-            label=r"$\gamma=0.75\Omega_{1}$")
+            label=r"Re{$\gamma$}$=0.75\Omega_{ic}$")
     ax.plot(omega1s, omega_50, 'go-',
-            label=r"$\gamma=0.50\Omega_{1}$")
+            label=r"Re{$\gamma$}$=0.50\Omega_{ic}$")
     ax.plot(omega1s, omega_25, 'r*-',
-            label=r"$\gamma=0.25\Omega_{1}$")
+            label=r"Re{$\gamma$}$=0.25\Omega_{ic}$")
     ax.plot(omega1s, omega_10, 'cp-',
-            label=r"$\gamma=0.10\Omega_{1}$")
+            label=r"Re{$\gamma$}$=0.10\Omega_{ic}$")
     
-    ax.set_xlabel(r"$\Omega_{1}$ [rpm]")
+    ax.set_xlabel(r"$\Omega_{ic}$ [rpm]")
     ax.set_ylabel(r"$B$ [gauss]")
     ax.legend(loc='upper left')
 
