@@ -603,11 +603,18 @@ def calculate_currents_kz0(filename, mode_number, B=1000):
 
 
 def plot_derived_quantity_contour(filename, quantity_mag, quantity_phase,
-                                  showcolorbar=0, axisequalize=1, lines=0):
+                                  showcolorbar=0, axisequalize=1, lines=0,
+                                  phase_offset=0, autorotate=0):
     ncfile = netcdf.netcdf_file(filename, 'r')
+
+    if(autorotate):
+        #Rotate things so that the peak vr is at the right of the plot.
+        ridx = abs(ncfile.variables['r'][:]-14).argmin()
+        phase_offset = -ncfile.variables['vr'][mode_number,ridx,1]
+
     (xi,yi,zi)=regrid_component_two(ncfile.variables['r'][:],
                                     quantity_mag,
-                                    quantity_phase,
+                                    quantity_phase + phase_offset,
                                     ncfile.m, ncfile.r1, ncfile.r2)
     print "Regrid complete"
 
@@ -632,8 +639,14 @@ def plot_derived_quantity_contour(filename, quantity_mag, quantity_phase,
     
 def plot_component_contour(filename, component, mode_number, showcolorbar=0,
                            axisequalize=1, showtitle=1, desiredcells=400,
-                           phase_offset=0.0):
+                           phase_offset=0.0, autorotate=0):
     ncfile = netcdf.netcdf_file(filename, 'r')
+
+    if(autorotate):
+        #Rotate things so that the peak vr is at the right of the plot.
+        ridx = abs(ncfile.variables['r'][:]-14).argmin()
+        phase_offset = -ncfile.variables['vr'][mode_number,ridx,1]
+    
     (xi,yi,zi)=regrid_component_two(ncfile.variables['r'][:],
                                     ncfile.variables[component][mode_number,:,0],
                                     ncfile.variables[component][mode_number,:,1] + phase_offset,
