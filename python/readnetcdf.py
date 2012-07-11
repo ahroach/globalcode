@@ -436,9 +436,10 @@ def plot_avg_torque(filename, mode_number):
     ax1=gca()
     ax1.plot(var_r, vr_mag, 'r-', label=r"$|v_r|$")
     ax1.plot(var_r, vt_mag, 'g-', label=r"$|v_{\theta}|$")
-    ax1.plot(var_r, avg_torque, 'b-', label="Torque")
+    ax1.plot(var_r, avg_torque, 'b-',
+             label=r"$<\tilde{v_{r}}\tilde{v_{\theta}}>$")
 
-    ax1.set_ylabel("Velocity, Torque [arb.]")
+    ax1.set_ylabel(r"$|v_r|$, $|v_{\theta}|$, $<\tilde{v_{r}}\tilde{v_{\theta}}>$ [arb.]")
 
     ax2 = ax1.twinx()
     phasedifference = vt_phase-vr_phase
@@ -448,8 +449,8 @@ def plot_avg_torque(filename, mode_number):
         if phasedifference[i] < -pi:
             phasedifference[i] = phasedifference[i] + 2.0*pi
     
-    ax2.plot(var_r, phasedifference, 'c-', label=r"$\Delta$phase")
-    ax2.set_ylabel(r"Arg($v_{\theta}$) - Arg($v_r$) [rad]")
+    ax2.plot(var_r, phasedifference, 'c-', label=r"$\Delta\phi$")
+    ax2.set_ylabel(r"$\Delta\phi=$Arg($v_{\theta}$) - Arg($v_r$) [rad]", rotation=270)
     ax2.set_ylim(-pi,pi)
     ax2.axhline(pi/2.0, color='black')
     ax2.axhline(-pi/2.0, color='black')
@@ -458,7 +459,7 @@ def plot_avg_torque(filename, mode_number):
     lines2, labels2 = ax2.get_legend_handles_labels()
     legend(lines1 + lines2, labels1 + labels2,
            loc='upper right', ncol=2)
-
+    ax1.set_xlabel("r [cm]")
 
 def plot_torque(filename, mode_number):
     ncfile = netcdf.netcdf_file(filename, 'r')
