@@ -603,8 +603,9 @@ def calculate_currents_kz0(filename, mode_number, B=1000):
 
 
 def plot_derived_quantity_contour(filename, quantity_mag, quantity_phase,
-                                  showcolorbar=0, axisequalize=1, lines=0,
-                                  phase_offset=0, autorotate=0):
+                                  levels=50, showcolorbar=0, axisequalize=1,
+                                  lines=0, phase_offset=0, autorotate=0,
+                                  mode_number=0):
     ncfile = netcdf.netcdf_file(filename, 'r')
 
     if(autorotate):
@@ -619,19 +620,19 @@ def plot_derived_quantity_contour(filename, quantity_mag, quantity_phase,
     print "Regrid complete"
 
 
-    contourf(xi, yi, zi.T, 50)
+    cf=gca().contourf(xi, yi, zi.T, levels)
     if(lines):
-        contour(xi, yi, zi.T, 20, colors='k')
+        ct=gca().contour(xi, yi, zi.T, lines, colors='k')
 
-    xlim(-ncfile.r2, ncfile.r2)
-    ylim(-ncfile.r2, ncfile.r2)
+    gca().set_xlim(-ncfile.r2, ncfile.r2)
+    gca().set_ylim(-ncfile.r2, ncfile.r2)
     if(axisequalize):
-        axes().set_aspect('equal')
+        gca().set_aspect('equal')
 
-    xlabel("x [cm]")
-    ylabel("y [cm]")
+    gca().set_xlabel("x [cm]")
+    gca().set_ylabel("y [cm]")
     if(showcolorbar):
-        colorbar()
+        gca().get_figure().colorbar(mappable=cf, ax=gca())
     ncfile.close()
     del ncfile
 
