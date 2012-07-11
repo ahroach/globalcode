@@ -639,7 +639,8 @@ def plot_derived_quantity_contour(filename, quantity_mag, quantity_phase,
     
 def plot_component_contour(filename, component, mode_number, showcolorbar=0,
                            axisequalize=1, showtitle=1, desiredcells=400,
-                           phase_offset=0.0, autorotate=0):
+                           phase_offset=0.0, autorotate=0, levels=50,
+                           showlabels=1):
     ncfile = netcdf.netcdf_file(filename, 'r')
 
     if(autorotate):
@@ -655,15 +656,17 @@ def plot_component_contour(filename, component, mode_number, showcolorbar=0,
     print "Regrid complete"
 
 
-    cf=gca().contourf(xi, yi, zi.T, 50)
+    cf=gca().contourf(xi, yi, zi.T, levels)
 
     gca().set_xlim(-ncfile.r2, ncfile.r2)
     gca().set_ylim(-ncfile.r2, ncfile.r2)
     if(axisequalize):
         gca().set_aspect('equal')
 
-    gca().set_xlabel("x [cm]")
-    gca().set_ylabel("y [cm]")
+    if(showlabels):
+        gca().set_xlabel("x [cm]")
+        gca().set_ylabel("y [cm]")
+    
     titlestring = "%s for mode %d, GR = %.6g + %.6g*i 1/s" % (component, mode_number, ncfile.variables['lambda'][mode_number,0], ncfile.variables['lambda'][mode_number,1])
     if(showtitle):
         title(titlestring)
@@ -671,6 +674,7 @@ def plot_component_contour(filename, component, mode_number, showcolorbar=0,
         gca().get_figure().colorbar(mappable=cf,  ax=gca())
     ncfile.close()
     del ncfile
+    return cf.levels
 
 def plot_all_component_contours(filename, mode_number):
     subplot(2,3,1)
