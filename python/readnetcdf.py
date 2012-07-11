@@ -419,6 +419,7 @@ def plot_avg_torque(filename, mode_number):
 
     #First let's renormalize vr and vt so that the expected value of
     #any given element is 1.
+    #scalefac^2*(sum(vr^2) + sum(vt^2)) = 2*numcells
     x = sqrt((vr_mag*vr_mag).sum()
              + (vt_mag*vt_mag).sum())
     scalefac = sqrt(2*ncells)/x
