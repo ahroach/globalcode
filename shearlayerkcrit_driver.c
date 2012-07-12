@@ -368,6 +368,10 @@ double mindampingrate(double k, void *fnparams)
   free(grid);
   grid = gridgen(params);
   
+  if(params->VERBOSE) {
+    printf("Running with k=%g\n", params->k);
+  }
+
   //Now I'm ready to find that eigenvalue!
   arpack_params->sigma = find_sigma(matrix, params, grid, rotation,
 				    arpack_params);
