@@ -10,7 +10,7 @@ import matplotlib.pyplot as pyplot
 # and kz = kcos\theta = 0.311
 
 def find_roots_simple(B=0.0, kr=0.0, kz=0.0, Omega=0.0, zeta=0.0, m=1.0,
-                      nu=3.4e-3, eta=2.43e3, rho=6.36, r1=7.06, r2=20.3):
+                      nu=2.98e-3, eta=2.57e3, rho=6.36, r1=7.06, r2=20.3):
     """Solve the local dispersion relation."""
     pi = math.pi
 
@@ -38,7 +38,7 @@ def find_roots_simple(B=0.0, kr=0.0, kz=0.0, Omega=0.0, zeta=0.0, m=1.0,
 
 
 def find_roots(B=0.0, kr=0.0, kz=0.0, Omega=0.0, zeta=0.0, m=0,
-               nu=3.4e-3, eta=2.43e3, rho=6.36, r1=7.06, r2=20.3):
+               nu=2.98e-3, eta=2.57e3, rho=6.36, r1=7.06, r2=20.3):
 
     #Parameters are in cgs units (Gauss, cm, 1/cm, cm^2/sec, gm/cm^3, etc)
     #We will be solving for the Doppler shifted frequency
@@ -140,7 +140,7 @@ def sort_roots(results):
 
 
 def plot_vs_kz(B=0.0, kr=0.0, kz=logspace(-3,2,1000), Omega=0.0, zeta=0.0,
-               m=0, nu=3.4e-3, eta=2.43e3, rho=6.36, r1=7.06, r2=20.3,
+               m=0, nu=2.98e-3, eta=2.57e3, rho=6.36, r1=7.06, r2=20.3,
                logscalex=1):
 
     omegas = zeros([kz.size, 5], dtype=complex)
