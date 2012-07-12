@@ -677,7 +677,7 @@ def plot_component_contour(filename, component, mode_number, showcolorbar=0,
         gca().get_figure().colorbar(mappable=cf,  ax=gca())
     ncfile.close()
     del ncfile
-    return cf.levels
+    return cf
 
 def plot_all_component_contours(filename, mode_number):
     subplot(2,3,1)
