@@ -461,6 +461,53 @@ def plot_avg_torque(filename, mode_number):
            loc='upper right', ncol=2)
     ax1.set_xlabel("r [cm]")
 
+
+def plot_avg_torque_m0(filename, mode_number):
+    ncfile = netcdf.netcdf_file(filename, 'r')
+
+    vr_mag = ncfile.variables['vr'][mode_number,:,0]
+    vr_phase = ncfile.variables['vr'][mode_number,:,1]
+    vt_mag = ncfile.variables['vt'][mode_number,:,0]
+    vt_phase = ncfile.variables['vt'][mode_number,:,1]
+    ncells = ncfile.numcells
+    
+    var_r = ncfile.variables['r'][:]
+    m = ncfile.m
+    ncfile.close()
+    del ncfile
+
+    #First let's renormalize vr and vt so that the expected value of
+    #any given element is 1.
+    #scalefac^2*(sum(vr^2) + sum(vt^2)) = 2*numcells
+    x = sqrt((vr_mag*vr_mag).sum()
+             + (vt_mag*vt_mag).sum())
+    scalefac = sqrt(2*ncells)/x
+    vr_mag = vr_mag*scalefac
+    vt_mag = vt_mag*scalefac
+
+    #Now calculate the average torque
+
+    vr = zeros(var_r.size)
+    vt = zeros(var_r.size)
+    avg_torque = zeros(var_r.size)
+
+    for i in range(0, var_r.size):
+        vr[i] = real(vr_mag[i]*exp(1j*vr_phase[i]))
+        vt[i] = real(vt_mag[i]*exp(1j*vt_phase[i]))
+        avg_torque[i] = 0.5*(vr[i]*vt[i])
+    
+
+    ax1=gca()
+    ax1.plot(var_r, vr, 'r-', label=r"$v_r$")
+    ax1.plot(var_r, vt, 'g-', label=r"$v_{\theta}$")
+    ax1.plot(var_r, avg_torque, 'b-',
+             label=r"$<\tilde{v_{r}}\tilde{v_{\theta}}>$")
+
+    ax1.set_ylabel(r"$v_r$, $v_{\theta}$, $<\tilde{v_{r}}\tilde{v_{\theta}}>$ [arb.]")
+    ax1.set_xlabel("r [cm]")
+    ax1.legend(loc='upper right')
+
+
 def plot_torque(filename, mode_number):
     ncfile = netcdf.netcdf_file(filename, 'r')
     vr_mag = ncfile.variables['vr'][mode_number,:,0]
