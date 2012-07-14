@@ -79,7 +79,7 @@ def grab_data(rule):
     return data
 
 def plot_quantities_const_deltaomega(rule, *deltaomegas):
-    if len(omegas) <= 0:
+    if len(deltaomegas) <= 0:
         print "Need to specify at least one deltaomega."
         return
 
@@ -91,7 +91,7 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
     fig = pyplot.figure(figsize=(8, 4*numdeltaomegas))
     fig.subplots_adjust(hspace=0.5)
 
-    for i in range(0, len(omegas)):
+    for i in range(0, len(deltaomegas)):
         tempax = []
         idxs.append(numpy.equal(data[:]['deltaomega'],
                                 deltaomegas[i]*numpy.ones(data.size)))
@@ -113,20 +113,21 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
                        'r.-', label=r"$k_{max}$")
         axs[i][0].plot(data[idxs[i]]['B'], data[idxs[i]]['kpeak'],
                        'g.-', label=r"$k_{peak}$")
-        axs[i][1].plot(data[idxs[i]]['B'], data[idxs[i]]['peakgr'],
-                       'b.-', label="peak gr")
+        axs[i][1].plot(data[idxs[i]]['B'],
+                       data[idxs[i]]['peakgr']/(2*numpy.pi*deltaomegas[i]/60),
+                       'b.-', label=r"Peak Re{$\gamma$}")
         axs[i][0].loglog()
         axs[i][1].set_xscale('log')
         axs[i][0].axvline(Bcrit(deltaomegas[i]), color='k')
         axs[i][1].axvline(Bcrit(deltaomegas[i]), color='k')
         axs[i][0].text(0.1, 0.1,
-                       r"$\Omega_{ic}-\Omega_{oc}$= %g rpm" % deltaomegas[i],
+                       r"$\Omega_1-\Omega_2$= %g rpm" % deltaomegas[i],
                        transform = axs[i][0].transAxes)
         axs[i][1].text(0.1, 0.1,
-                       r"$\Omega_{ic}-\Omega_{oc}$= %g rpm" % deltaomegas[i],
+                       r"$\Omega_1-\Omega_2$= %g rpm" % deltaomegas[i],
                        transform = axs[i][1].transAxes)
         axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
-        axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
+        axs[i][1].set_ylabel(r"Re{$\gamma$}/$\Delta\Omega$")
         
     axs[0][0].legend(loc='upper right')
     axs[0][1].legend(loc='upper right')
@@ -169,8 +170,11 @@ def plot_quantities_const_B(rule, *Bs):
                        'r.-', label=r"$k_{max}$")
         axs[i][0].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['kpeak'],
                        'g.-', label=r"$k_{peak}$")
-        axs[i][1].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['peakgr'],
-                       'b.-', label="peak gr")
+        axs[i][1].plot(data[idxs[i]]['deltaomega'],
+                       data[idxs[i]]['peakgr']/(2*numpy.pi * 
+                                                data[idxs[i]]['deltaomega'] / 
+                                                60),
+                       'b.-', label=r"Peak Re{$\gamma$}")
         axs[i][0].loglog()
         axs[i][1].set_xscale('log')
         axs[i][0].text(0.1, 0.1, r"$B$= %g gauss" % Bs[i],
@@ -178,12 +182,12 @@ def plot_quantities_const_B(rule, *Bs):
         axs[i][1].text(0.1, 0.1, r"$B$= %g gauss" % Bs[i],
                        transform = axs[i][1].transAxes)
         axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
-        axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
+        axs[i][1].set_ylabel(r"Re{$\gamma$}/$\Delta\Omega$")
         
     axs[0][0].legend(loc='upper right')
     axs[0][1].legend(loc='upper right')
 
-    axs[-1][1].set_xlabel(r"$\Omega_{ic}-\Omega_{oc}$ [rpm]")
+    axs[-1][1].set_xlabel(r"$\Omega_1-\Omega_2$ [rpm]")
 
 def plot_gr_contour(rule):
     data = grab_data(rule)
@@ -226,8 +230,8 @@ def plot_gr_contour(rule):
     cf = ax.contourf(deltaomegas, Bs, normgrs, 50)
     ax.scatter(data[:]['deltaomega'], data[:]['B'], s=1, c='k')
     cb = fig.colorbar(cf, ax=ax)
-    cb.set_label(r"Re{$\gamma$}/($\Omega_{ic}-\Omega_{oc}$)", rotation=270)
-    ax.set_xlabel(r"$\Omega_{ic}-\Omega_{oc}$ [rpm]")
+    cb.set_label(r"Re{$\gamma$}/($\Omega_1-\Omega_2$)", rotation=270)
+    ax.set_xlabel(r"$\Omega_1-\Omega_2$ [rpm]")
     ax.set_ylabel("B [gauss]")
 
     

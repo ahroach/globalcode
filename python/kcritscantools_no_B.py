@@ -137,29 +137,29 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
         for omega2 in omega2s:
             if (list(data[idxs[i]]['omega2']).count(omega2) == 0):
                 zerogromega2s.append(omega2)
-        print zerogromega2s
         axs[i][1].plot(numpy.concatenate((data[idxs[i]]['omega2'],
                                           numpy.array(zerogromega2s))),
-                       numpy.concatenate((data[idxs[i]]['peakgr'],
-                                          numpy.zeros(len(zerogromega2s)))),
-                       'b.-', label="peak gr")
+                       (numpy.concatenate((data[idxs[i]]['peakgr'],
+                                           numpy.zeros(len(zerogromega2s)))) /
+                        (2*numpy.pi*deltaomegas[i]/60)),
+                       'b.-', label=r"Peak Re{$\gamma$}")
         axs[i][0].loglog()
         axs[i][1].set_xscale('log')
         axs[i][0].axvline(deltaomegas[i]/2.35, color='k')
         axs[i][1].axvline(deltaomegas[i]/2.35, color='k')
         axs[i][0].text(0.1, 0.1,
-                       r"$\Omega_{ic}-\Omega_{oc}$= %g rpm" % deltaomegas[i],
+                       r"$\Omega_1-\Omega_2$= %g rpm" % deltaomegas[i],
                        transform = axs[i][0].transAxes)
         axs[i][1].text(0.1, 0.1,
-                       r"$\Omega_{ic}-\Omega_{oc}$= %g rpm" % deltaomegas[i],
+                       r"$\Omega_1-\Omega_2$= %g rpm" % deltaomegas[i],
                        transform = axs[i][1].transAxes)
         axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
-        axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
+        axs[i][1].set_ylabel(r"Re{$\gamma$}/$\Delta\Omega$")
         
     axs[0][0].legend(loc='upper right')
     axs[0][1].legend(loc='upper right')
     
-    axs[-1][1].set_xlabel(r"$\Omega_{oc}$ [rpm]")
+    axs[-1][1].set_xlabel(r"$\Omega_2$ [rpm]")
 
 
 def plot_quantities_const_omega2(rule, *omega2s):
@@ -197,21 +197,24 @@ def plot_quantities_const_omega2(rule, *omega2s):
                        'r.-', label=r"$k_{max}$")
         axs[i][0].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['kpeak'],
                        'g.-', label=r"$k_{peak}$")
-        axs[i][1].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['peakgr'],
-                       'b.-', label="peak gr")
+        axs[i][1].plot(data[idxs[i]]['deltaomega'],
+                       data[idxs[i]]['peakgr']/(2*numpy.pi * 
+                                                data[idxs[i]]['deltaomega'] /
+                                                60),
+                       'b.-', label=r"Peak Re{$\gamma$}")
         axs[i][0].loglog()
         axs[i][1].set_xscale('log')
-        axs[i][0].text(0.1, 0.1, r"$\Omega_{oc}$= %g rpm" % omega2s[i],
+        axs[i][0].text(0.1, 0.1, r"$\Omega_2$= %g rpm" % omega2s[i],
                        transform = axs[i][0].transAxes)
-        axs[i][1].text(0.1, 0.1, r"$\Omega_{oc}$= %g rpm" % omega2s[i],
+        axs[i][1].text(0.1, 0.1, r"$\Omega_2$= %g rpm" % omega2s[i],
                        transform = axs[i][1].transAxes)
         axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
-        axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
+        axs[i][1].set_ylabel(r"Re{$\gamma$}/$\Delta\Omega$")
         
     axs[0][0].legend(loc='upper right')
     axs[0][1].legend(loc='upper right')
     
-    axs[-1][1].set_xlabel(r"$\Omega_{ic}-\Omega_{oc}$ [rpm]")
+    axs[-1][1].set_xlabel(r"$\Omega_1-\Omega_2$ [rpm]")
 
 
 def grab_data_kscan(rule):
@@ -260,7 +263,7 @@ def plot_kscan_curves(rule):
     ax = fig.add_subplot(111)
     for i in range(0, len(omega2s)):
         ax.plot(data[omega2idx[i]]['kz'], data[omega2idx[i]]['gr'],
-                '.-', label=r"$\Omega_{oc}$=%g rpm" % omega2s[i])
+                '.-', label=r"$\Omega_2$=%g rpm" % omega2s[i])
     
     ax.set_xlabel(r"$k_z$ [1/cm]")
     ax.set_ylabel(r"Re[$\gamma$] [1/s]")
@@ -306,9 +309,9 @@ def plot_gr_contour(rule):
     cf = ax.contourf(deltaomegas, omega2s, normgrs, 50)
     ax.scatter(data[:]['deltaomega'], data[:]['omega2'], s=1, c='k')
     cb = fig.colorbar(cf, ax=ax)
-    cb.set_label(r"Re{$\gamma$}/($\Omega_{ic}-\Omega_{oc}$)", rotation=270)
-    ax.set_xlabel(r"$\Omega_{ic}-\Omega_{oc}$ [rpm]")
-    ax.set_ylabel(r"$\Omega_{oc}$ [rpm]")
+    cb.set_label(r"Re{$\gamma$}/($\Omega_1-\Omega_2$)", rotation=270)
+    ax.set_xlabel(r"$\Omega_1-\Omega_2$ [rpm]")
+    ax.set_ylabel(r"$\Omega_2$ [rpm]")
 
 
 def elsasser(omega, B):
@@ -335,17 +338,17 @@ def plot_omega2crit_scaling():
     ax = fig.add_subplot(1,1,1)
     ax.loglog()
     ax.plot(deltaomegas, rossby235, 'k-',
-            label=r"$(\Omega_{ic}-\Omega_{oc})/\Omega=2.35$", lw=2)
+            label=r"$(\Omega_1-\Omega_2)/\Omega=2.35$", lw=2)
     ax.plot(deltaomegas, omega_75, 'bs-',
-            label=r"Re{$\gamma$}$=0.75(\Omega_{ic}-\Omega_{oc})$")
+            label=r"Re{$\gamma$}$=0.75(\Omega_1-\Omega_2)$")
     ax.plot(deltaomegas, omega_50, 'go-',
-            label=r"Re{$\gamma$}$=0.50(\Omega_{ic}-\Omega_{oc})$")
+            label=r"Re{$\gamma$}$=0.50(\Omega_1-\Omega_2)$")
     ax.plot(deltaomegas, omega_25, 'r*-',
-            label=r"Re{$\gamma$}$=0.25(\Omega_{ic}-\Omega_{oc})$")
+            label=r"Re{$\gamma$}$=0.25(\Omega_1-\Omega_2)$")
     ax.plot(deltaomegas, omega_10, 'cp-',
-            label=r"Re{$\gamma$}$=0.10(\Omega_{ic}-\Omega_{oc})$")
+            label=r"Re{$\gamma$}$=0.10(\Omega_1-\Omega_2)$")
     
-    ax.set_xlabel(r"$\Omega_{ic}-\Omega_{oc}$ [rpm]")
-    ax.set_ylabel(r"$\Omega_{oc}$ [rpm]")
+    ax.set_xlabel(r"$\Omega_1-\Omega_2$ [rpm]")
+    ax.set_ylabel(r"$\Omega_2$ [rpm]")
     ax.legend(loc='upper left')
     ax.set_xlim(3,1000)

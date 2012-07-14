@@ -119,18 +119,19 @@ def plot_quantities_const_omega1(rule, *omegas):
                        'r.-', label=r"$k_{max}$")
         axs[i][0].plot(data[idxs[i]]['B'], data[idxs[i]]['kpeak'],
                        'g.-', label=r"$k_{peak}$")
-        axs[i][1].plot(data[idxs[i]]['B'], data[idxs[i]]['peakgr'],
-                       'b.-', label="peak gr")
+        axs[i][1].plot(data[idxs[i]]['B'],
+                       data[idxs[i]]['peakgr']/(2*numpy.pi*omegas[i]/60),
+                       'b.-', label=r"Peak Re{$\gamma$}")
         axs[i][0].loglog()
         axs[i][1].set_xscale('log')
         axs[i][0].axvline(Bcrit(omegas[i]), color='k')
         axs[i][1].axvline(Bcrit(omegas[i]), color='k')
-        axs[i][0].text(0.1, 0.1, r"$\Omega_{ic}$= %g rpm" % omegas[i],
+        axs[i][0].text(0.1, 0.1, r"$\Omega_1$= %g rpm" % omegas[i],
                        transform = axs[i][0].transAxes)
-        axs[i][1].text(0.1, 0.1, r"$\Omega_{ic}$= %g rpm" % omegas[i],
+        axs[i][1].text(0.1, 0.1, r"$\Omega_1$= %g rpm" % omegas[i],
                        transform = axs[i][1].transAxes)
         axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
-        axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
+        axs[i][1].set_ylabel(r"Re{$\gamma$}/$\Omega_1$")
         
     axs[0][0].legend(loc='upper right')
     axs[0][1].legend(loc='upper right')
@@ -173,8 +174,11 @@ def plot_quantities_const_B(rule, *Bs):
                        'r.-', label=r"$k_{max}$")
         axs[i][0].plot(data[idxs[i]]['omega1'], data[idxs[i]]['kpeak'],
                        'g.-', label=r"$k_{peak}$")
-        axs[i][1].plot(data[idxs[i]]['omega1'], data[idxs[i]]['peakgr'],
-                       'b.-', label="peak gr")
+        axs[i][1].plot(data[idxs[i]]['omega1'],
+                       data[idxs[i]]['peakgr']/(2*numpy.pi *
+                                                data[idxs[i]]['omega1'] /
+                                                60),
+                       'b.-', label=r"Peak Re{$\gamma$}")
         axs[i][0].loglog()
         axs[i][1].set_xscale('log')
         axs[i][0].text(0.1, 0.1, r"$B$= %g gauss" % Bs[i],
@@ -182,12 +186,12 @@ def plot_quantities_const_B(rule, *Bs):
         axs[i][1].text(0.1, 0.1, r"$B$= %g gauss" % Bs[i],
                        transform = axs[i][1].transAxes)
         axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
-        axs[i][1].set_ylabel(r"Re{$\gamma$} [1/s]")
+        axs[i][1].set_ylabel(r"Re{$\gamma$}/\Omega_1$")
         
     axs[0][0].legend(loc='upper right')
     axs[0][1].legend(loc='upper right')
 
-    axs[-1][1].set_xlabel(r"$\Omega_{ic}$ [rpm]")
+    axs[-1][1].set_xlabel(r"$\Omega_1$ [rpm]")
 
 
 def grab_data_kscan(rule):
@@ -282,8 +286,8 @@ def plot_gr_contour(rule):
     cf = ax.contourf(omega1s, Bs, normgrs, 50)
     ax.scatter(data[:]['omega1'], data[:]['B'], s=2, c='k')
     cb = fig.colorbar(cf, ax=ax)
-    cb.set_label(r"Re{$\gamma$}/($\Omega_{ic}-\Omega_{oc}$)", rotation=270)
-    ax.set_xlabel(r"$\Omega_{ic}$ [rpm]")
+    cb.set_label(r"Re{$\gamma$}/($\Omega_1$)", rotation=270)
+    ax.set_xlabel(r"$\Omega_1$ [rpm]")
     ax.set_ylabel("B [gauss]")
 
 
@@ -316,15 +320,15 @@ def plot_Bcrit_scaling():
     ax.plot(omega1s, elsasserone, 'k-',
             label=r"$\Lambda=1$", lw=2)
     ax.plot(omega1s, omega_75, 'bs-',
-            label=r"Re{$\gamma$}$=0.75\Omega_{ic}$")
+            label=r"Re{$\gamma$}$=0.75\Omega_1$")
     ax.plot(omega1s, omega_50, 'go-',
-            label=r"Re{$\gamma$}$=0.50\Omega_{ic}$")
+            label=r"Re{$\gamma$}$=0.50\Omega_1$")
     ax.plot(omega1s, omega_25, 'r*-',
-            label=r"Re{$\gamma$}$=0.25\Omega_{ic}$")
+            label=r"Re{$\gamma$}$=0.25\Omega_1$")
     ax.plot(omega1s, omega_10, 'cp-',
-            label=r"Re{$\gamma$}$=0.10\Omega_{ic}$")
+            label=r"Re{$\gamma$}$=0.10\Omega_1$")
     
-    ax.set_xlabel(r"$\Omega_{ic}$ [rpm]")
+    ax.set_xlabel(r"$\Omega_1$ [rpm]")
     ax.set_ylabel(r"$B$ [gauss]")
     ax.legend(loc='upper left')
 
