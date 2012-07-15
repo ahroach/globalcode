@@ -1062,7 +1062,7 @@ def find_dispersion_relation_range(filename, krmin, krmax):
         roots = find_dispersion_relation_k(filename, kr)
         #Remove ridiculous roots
         for i in range(0,4):
-            if roots[i].real < -8:
+            if roots[i].real < -1e8:
                 roots[i] = numpy.nan
 
         rootsarray[:,n] = roots
