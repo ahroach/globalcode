@@ -327,8 +327,8 @@ def Bcrit(omega, elsasser=1):
 def plot_omega2crit_scaling():
     #Note that these measurements were all made by hand from the plots!
     deltaomegas = numpy.array((5, 10, 50, 100, 200, 400, 600, 800))
-    omega_75 = numpy.array((2.9, 6.0, 32, 64, 126, 264, 396, 528))
-    omega_50 = numpy.array((3.3, 7.1, 34, 73, 146, 299, 450, 600))
+    omega_75 = numpy.array((2.9, 6.0, 32, 64, 128, 264, 396, 528))
+    omega_50 = numpy.array((3.3, 7.1, 34, 73, 149, 299, 450, 600))
     omega_25 = numpy.array((3.6, 7.6, 36, 79, 154, 310, 467, 620))
     omega_10 = numpy.array((3.8, 7.8, 38, 81, 160, 315, 474, 630))
 
