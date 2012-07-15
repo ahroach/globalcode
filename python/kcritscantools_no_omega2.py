@@ -286,7 +286,7 @@ def plot_gr_contour(rule):
     cf = ax.contourf(omega1s, Bs, normgrs, 50)
     ax.scatter(data[:]['omega1'], data[:]['B'], s=2, c='k')
     cb = fig.colorbar(cf, ax=ax)
-    cb.set_label(r"Re{$\gamma$}/($\Omega_1$)", rotation=270)
+    cb.set_label(r"Re{$\gamma$}/$\Omega_1$", rotation=270)
     ax.set_xlabel(r"$\Omega_1$ [rpm]")
     ax.set_ylabel("B [gauss]")
 
