@@ -1,0 +1,49 @@
+#module load gcc4/4.6.3
+#module load netcdf
+#module load lapack-blas
+#module load gsl/1.13
+#export LD_LIBRARY_PATH=/usr/pppl/gcc/4.6-pkgs/libf2c/lib:$LD_LIBRARY_PATH
+
+.c.o:
+	$(CC) -c $(CFLAGS) $*.c
+
+CC = gcc4 -std=gnu99
+CFLAGS = -Wall -g -O3 -I/usr/pppl/gcc/4.6.3/include \
+         -I/usr/pppl/gcc/4.6-pkgs/libf2c/include \
+	 -I/usr/pppl/gcc/4.6-pkgs/netcdf-4.1.2/include \
+         -I/usr/pppl/gsl/1.13/include -I/usr/pppl/gcc/4.6-pkgs/libf2c/include
+
+LDFLAGS = -L/usr/pppl/gcc/4.6-pkgs/lapack-3.3.1 -L/usr/pppl/gcc/4.6.3/lib64 \
+          -L/usr/pppl/gcc/4.6-pkgs/netcdf-4.1.2/lib \
+	  -L/usr/pppl/gsl/1.13/lib -L/usr/pppl/gcc/4.6-pkgs/libf2c/lib \
+          -L/p/mri/aroach/ARPACK
+
+LIBS = -lgfortran -lm -lf2c -llapack -lblas -larpack_LINUX -lgslcblas \
+       -lgsl -lnetcdf -lz
+
+PROGS = global
+
+OBJS = main.o \
+       getparam.o \
+       probgen.o \
+       gridgen.o \
+       create_matrix.o \
+       setup_arpack.o \
+       find_sigma.o \
+       arpack_driver.o \
+       batch_driver.o \
+       full_driver.o \
+       shearlayerkcrit_driver.o \
+       couette.o \
+       shearlayer.o \
+       writematrix.o \
+       eigensolve.o \
+       eigensolve_full.o \
+       wnetcdf.o \
+       dataprofile.o
+
+global : $(OBJS)
+	$(CC) -o global $(OBJS) $(LDFLAGS) $(LIBS)
+
+clean:
+	$(RM) $(PROGS) gmon.{out,sum} *.o *.s *~ core core.[0-9]*[0-9]
