@@ -189,7 +189,7 @@ def plot_quantities_const_B(rule, *Bs):
 
     axs[-1][1].set_xlabel(r"$\Omega_1-\Omega_2$ [rpm]")
 
-def plot_gr_contour(rule):
+def plot_gr_contour(rule, *zerodeltaomegas):
     data = grab_data(rule)
 
     #Find all of the unique Bs and deltaomegas
@@ -207,7 +207,14 @@ def plot_gr_contour(rule):
         Bs.append(0)
     if (deltaomegas.count(0) == 0):
         deltaomegas.append(0)
-      
+    
+    #Also have the option to add deltaomegas that were calculated,
+    #but had no unstable growthrates so aren't in the list from data
+    #They help to define the edges of the unstable region in the plot
+    for dw in zerodeltaomegas:
+        if(deltaomegas.count(dw) == 0):
+            deltaomegas.append(dw)
+        
     Bs.sort()
     deltaomegas.sort()
 
