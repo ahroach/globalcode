@@ -12,6 +12,10 @@ typedef struct {
 } EIGENVALUE_STRUCT;
 
 int cmpeigenvalueg(EIGENVALUE_STRUCT *eigen1, EIGENVALUE_STRUCT *eigen2);
+double ***alloc_3d_dbl_array(int dim1, int dim2, int dim3);
+void free_3d_dbl_array(double ***array, int dim1, int dim2, int dim3);
+double **alloc_2d_dbl_array(int dim1, int dim2);
+void free_2d_dbl_array(double **array, int dim1, int dim2);
 
 int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
 	    ROTATION_STRUCT *rotation, OUTPUT_CONTROL *output_control,
@@ -47,17 +51,15 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
   double complex vz;
   int pos;
 
-  double writeable_lambda[results->nconv][2];
-  double writeable_residual[results->nconv];
-  double writeable_br[results->nconv][grid->numcells][2];
-  double writeable_bt[results->nconv][grid->numcells][2];
-  double writeable_bz[results->nconv][grid->numcells][2];
-  double writeable_vr[results->nconv][grid->numcells][2];
-  double writeable_vt[results->nconv][grid->numcells][2];
-  double writeable_vz[results->nconv][grid->numcells][2];
-  double writeable_pi[results->nconv][grid->numcells][2];
-  double writeable_r[grid->numcells];
-  double writeable_omega[grid->numcells];
+  double **writeable_lambda;
+  double *writeable_residual;
+  double ***writeable_br;
+  double ***writeable_bt;
+  double ***writeable_bz;
+  double ***writeable_vr;
+  double ***writeable_vt;
+  double ***writeable_vz;
+  double ***writeable_pi;
 
   size_t start[3] = {0, 0, 0};
   size_t count[3];
@@ -71,7 +73,11 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
   //First, lets sort these things so that we only save the eigenvectors
   //that actually have data.
 
-  EIGENVALUE_STRUCT eigenvalues[5*grid->numcells];
+  EIGENVALUE_STRUCT *eigenvalues;
+  eigenvalues = malloc(sizeof(EIGENVALUE_STRUCT)*5*grid->numcells);
+  if (!eigenvalues) {
+    fprintf(stderr, "Error allocating space for eigenvalues structure.\n");
+  }
 
   //Sort the eigenvalues
   for (int i = 0; i < results->nconv; i++) {
@@ -414,7 +420,9 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
 
   //Get the eigenvalues (lambda) and residuals in the correct order
   //and load them in the arrays to write.
-  
+  writeable_lambda = alloc_2d_dbl_array(results->nconv, 2);
+  writeable_residual = malloc(sizeof(double)*results->nconv);
+
   for(int i=0; i < results->nconv; i++) {    
     writeable_lambda[i][0] = creal(eigenvalues[i].eigenvalue);
     writeable_lambda[i][1] = cimag(eigenvalues[i].eigenvalue);
@@ -426,14 +434,23 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
   count[0] = results->nconv;
   count[1] = 2;
   nc_put_vara_double(ncid, lambda_id, start, count,
-		     &writeable_lambda[0][0]);
+		     writeable_lambda[0]);
   nc_put_vara_double(ncid, residual_id, start, count,
-		     &writeable_residual[0]);
+		     writeable_residual);
 
-
+  //We've written, so free up these arrays.
+  free_2d_dbl_array(writeable_lambda, results->nconv, 2);
+  free(writeable_residual);
 
   //Load up the data arrays with results in the correct order.
-   
+  //First allocate the necessary resources.
+  writeable_br = alloc_3d_dbl_array(results->nconv, grid->numcells, 2);
+  writeable_bt = alloc_3d_dbl_array(results->nconv, grid->numcells, 2);
+  writeable_bz = alloc_3d_dbl_array(results->nconv, grid->numcells, 2);
+  writeable_vr = alloc_3d_dbl_array(results->nconv, grid->numcells, 2);
+  writeable_vt = alloc_3d_dbl_array(results->nconv, grid->numcells, 2);
+  writeable_vz = alloc_3d_dbl_array(results->nconv, grid->numcells, 2);
+  writeable_pi = alloc_3d_dbl_array(results->nconv, grid->numcells, 2);
 
   for(int i=0; i < results->nconv; i++) {
     pos = eigenvalues[i].pos;
@@ -481,7 +498,7 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
   count[2] = 2;
 
   ncerror = nc_put_vara_double(ncid, br_id, start, count,
-			       (double *)writeable_br);
+			       writeable_br[0][0]);
   if (ncerror != NC_NOERR) {
     if(ncerror == NC_ERANGE) {
       fprintf(stderr, "Value out of range in 'br'\n");
@@ -494,7 +511,7 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
 
 
   ncerror = nc_put_vara_double(ncid, bt_id, start, count,
-			       (double *)writeable_bt);
+			       writeable_bt[0][0]);
   if (ncerror != NC_NOERR) {
     if(ncerror == NC_ERANGE) {
       fprintf(stderr, "Value out of range in 'bt'\n");
@@ -506,7 +523,7 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
   }  
 
   ncerror = nc_put_vara_double(ncid, bz_id, start, count,
-			       (double *)writeable_bz);
+			       writeable_bz[0][0]);
   if (ncerror != NC_NOERR) {
     if(ncerror == NC_ERANGE) {
       fprintf(stderr, "Value out of range in 'bz'\n");
@@ -519,7 +536,7 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
 
 
   ncerror = nc_put_vara_double(ncid, vr_id, start, count,
-			       (double *)writeable_vr);
+			       writeable_vr[0][0]);
   if (ncerror != NC_NOERR) {
     if(ncerror == NC_ERANGE) {
       fprintf(stderr, "Value out of range in 'vr'\n");
@@ -531,7 +548,7 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
   }  
 
   ncerror = nc_put_vara_double(ncid, vt_id, start, count,
-			       (double *)writeable_vt);
+			       writeable_vt[0][0]);
   if (ncerror != NC_NOERR) {
     if(ncerror == NC_ERANGE) {
       fprintf(stderr, "Value out of range in 'vt'\n");
@@ -545,7 +562,7 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
   
   ncerror = nc_put_vara_double(ncid, vz_id, (size_t[3]){0,0,0},
 			       (size_t[3]){results->nconv, grid->numcells, 2},
-			       (double *)writeable_vz);
+			       writeable_vz[0][0]);
   if (ncerror != NC_NOERR) {
     if(ncerror == NC_ERANGE) {
       fprintf(stderr, "Value out of range in 'vz'\n");
@@ -558,7 +575,7 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
 
 
   ncerror = nc_put_vara_double(ncid, pi_id, start, count,
-			       (double *)writeable_pi);
+			       writeable_pi[0][0]);
   if (ncerror != NC_NOERR) {
     if(ncerror == NC_ERANGE) {
       fprintf(stderr, "Value out of range in 'pi'\n");
@@ -569,22 +586,33 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
     }
   }  
 
+  //Free all the areas that I used for saving things.
+  free_3d_dbl_array(writeable_br, results->nconv, grid->numcells, 2);
+  free_3d_dbl_array(writeable_bt, results->nconv, grid->numcells, 2);
+  free_3d_dbl_array(writeable_bz, results->nconv, grid->numcells, 2);
+  free_3d_dbl_array(writeable_vr, results->nconv, grid->numcells, 2);
+  free_3d_dbl_array(writeable_vt, results->nconv, grid->numcells, 2);
+  free_3d_dbl_array(writeable_vz, results->nconv, grid->numcells, 2);
+  free_3d_dbl_array(writeable_pi, results->nconv, grid->numcells, 2);
+
+
 
   //Now write the r and omega values
   //(Finally, something that's already in order and easy to write!)
-
+  
   count[0] = grid->numcells;
   nc_put_vara_double(ncid, r_id, start, count, grid->r);
   nc_put_vara_double(ncid, omega_id, start, count, rotation->omega);
-   
-
+  
+  free(eigenvalues);
+  
   //Close the file
   ncerror = nc_close(ncid);
   if (ncerror != NC_NOERR) {
     fprintf(stderr, "Failed to close netCDF dataset properly.\n");
     return 1;
   }
-
+  
 return 0;
 }
 
@@ -601,4 +629,79 @@ int cmpeigenvalueg(EIGENVALUE_STRUCT *eigen1, EIGENVALUE_STRUCT *eigen2)
   }
 }
 
-    
+double ***alloc_3d_dbl_array(int dim1, int dim2, int dim3) {
+  double ***array;
+  double *tmpblock;
+
+  //Allocate a contiguous block of memory.
+  tmpblock = malloc(sizeof(double)*dim1*dim2*dim3);
+  if(tmpblock == NULL) {
+    fprintf(stderr, "Error allocating tmpblock in allocate_3d_dbl_array.\n");
+  }
+
+  //Now allocate an array of pointers to an array of pointers.
+  array = malloc(dim1 * sizeof(double **));
+  if(array == NULL) {
+    fprintf(stderr, "Error allocating memory in allocate_3d_dbl_array.\n");
+    exit(1);
+  }
+  for(int i = 0; i < dim1; i++) {
+    //And allocate an array of pointers to doubles
+    array[i] = malloc(dim2 * sizeof(double *));
+    if(array == NULL) {
+      fprintf(stderr, "Error allocating memory in second loop of allocate_3d_dbl_array.\n");
+      exit(1);
+    }
+    for(int j = 0; j < dim2; j++) {
+      //Set those pointers to point to the correct spot in the
+      //block of memory
+      array[i][j] = tmpblock + i*(dim2*dim3) + j*dim3;
+    }
+  }
+  return array;
+}
+
+void free_3d_dbl_array(double ***array, int dim1, int dim2, int dim3) {
+  //Free the actual block of memory.
+  free(array[0][0]);
+  //And now free the inside group of pointers
+  for(int i = 0; i < dim1; i++) {
+    free(array[i]);
+  }
+  //And free the outside group of pointers.
+  free(array);
+  return;
+}
+
+double **alloc_2d_dbl_array(int dim1, int dim2) {
+  double **array;
+  double *tmpblock;
+
+  //Allocate a contiguous block of memory.
+  tmpblock = malloc(sizeof(double)*dim1*dim2);
+  if(tmpblock == NULL) {
+    fprintf(stderr, "Error allocating tmpblock in allocate_2d_dbl_array.\n");
+  }
+
+  //Now allocate an array of pointers to doubles.
+  array = malloc(dim1 * sizeof(double *));
+  if(array == NULL) {
+    fprintf(stderr, "Error allocating memory in allocate_2d_dbl_array.\n");
+    exit(1);
+  }
+  for(int i = 0; i < dim1; i++) {
+    //Set those pointers to point to the correct spot in the
+    //block of memory
+    array[i] = tmpblock + i*(dim2);
+  }
+  return array;
+}
+
+
+void free_2d_dbl_array(double **array, int dim1, int dim2) {
+  //Free the actual block of memory
+  free(array[0]);
+  //And free the array of pointers.
+  free(array);
+  return;
+}
