@@ -42,11 +42,26 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
   int ncerror;
   char output_file_path[256];
   size_t put_index[3];
-  double tmp_output_value;
   double sigma_r, sigma_i;
   double complex bz;
   double complex vz;
   int pos;
+
+  double writeable_lambda[results->nconv][2];
+  double writeable_residual[results->nconv];
+  double writeable_br[results->nconv][grid->numcells][2];
+  double writeable_bt[results->nconv][grid->numcells][2];
+  double writeable_bz[results->nconv][grid->numcells][2];
+  double writeable_vr[results->nconv][grid->numcells][2];
+  double writeable_vt[results->nconv][grid->numcells][2];
+  double writeable_vz[results->nconv][grid->numcells][2];
+  double writeable_pi[results->nconv][grid->numcells][2];
+  double writeable_r[grid->numcells];
+  double writeable_omega[grid->numcells];
+
+  size_t start[3] = {0, 0, 0};
+  size_t count[3];
+
 
   //Create local pointers to these guys
   double complex *lambda = results->lambda;
@@ -396,191 +411,46 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
 
   
   //Now we just need to fill out all of these fields.
-  //Write the eigenvalues lambda
 
+  //Get the eigenvalues (lambda) and residuals in the correct order
+  //and load them in the arrays to write.
+  
   for(int i=0; i < results->nconv; i++) {    
-    put_index[0] = i;
-    put_index[1] = 0;
-    tmp_output_value = creal(eigenvalues[i].eigenvalue);
-    nc_put_var1_double(ncid, lambda_id, put_index, &tmp_output_value);
-    
-    put_index[1] = 1;
-    tmp_output_value = cimag(eigenvalues[i].eigenvalue);
-    nc_put_var1_double(ncid, lambda_id, put_index, &tmp_output_value);
-
-    nc_put_var1_double(ncid, residual_id, put_index,
-		       &residual[eigenvalues[i].pos]);
+    writeable_lambda[i][0] = creal(eigenvalues[i].eigenvalue);
+    writeable_lambda[i][1] = cimag(eigenvalues[i].eigenvalue);
+    writeable_residual[i] = residual[eigenvalues[i].pos];
   }
   
+  //Write these values to the file
 
-  //Now write all of the components br to pi
-  
+  count[0] = results->nconv;
+  count[1] = 2;
+  nc_put_vara_double(ncid, lambda_id, start, count,
+		     &writeable_lambda[0][0]);
+  nc_put_vara_double(ncid, residual_id, start, count,
+		     &writeable_residual[0]);
+
+
+
+  //Load up the data arrays with results in the correct order.
+   
+
   for(int i=0; i < results->nconv; i++) {
-    put_index[0] = i;
     pos = eigenvalues[i].pos;
     for (int j = 0; j < grid->numcells; j++) {	
-      put_index[1] = j;
-	
       //br
-      put_index[2] = 0;
-      tmp_output_value = cabs(eigvecs[5*grid->numcells*pos + 5*j + 0]);
-      ncerror = nc_put_var1_double(ncid, br_id, put_index, &tmp_output_value);
-      if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'br.mag': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'br.mag'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
-      
-      
-      put_index[2] = 1;
-      tmp_output_value = carg(eigvecs[5*grid->numcells*pos + 5*j + 0]);
-      ncerror = nc_put_var1_double(ncid, br_id, put_index, &tmp_output_value);
-      if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'br.arg': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'br.arg'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
+      writeable_br[i][j][0] = cabs(eigvecs[5*grid->numcells*pos + 5*j + 0]);
+      writeable_br[i][j][1] = carg(eigvecs[5*grid->numcells*pos + 5*j + 0]);
+      writeable_bt[i][j][0] = cabs(eigvecs[5*grid->numcells*pos + 5*j + 1]);
+      writeable_bt[i][j][1] = carg(eigvecs[5*grid->numcells*pos + 5*j + 1]);
+      writeable_vr[i][j][0] = cabs(eigvecs[5*grid->numcells*pos + 5*j + 2]);
+      writeable_vr[i][j][1] = carg(eigvecs[5*grid->numcells*pos + 5*j + 2]);
+      writeable_vt[i][j][0] = cabs(eigvecs[5*grid->numcells*pos + 5*j + 3]);
+      writeable_vt[i][j][1] = carg(eigvecs[5*grid->numcells*pos + 5*j + 3]);
+      writeable_pi[i][j][0] = cabs(eigvecs[5*grid->numcells*pos + 5*j + 4]);
+      writeable_pi[i][j][1] = carg(eigvecs[5*grid->numcells*pos + 5*j + 4]);
 
-
-      
-      //bt
-      put_index[2] = 0;
-      tmp_output_value = cabs(eigvecs[5*grid->numcells*pos + 5*j + 1]);
-      ncerror = nc_put_var1_double(ncid, bt_id, put_index, &tmp_output_value);
-            if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'bt.mag': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'bt.mag'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
-
-
-
-      put_index[2] = 1;
-      tmp_output_value = carg(eigvecs[5*grid->numcells*pos + 5*j + 1]);
-      ncerror = nc_put_var1_double(ncid, bt_id, put_index, &tmp_output_value);
-      if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'bt.arg': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'bt.arg'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
-
-      
-      
-      //vr
-      put_index[2] = 0;
-      tmp_output_value = cabs(eigvecs[5*grid->numcells*pos + 5*j + 2]);
-      ncerror = nc_put_var1_double(ncid, vr_id, put_index, &tmp_output_value);
-      if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'vr.mag': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'vr.mag'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }        
-
-
-      put_index[2] = 1;
-      tmp_output_value = carg(eigvecs[5*grid->numcells*pos + 5*j + 2]);
-      ncerror = nc_put_var1_double(ncid, vr_id, put_index, &tmp_output_value);
-      if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'vr.arg': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'vr.arg'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
-      
-
-      //vt
-      put_index[2] = 0;
-      tmp_output_value = cabs(eigvecs[5*grid->numcells*pos + 5*j + 3]);
-      ncerror = nc_put_var1_double(ncid, vt_id, put_index, &tmp_output_value);
-      if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'vt.mag': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'vt.mag'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
-
-
-      put_index[2] = 1;
-      tmp_output_value = carg(eigvecs[5*grid->numcells*pos + 5*j + 3]);
-      ncerror = nc_put_var1_double(ncid, vt_id, put_index, &tmp_output_value);
-      if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'vt.arg': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'vt.arg'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
-
-      
-      //pi
-      put_index[2] = 0;
-      tmp_output_value = cabs(eigvecs[5*grid->numcells*pos + 5*j + 4]);
-      ncerror = nc_put_var1_double(ncid, pi_id, put_index, &tmp_output_value);
-      if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'pi.mag': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'pi.mag'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
-      
-
-      put_index[2] = 1;
-      tmp_output_value = carg(eigvecs[5*grid->numcells*pos + 5*j + 4]);
-      ncerror = nc_put_var1_double(ncid, pi_id, put_index, &tmp_output_value);
-      if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'pi.arg': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'pi.arg'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
-
-      
-      //Now calculate vz and bz and save those
-      
+      //Now calculate vz and bz
       if (j == 0 || j == grid->numcells-1) {
 	vz = 0.0;
 	bz = 0.0;
@@ -596,82 +466,119 @@ int wnetcdf(PARAMS_STRUCT *params, GRID_STRUCT *grid,
 		  - eigvecs[5*grid->numcells*pos + 5*(j-1) + 0])/
 	       (2.0*grid->dx))/(params->k*grid->r[j]);
       }
-      
-      
-      //bz
-      put_index[2] = 0;
-      tmp_output_value = cabs(bz);
-      ncerror = nc_put_var1_double(ncid, bz_id, put_index, &tmp_output_value);
-      if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'bz.mag': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'bz.mag'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
+
+      writeable_bz[i][j][0] = cabs(bz);
+      writeable_bz[i][j][1] = carg(bz);
+      writeable_vz[i][j][0] = cabs(vz);
+      writeable_vz[i][j][1] = carg(vz);
+    }      
+  }
 
 
-      put_index[2] = 1;
-      tmp_output_value= carg(bz);
-      ncerror = nc_put_var1_double(ncid, bz_id, put_index, &tmp_output_value);
-      if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'bz.arg': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'bz.arg'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
-      
+  //Write all of the data arrays to the file
+  count[0] = results->nconv;
+  count[1] = grid->numcells;
+  count[2] = 2;
 
-      //vz
-      put_index[2] = 0;
-      tmp_output_value = cabs(vz);
-      ncerror = nc_put_var1_double(ncid, vz_id, put_index, &tmp_output_value);
-      if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'vz.mag': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'vz.mag'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
-
-      
-      put_index[2] = 1;
-      tmp_output_value = carg(vz);
-      ncerror = nc_put_var1_double(ncid, vz_id, put_index, &tmp_output_value);       if (ncerror != NC_NOERR) {
-	if(ncerror == NC_ERANGE) {
-	  fprintf(stderr, "Value out of range in 'vz.arg': %g\n",
-		  tmp_output_value);
-	} else {
-	  fprintf(stderr, "Failed to write value for 'vz.arg'. Error %i.\n",
-		  ncerror);
-	  return 1;
-	}
-      }  
-
-      
-      
+  ncerror = nc_put_vara_double(ncid, br_id, start, count,
+			       (double *)writeable_br);
+  if (ncerror != NC_NOERR) {
+    if(ncerror == NC_ERANGE) {
+      fprintf(stderr, "Value out of range in 'br'\n");
+    } else {
+      fprintf(stderr, "Failed to write value for 'br'. Error %i.\n",
+	      ncerror);
+      return 1;
     }
-  }
+  }  
 
-  //Now save the r and omega values
 
-  for(int i=0; i < grid->numcells; i++) {    
-    put_index[0] = i;
-    nc_put_var1_double(ncid, r_id, put_index, &grid->r[i]);
-    nc_put_var1_double(ncid, omega_id, put_index, &rotation->omega[i]);
-  }
+  ncerror = nc_put_vara_double(ncid, bt_id, start, count,
+			       (double *)writeable_bt);
+  if (ncerror != NC_NOERR) {
+    if(ncerror == NC_ERANGE) {
+      fprintf(stderr, "Value out of range in 'bt'\n");
+    } else {
+      fprintf(stderr, "Failed to write value for 'bt'. Error %i.\n",
+	      ncerror);
+      return 1;
+    }
+  }  
+
+  ncerror = nc_put_vara_double(ncid, bz_id, start, count,
+			       (double *)writeable_bz);
+  if (ncerror != NC_NOERR) {
+    if(ncerror == NC_ERANGE) {
+      fprintf(stderr, "Value out of range in 'bz'\n");
+    } else {
+      fprintf(stderr, "Failed to write value for 'bz'. Error %i.\n",
+	      ncerror);
+      return 1;
+    }
+  }  
+
+
+  ncerror = nc_put_vara_double(ncid, vr_id, start, count,
+			       (double *)writeable_vr);
+  if (ncerror != NC_NOERR) {
+    if(ncerror == NC_ERANGE) {
+      fprintf(stderr, "Value out of range in 'vr'\n");
+    } else {
+      fprintf(stderr, "Failed to write value for 'vr'. Error %i.\n",
+	      ncerror);
+      return 1;
+    }
+  }  
+
+  ncerror = nc_put_vara_double(ncid, vt_id, start, count,
+			       (double *)writeable_vt);
+  if (ncerror != NC_NOERR) {
+    if(ncerror == NC_ERANGE) {
+      fprintf(stderr, "Value out of range in 'vt'\n");
+    } else {
+      fprintf(stderr, "Failed to write value for 'vt'. Error %i.\n",
+	      ncerror);
+      return 1;
+    }
+  }  
 
   
+  ncerror = nc_put_vara_double(ncid, vz_id, (size_t[3]){0,0,0},
+			       (size_t[3]){results->nconv, grid->numcells, 2},
+			       (double *)writeable_vz);
+  if (ncerror != NC_NOERR) {
+    if(ncerror == NC_ERANGE) {
+      fprintf(stderr, "Value out of range in 'vz'\n");
+    } else {
+      fprintf(stderr, "Failed to write value for 'vz'. Error %i.\n",
+	      ncerror);
+      return 1;
+    }
+  }  
+
+
+  ncerror = nc_put_vara_double(ncid, pi_id, start, count,
+			       (double *)writeable_pi);
+  if (ncerror != NC_NOERR) {
+    if(ncerror == NC_ERANGE) {
+      fprintf(stderr, "Value out of range in 'pi'\n");
+    } else {
+      fprintf(stderr, "Failed to write value for 'pi'. Error %i.\n",
+	      ncerror);
+      return 1;
+    }
+  }  
+
+
+  //Now write the r and omega values
+  //(Finally, something that's already in order and easy to write!)
+
+  count[0] = grid->numcells;
+  nc_put_vara_double(ncid, r_id, start, count, grid->r);
+  nc_put_vara_double(ncid, omega_id, start, count, rotation->omega);
+   
+
+  //Close the file
   ncerror = nc_close(ncid);
   if (ncerror != NC_NOERR) {
     fprintf(stderr, "Failed to close netCDF dataset properly.\n");
@@ -693,3 +600,5 @@ int cmpeigenvalueg(EIGENVALUE_STRUCT *eigen1, EIGENVALUE_STRUCT *eigen2)
     return 1;
   }
 }
+
+    
