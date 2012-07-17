@@ -1,7 +1,6 @@
 #module load gcc4/4.6.3
 #module load netcdf
 #module load lapack-blas
-#module load gsl/1.13
 #export LD_LIBRARY_PATH=/usr/pppl/gcc/4.6-pkgs/libf2c/lib:$LD_LIBRARY_PATH
 
 .c.o:
@@ -11,11 +10,12 @@ CC = gcc4 -std=gnu99
 CFLAGS = -Wall -g -O3 -I/usr/pppl/gcc/4.6.3/include \
          -I/usr/pppl/gcc/4.6-pkgs/libf2c/include \
 	 -I/usr/pppl/gcc/4.6-pkgs/netcdf-4.1.2/include \
-         -I/usr/pppl/gsl/1.13/include -I/usr/pppl/gcc/4.6-pkgs/libf2c/include
+         -I/p/mri/aroach/gsl_install/include \
+         -I/usr/pppl/gcc/4.6-pkgs/libf2c/include
 
 LDFLAGS = -L/usr/pppl/gcc/4.6-pkgs/lapack-3.3.1 -L/usr/pppl/gcc/4.6.3/lib64 \
           -L/usr/pppl/gcc/4.6-pkgs/netcdf-4.1.2/lib \
-	  -L/usr/pppl/gsl/1.13/lib -L/usr/pppl/gcc/4.6-pkgs/libf2c/lib \
+	  -L/p/mri/aroach/gsl_install/lib -L/usr/pppl/gcc/4.6-pkgs/libf2c/lib \
           -L/p/mri/aroach/ARPACK
 
 LIBS = -lgfortran -lm -lf2c -llapack -lblas -larpack_LINUX -lgslcblas \
