@@ -4,6 +4,7 @@ import readnetcdf
 import matplotlib.pyplot as pyplot
 import numpy
 import scipy.io.netcdf as netcdf
+import localdispersionrelation
 
 benchmarkdir = "/home/MRI/globalcode/benchmarks_v2/"
 
@@ -179,6 +180,7 @@ def plot_timings(filename="timings.eps"):
 
     fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
 
+
 def plot_goodman_mri_insulating_mode(filename="goodman_mri_insulating_mode.eps"):
     datapath = benchmarkdir + "goodman_mri/"
 
@@ -222,3 +224,208 @@ def plot_goodman_mri_insulating_mode(filename="goodman_mri_insulating_mode.eps")
     fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
 
     ncfile.close()
+
+
+def plot_narrowgap_alfven_pm1(filename="narrowgap_alfven_pm1.eps"):
+    kmin = 100
+    kmax = 5000
+    #Calculate ks from the global code
+    datafile = benchmarkdir + "narrowgap_alfven/m1.nc"
+    ncfile = netcdf.netcdf_file(datafile, 'r')
+    modes = range(ncfile.variables['lambda'][:,0].size)
+    k = numpy.zeros(ncfile.variables['lambda'][:,0].size)
+
+    for mode in modes:
+        mode_attrs = readnetcdf.get_mode_attributes_mequalzero(datafile, mode)
+        k[mode] = mode_attrs['k']
+
+    #Find ks from the local dispersion relation
+    localk = numpy.linspace(kmin, kmax, 200)
+    omegas = numpy.zeros([localk.size, 5], dtype=complex)
+    findr = localdispersionrelation.find_roots
+    omegabar = numpy.sqrt(ncfile.variables['omega'][0] *
+                          ncfile.variables['omega'][-1])
+    zetabar = (2*(ncfile.r2**2*ncfile.variables['omega'][-1] -
+                  ncfile.r1**2*ncfile.variables['omega'][0]) /
+               ((ncfile.r2**2 - ncfile.r1**2)*omegabar))
+    for i in range(0, localk.size):
+        omegas[i,:] = findr(B=ncfile.B0,
+                            kr=localk[i],
+                            kz=ncfile.kz,
+                            m=ncfile.m,
+                            nu=ncfile.nu,
+                            eta=ncfile.eta,
+                            rho=ncfile.rho,
+                            r1=ncfile.r1,
+                            r2=ncfile.r2,
+                            Omega=omegabar,
+                            zeta=2)
+
+    omegas = localdispersionrelation.sort_roots(omegas)
+
+    fig=pyplot.figure()
+    ax1 = fig.add_subplot(2,1,1)
+    ax2 = fig.add_subplot(2,1,2, sharex=ax1)
+    
+    ax1.plot(localk, omegas[:,0].imag, 'k-')
+    ax1.plot(localk, omegas[:,1].imag, 'k-')
+    ax2.plot(localk, omegas[:,0].real, 'k-')
+    ax2.plot(localk, omegas[:,1].real, 'k-')
+    ax2.plot(localk, omegas[:,2].real, 'k-')
+    ax2.plot(localk, omegas[:,3].real, 'k-')
+    ax2.plot(localk, omegas[:,4].real, 'k-')
+    ax1.plot(k, ncfile.variables['lambda'][:,0], 'r.')
+    ax2.plot(k, ncfile.variables['lambda'][:,1], 'r.')
+
+    ax1.set_xlim(kmin, kmax)
+    ax2.set_xlim(kmin, kmax)
+    
+    ax1.set_ylabel(r"Re{$\gamma$}")
+    ax2.set_ylabel(r"Im{$\gamma$}")
+    ax2.set_xlabel(r"$k_r$ [1/cm]")
+
+    ax1.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
+    ax2.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
+
+    ncfile.close()
+         
+    fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
+
+
+
+
+def plot_narrowgap_alfven_pmpoint1(filename="narrowgap_alfven_pmpoint1.eps"):
+    kmin = 100
+    kmax = 5000
+    #Calculate ks from the global code
+    datafile = benchmarkdir + "narrowgap_alfven_pm0.1/m1.nc"
+    ncfile = netcdf.netcdf_file(datafile, 'r')
+    modes = range(ncfile.variables['lambda'][:,0].size)
+    k = numpy.zeros(ncfile.variables['lambda'][:,0].size)
+
+    for mode in modes:
+        mode_attrs = readnetcdf.get_mode_attributes_mequalzero(datafile, mode)
+        k[mode] = mode_attrs['k']
+
+    #Find ks from the local dispersion relation
+    localk = numpy.linspace(kmin, kmax, 200)
+    omegas = numpy.zeros([localk.size, 5], dtype=complex)
+    findr = localdispersionrelation.find_roots
+    omegabar = numpy.sqrt(ncfile.variables['omega'][0] *
+                          ncfile.variables['omega'][-1])
+    zetabar = (2*(ncfile.r2**2*ncfile.variables['omega'][-1] -
+                  ncfile.r1**2*ncfile.variables['omega'][0]) /
+               ((ncfile.r2**2 - ncfile.r1**2)*omegabar))
+    for i in range(0, localk.size):
+        omegas[i,:] = findr(B=ncfile.B0,
+                            kr=localk[i],
+                            kz=ncfile.kz,
+                            m=ncfile.m,
+                            nu=ncfile.nu,
+                            eta=ncfile.eta,
+                            rho=ncfile.rho,
+                            r1=ncfile.r1,
+                            r2=ncfile.r2,
+                            Omega=omegabar,
+                            zeta=2)
+
+    omegas = localdispersionrelation.sort_roots(omegas)
+
+    fig=pyplot.figure()
+    ax1 = fig.add_subplot(2,1,1)
+    ax2 = fig.add_subplot(2,1,2, sharex=ax1)
+    
+    ax1.plot(localk, omegas[:,0].imag, 'k-')
+    ax1.plot(localk, omegas[:,1].imag, 'k-')
+    ax1.plot(localk, omegas[:,2].imag, 'k-')
+    ax1.plot(localk, omegas[:,3].imag, 'k-')
+    ax2.plot(localk, omegas[:,0].real, 'k-')
+    ax2.plot(localk, omegas[:,1].real, 'k-')
+    ax2.plot(localk, omegas[:,2].real, 'k-')
+    ax2.plot(localk, omegas[:,3].real, 'k-')
+    ax1.plot(k, ncfile.variables['lambda'][:,0], 'r.')
+    ax2.plot(k, ncfile.variables['lambda'][:,1], 'r.')
+
+    ax1.set_xlim(kmin, kmax)
+    ax2.set_xlim(kmin, kmax)
+
+    ax1.set_ylabel(r"Re{$\gamma$}")
+    ax2.set_ylabel(r"Im{$\gamma$}")    
+    ax2.set_xlabel(r"$k_r$ [1/cm]")
+
+    ax1.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
+    ax2.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
+
+    ncfile.close()
+         
+    fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
+
+
+def plot_narrowgap_inertial(filename="narrowgap_inertial.eps"):
+    kmin = 100
+    kmax = 5000
+    #Calculate ks from the global code
+    datafile = benchmarkdir + "narrowgap_inertial_highk/m0.nc"
+    ncfile = netcdf.netcdf_file(datafile, 'r')
+    modes = range(ncfile.variables['lambda'][:,0].size)
+    k = numpy.zeros(ncfile.variables['lambda'][:,0].size)
+
+    for mode in modes:
+        mode_attrs = readnetcdf.get_mode_attributes_mequalzero(datafile, mode)
+        k[mode] = mode_attrs['k']
+
+    #Find ks from the local dispersion relation
+    localk = numpy.linspace(kmin, kmax, 200)
+    omegas = numpy.zeros([localk.size, 5], dtype=complex)
+    findr = localdispersionrelation.find_roots
+    omegabar = numpy.sqrt(ncfile.variables['omega'][0] *
+                          ncfile.variables['omega'][-1])
+    zetabar = (2*(ncfile.r2**2*ncfile.variables['omega'][-1] -
+                  ncfile.r1**2*ncfile.variables['omega'][0]) /
+               ((ncfile.r2**2 - ncfile.r1**2)*omegabar))
+    print ncfile.kz
+    for i in range(0, localk.size):
+        omegas[i,:] = findr(B=ncfile.B0,
+                            kr=localk[i],
+                            kz=ncfile.kz,
+                            m=ncfile.m,
+                            nu=ncfile.nu,
+                            eta=ncfile.eta,
+                            rho=ncfile.rho,
+                            r1=ncfile.r1,
+                            r2=ncfile.r2,
+                            Omega=omegabar,
+                            zeta=2)
+
+    omegas = localdispersionrelation.sort_roots(omegas)
+
+    fig=pyplot.figure()
+    ax1 = fig.add_subplot(2,1,1)
+    ax2 = fig.add_subplot(2,1,2, sharex=ax1)
+    
+    ax1.plot(localk, omegas[:,0].imag, 'k-')
+    ax1.plot(localk, omegas[:,1].imag, 'k-')
+    ax1.plot(localk, omegas[:,2].imag, 'k-')
+    ax1.plot(localk, omegas[:,3].imag, 'k-')
+    ax2.plot(localk, omegas[:,0].real, 'k-')
+    ax2.plot(localk, omegas[:,1].real, 'k-')
+    ax2.plot(localk, omegas[:,2].real, 'k-')
+    ax2.plot(localk, omegas[:,3].real, 'k-')
+    ax1.plot(k, ncfile.variables['lambda'][:,0], 'r.')
+    ax2.plot(k, ncfile.variables['lambda'][:,1], 'r.')
+
+    ax1.set_xlim(kmin, kmax)
+    ax2.set_xlim(kmin, kmax)
+
+    ax1.set_ylabel(r"Re{$\gamma$}")
+    ax2.set_ylabel(r"Im{$\gamma$}")    
+    ax2.set_xlabel(r"$k_r$ [1/cm]")
+
+    ax1.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
+    ax2.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
+
+    ncfile.close()
+         
+    fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
+
+
