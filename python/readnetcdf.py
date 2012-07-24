@@ -211,7 +211,7 @@ def plot_velocity_components(filename, mode_number):
     del ncfile
 
 
-def plot_all_components(filename, mode_number):
+def plot_all_components(filename, mode_number, showpoints=1):
     ncfile = netcdf.netcdf_file(filename, 'r')
     r = ncfile.variables['r'][:]
     vr_mag = ncfile.variables['vr'][mode_number, :, 0]
@@ -241,29 +241,36 @@ def plot_all_components(filename, mode_number):
         bt_real[i] = real(bt_mag[i]*exp(1j*bt_arg[i]))
         pi_real[i] = real(pi_mag[i]*exp(1j*pi_arg[i]))
 
-    subplot(5,1,1)
-    plot(r, vr_real, '.-')
-    ylabel(r"$v_r$")
+    
+    ax1 = gcf().add_subplot(5,1,1)
+    ax2 = gcf().add_subplot(5,1,2)
+    ax3 = gcf().add_subplot(5,1,3)
+    ax4 = gcf().add_subplot(5,1,4)
+    ax5 = gcf().add_subplot(5,1,5)
+
+    if(showpoints):
+        ax1.plot(r, vr_real, '.-')
+        ax2.plot(r, vt_real, '.-')
+        ax3.plot(r, br_real, '.-')
+        ax4.plot(r, bt_real, '.-')
+        ax5.plot(r, pi_real, '.-')
+    else:
+        ax1.plot(r, vr_real)
+        ax2.plot(r, vt_real)
+        ax3.plot(r, br_real)
+        ax4.plot(r, bt_real)
+        ax5.plot(r, pi_real)
+
+    ax1.set_ylabel(r"$v_r$")
+    ax2.set_ylabel(r"$v_\theta$")
+    ax3.set_ylabel(r"$b_r$")
+    ax4.set_ylabel(r"$b_\theta$")
+    ax5.set_ylabel(r"$\pi$")
+    ax5.set_xlabel("r [cm]")
+
+
     titlestring = "mode %d, GR = %.6g + %.6g*i 1/s" % (mode_number,  ncfile.variables['lambda'][mode_number,0], ncfile.variables['lambda'][mode_number,1])
-    title(titlestring)
-
-    subplot(5,1,2)
-    plot(r, vt_real, '.-')
-    ylabel(r"$v_\theta$")
-
-    subplot(5,1,3)
-    plot(r, br_real, '.-')
-    ylabel(r"$b_r$")
-
-    subplot(5,1,4)
-    plot(r, bt_real, '.-')
-    ylabel(r"$b_\theta$")
-
-
-    subplot(5,1,5)
-    plot(r, pi_real, '.-')
-    ylabel(r"$\pi$")
-    xlabel("r [cm]")
+    ax1.set_title(titlestring)
 
     ncfile.close()
     del ncfile
