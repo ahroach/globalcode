@@ -98,8 +98,8 @@ def plot_eigenvalues(filename, logx=0):
 
     else:
         plot(ncfile.variables['lambda'][:,0], -ncfile.variables['lambda'][:,1], 'o')    
-        xlabel("Growth rate [1/sec]")
-        ylabel("Oscillation frequency [rad/sec]")
+        xlabel(r"Re[$\gamma$] [1/s]")
+        ylabel(r"-Im[$\gamma$] [1/s]")
     grid(b=1)
     ncfile.close()
 

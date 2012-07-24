@@ -181,6 +181,34 @@ def plot_timings(filename="timings.eps"):
     fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
 
 
+def plot_goodman_mri_m0_eigenvalues(filename="goodman_mri_m0_eigenvalues.eps"):
+    datapath = benchmarkdir + "goodman_mri/"
+    fig = pyplot.figure()
+    ax = fig.add_subplot(1,1,1)
+
+    readnetcdf.plot_eigenvalues(datapath + "m0.nc")
+
+    ax.grid(b='off')
+    ax.axvline(0, color='k')
+    ax.axhline(0, color='k')
+
+    fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
+
+
+def plot_goodman_mri_m1_eigenvalues(filename="goodman_mri_m1_eigenvalues.eps"):
+    datapath = benchmarkdir + "goodman_mri/"
+    fig = pyplot.figure()
+    ax = fig.add_subplot(1,1,1)
+
+    readnetcdf.plot_eigenvalues(datapath + "m1.nc")
+
+    ax.grid(b='off')
+    ax.axvline(0, color='k')
+    ax.axhline(0, color='k')
+
+    fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
+
+
 def plot_goodman_mri_insulating_mode(filename="goodman_mri_insulating_mode.eps"):
     datapath = benchmarkdir + "goodman_mri/"
 
@@ -190,8 +218,6 @@ def plot_goodman_mri_insulating_mode(filename="goodman_mri_insulating_mode.eps")
     
     vr = numpy.real(ncfile.variables['vr'][0, :, 0] *
                     numpy.exp(1j*ncfile.variables['vr'][0, :, 1]))
-    print r.size
-    print vr.size
 
     vt = numpy.real(ncfile.variables['vt'][0, :, 0] *
                     numpy.exp(1j*ncfile.variables['vt'][0, :, 1]))
@@ -224,6 +250,9 @@ def plot_goodman_mri_insulating_mode(filename="goodman_mri_insulating_mode.eps")
     fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
 
     ncfile.close()
+
+
+def plot_goodman_mri_stable_modes
 
 
 def plot_narrowgap_alfven_pm1(filename="narrowgap_alfven_pm1.eps"):
@@ -407,10 +436,12 @@ def plot_narrowgap_inertial(filename="narrowgap_inertial.eps"):
     ax1.plot(localk, omegas[:,1].imag, 'k-')
     ax1.plot(localk, omegas[:,2].imag, 'k-')
     ax1.plot(localk, omegas[:,3].imag, 'k-')
+    ax1.plot(localk, omegas[:,4].imag, 'k-')
     ax2.plot(localk, omegas[:,0].real, 'k-')
     ax2.plot(localk, omegas[:,1].real, 'k-')
     ax2.plot(localk, omegas[:,2].real, 'k-')
     ax2.plot(localk, omegas[:,3].real, 'k-')
+    ax2.plot(localk, omegas[:,4].real, 'k-')
     ax1.plot(k, ncfile.variables['lambda'][:,0], 'r.')
     ax2.plot(k, ncfile.variables['lambda'][:,1], 'r.')
 
