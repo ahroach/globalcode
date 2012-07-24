@@ -211,7 +211,12 @@ def grab_data_kscan(rule):
                                       re.split('B', fname)[1])[0])
 
         ncfile = netcdf.netcdf_file(files[i], 'r')
-        data[i]['gr'] = ncfile.variables['lambda'][0,0]
+
+        if(ncfile.arpack_modes_converged > 0):
+            data[i]['gr'] = ncfile.variables['lambda'][0,0]
+        else:
+            data[i]['gr'] = numpy.nan
+
         ncfile.close()
 
     #Sort the array so things are nicer
