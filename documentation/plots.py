@@ -2,6 +2,7 @@ import sys
 sys.path.append("/home/MRI/globalcode/python")
 import readnetcdf
 import matplotlib.pyplot as pyplot
+import matplotlib.ticker
 import numpy
 import scipy.io.netcdf as netcdf
 import localdispersionrelation
@@ -247,13 +248,39 @@ def plot_goodman_mri_insulating_mode(filename="goodman_mri_insulating_mode.eps")
     ax.set_xlabel(r"$r$ [cm]")
     ax.legend(loc='lower right', ncol=2)
 
+    ncfile.close()
     fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
 
-    ncfile.close()
 
+def plot_goodman_mri_m0_stable_modes(filename="goodman_mri_m0_stable_modes.eps"):
+    fig = pyplot.figure(figsize=(8,10))
+    fig.subplots_adjust(left=0.15)
+    datapath = benchmarkdir + "goodman_mri/"
+    readnetcdf.plot_all_components(datapath + "m0.nc", 20, showpoints=0)
+    readnetcdf.plot_all_components(datapath + "m0.nc", 50, showpoints=0)
+    readnetcdf.plot_all_components(datapath + "m0.nc", 100, showpoints=0)
 
-def plot_goodman_mri_stable_modes
+    majorformatter = matplotlib.ticker.FormatStrFormatter("%0.1e")
+    for ax in fig.axes:
+        ax.yaxis.set_major_formatter(majorformatter)
+        ax.set_title("")
 
+    fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
+
+def plot_goodman_mri_m1_stable_modes(filename="goodman_mri_m1_stable_modes.eps"):
+    fig = pyplot.figure(figsize=(8,10))
+    fig.subplots_adjust(left=0.15)
+    datapath = benchmarkdir + "goodman_mri/"
+    readnetcdf.plot_all_components(datapath + "m1.nc", 20, showpoints=0)
+    readnetcdf.plot_all_components(datapath + "m1.nc", 50, showpoints=0)
+    readnetcdf.plot_all_components(datapath + "m1.nc", 100, showpoints=0)
+
+    majorformatter = matplotlib.ticker.FormatStrFormatter("%0.1e")
+    for ax in fig.axes:
+        ax.yaxis.set_major_formatter(majorformatter)
+        ax.set_title("")
+
+    fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
 
 def plot_narrowgap_alfven_pm1(filename="narrowgap_alfven_pm1.eps"):
     kmin = 100
@@ -321,6 +348,21 @@ def plot_narrowgap_alfven_pm1(filename="narrowgap_alfven_pm1.eps"):
     fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
 
 
+def plot_narrowgap_alfven_modes(filename="narrowgap_alfven_modes.eps"):
+    fig = pyplot.figure(figsize=(8,10))
+    fig.subplots_adjust(left=0.15)
+    datapath = benchmarkdir + "narrowgap_alfven/"
+    readnetcdf.plot_all_components(datapath + "m1.nc", 0, showpoints=0)
+    readnetcdf.plot_all_components(datapath + "m1.nc", 22, showpoints=0)
+    readnetcdf.plot_all_components(datapath + "m1.nc", 50, showpoints=0)
+    readnetcdf.plot_all_components(datapath + "m1.nc", 100, showpoints=0)
+
+    majorformatter = matplotlib.ticker.FormatStrFormatter("%0.1e")
+    for ax in fig.axes:
+        ax.yaxis.set_major_formatter(majorformatter)
+        ax.set_title("")
+
+    fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
 
 
 def plot_narrowgap_alfven_pmpoint1(filename="narrowgap_alfven_pmpoint1.eps"):
@@ -460,3 +502,19 @@ def plot_narrowgap_inertial(filename="narrowgap_inertial.eps"):
     fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
 
 
+def plot_narrowgap_inertial_modes(filename="narrowgap_inertial_modes.eps"):
+    fig = pyplot.figure(figsize=(8,10))
+    fig.subplots_adjust(left=0.15)
+    datapath = benchmarkdir + "narrowgap_inertial_highk/"
+    readnetcdf.plot_all_components(datapath + "m1.nc", 11, showpoints=0)
+    readnetcdf.plot_all_components(datapath + "m1.nc", 12, showpoints=0)
+    readnetcdf.plot_all_components(datapath + "m1.nc", 99, showpoints=0)
+    readnetcdf.plot_all_components(datapath + "m1.nc", 100, showpoints=0)
+
+
+    majorformatter = matplotlib.ticker.FormatStrFormatter("%0.1e")
+    for ax in fig.axes:
+        ax.yaxis.set_major_formatter(majorformatter)
+        ax.set_title("")
+
+    fig.savefig(filename, bbox_inches='tight', pad_inches=0.01)
