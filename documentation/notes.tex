@@ -748,8 +748,8 @@ eigenvalues. These eigenvalues are rejected before saving the results.
   code]{Execution time and memory scaling for several different modes
   of operation of the global eigenvalue code. Solving the full problem
   for all eigenvalues becomes prohibitively difficult for large
-  numbers of grid cells. Using the ARPACK subroutines results in
-  dramatically more efficient operation, at the cost of increased
+  numbers of grid cells. Using the \texttt{ARPACK} subroutines results
+  in dramatically more efficient operation, at the cost of increased
   complexity in setting up the problem.}
 \label{fig:globalcode:timings}
 \end{figure}
@@ -809,18 +809,19 @@ a very large, real $\sigma$. Unfortunately, as the value $\sigma$ gets
 farther from the eigenvalues of interest, the routine becomes much
 more inefficient, leading to increased computation time and larger
 errors in the computed eigenvalues. So, $\sigma$ is chosen by an
-iterative technique, using a large real $\sigma$ at first to make sure
-we find the fastest-growing eigenvalues, and then adjusting the value
-closer to the eigenvalues of interest. The initial value $\sigma_0 =
-5|\Omega_{ic}| + 5|\Omega_{oc}|$, since the largest growth rate and
-frequency of any mode are expected to be of order $\Omega_{ic}$ in the
-absence of very large Alfv\`{e}n frequencies. The problem is solved
-with a relatively large tolerance of $10^{-2}$. Next, a new value of
-$\sigma_1$ is determined based on the largest-growing computed
-eigenvalue $\gamma_0$, $\sigma_1 = 0.1\sigma_0 + 0.9\gamma_0$, and the
-tolerance is halved. This process is repeated four times, and the
-resulting $\sigma$ is then used to solve the problem at machine
-tolerance.
+iterative technique, using a $\sigma$ with a very large real part at
+first to make sure we find the fastest-growing eigenvalues, and then
+adjusting the value closer to the eigenvalues of interest. The initial
+value $\sigma_0 = 5|\Omega_1| + 5|\Omega_2| - im(\Omega_1/2 +
+\Omega_2/2)$, since the largest growth rate and frequency of any mode
+are expected to be of order $\Omega_1$ in the absence of very large
+Alfv\`{e}n frequencies and since a Doppler shift of order $m\bar{\Omega}$ is
+expected. The problem is solved with a relatively large tolerance of
+$10^{-2}$. Next, a new value of $\sigma_1$ is determined based on the
+largest-growing computed eigenvalue $\gamma_0$, $\sigma_1 =
+0.1\sigma_0 + 0.9\gamma_0$, and the tolerance is halved. This process
+is repeated four times, and the resulting $\sigma$ is then used to
+solve the problem at machine tolerance.
 
 Using the \verb@ARPACK@ subroutine results in greatly improved
 performance, as shown in Figure~\ref{fig:globalcode:timings}. But
@@ -829,7 +830,38 @@ the spectrum with a bad choice of $\sigma$. Because of this, it is
 advisable to verify some of the runs with the results of a full
 eigenvalue calculation.
 
-\section{Test Problems}
+\subsection{Convergence}
+
+Convergence of computed eigenvalues with increasing grid resolution
+was tested both in order to validate the \verb@ARPACK@ solver and to
+find the optimum grid resolution for computations. The results of a
+convergence test using the marginally stable MRI eigenmode from the
+first part of the ``Test problems'' section are shown in
+Figure~\ref{fig:globalcode:growth_rate_convergence}. Results from the
+full eigenvalue solution and from the \verb@ARPACK@ method are very
+consistent with each other up to the largest resolution at which it
+was reasonable to calculate the full solution, with the error in each
+dropping as $1/N^2$, as should be expected for second-order centered
+differences. The error for the \verb@ARPACK@ solution eventually
+levels out, suggesting an intrinsic error in the eigenvalue
+solver. 2000-8000 grid cells are typically used for the computations
+in this work.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.80\textwidth]{growth_rate_convergence}
+\caption[Convergence of computed global eigenvalues with increasing
+  grid resolution]{Convergence of computed global eigenvalues with
+  increasing grid resolution for the \texttt{ARPACK} solver and for the
+  full eigenmode solution. The eigenvalue is that of the marginally
+  stable MRI eigenmode described in the first part of the ``Test
+  problems'' section. The relative error of each computed eigenvalue
+  compared to the \texttt{ARPACK} solution with 32000 grid cells is
+  shown.}
+\label{fig:globalcode:growth_rate_convergence}
+\end{figure}
+
+\section{Test problems}
 
 \subsection{Magnetorotational instability}
 
