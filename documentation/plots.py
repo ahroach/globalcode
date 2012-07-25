@@ -7,7 +7,7 @@ import numpy
 import scipy.io.netcdf as netcdf
 import localdispersionrelation
 
-benchmarkdir = "/home/MRI/globalcode/benchmarks_v2/"
+benchmarkdir = "/home/MRI/globalcode/documentation/benchmarks/"
 
 def plot_growth_rate_convergence(filename="growth_rate_convergence.eps"):
     datapath = benchmarkdir + "goodman_mri_m0_arpack_resscan/"
