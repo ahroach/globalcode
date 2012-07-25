@@ -725,21 +725,22 @@ of all the eigenvalues and eigenvectors can take a long time. A second
 method can be used to solve for a subset of the eigenvalues and
 eigenvectors, saving time in the calculation. In both cases the
 eigenvalues and eigenvectors that are found are sorted are stored in a
-\verb@NetCDF-4@ file for later analysis.
+\texttt{NetCDF-4} file for later analysis.
 
 \subsection{Full solution}
 
-The full solution method uses a call to the \verb@LAPACK@ routine
-\verb@ZGGEV@
-\footnote{Note about FORTRAN subroutine. Row-major versus column-major
-  form, etc. Possibility of calls from Python, etc.}.  The routine
-does not take advantage of the banded nature of the problem and takes
-in $(5N)^2$ complex values describing the matrices ${\bf A}$ and ${\bf
-  B}$, and requires additional memory allocation for its work. This is
-not a very efficient mechanism, requiring large values of both time
-and memory, as shown in Figure~\ref{fig:globalcode:timings}. On the
-order of 20-30\% of the eigenvalues are spurious, with infinite
-eigenvalues. These eigenvalues are rejected before saving the results.
+The full solution method uses a call to the \texttt{LAPACK} routine
+\texttt{ZGGEV}
+\footnote{Note about \texttt{FORTRAN} subroutines. Row-major versus
+  column-major form, etc. Possibility of calls from Python, etc.}.
+The routine does not take advantage of the banded nature of the
+problem and takes in $(5N)^2$ complex values describing the matrices
+${\bf A}$ and ${\bf B}$, and requires additional memory allocation for
+its work. This is not a very efficient mechanism, requiring large
+values of both time and memory, as shown in
+Figure~\ref{fig:globalcode:timings}. On the order of 20-30\% of the
+eigenvalues are spurious, with infinite eigenvalues. These eigenvalues
+are rejected before saving the results.
 
 \begin{figure}
 \centering
@@ -756,19 +757,19 @@ eigenvalues. These eigenvalues are rejected before saving the results.
 
 \subsection{Subset of eigenvalues}
 
-The code has the option to use the \verb@ARPACK@ routine
-\verb@ZNAUPD@. This routine supplies a reverse-communication interface
-for the iterative technique, requesting calls to the \verb@BLAS@
-routine \verb@ZGBMV@ and the \verb@LAPACK@ routine \verb@ZGBTRS@ to do
+The code has the option to use the \texttt{ARPACK} routine
+\texttt{ZNAUPD}. This routine supplies a reverse-communication interface
+for the iterative technique, requesting calls to the \texttt{BLAS}
+routine \texttt{ZGBMV} and the \texttt{LAPACK} routine \texttt{ZGBTRS} to do
 its work. Both of these routines can operate on compressed banded
 matrices, requiring less memory than the method to generate the full
-solution. \verb@ARPACK@ is a library that can be used to find a number
+solution. \texttt{ARPACK} is a library that can be used to find a number
 of extremal eigenvalues meeting several different criteria: smallest
 magnitude, largest magnitude, largest real part, smallest real part,
 largest imaginary part, or smallest imaginary part.. This we are
 generally interested in the largest growing modes, at first glance it
-should be as easy as using the \verb@ARPACK@ routine to find the modes
-with the largest real part. Unfortunately, the \verb@ZNAUPD@ problem
+should be as easy as using the \texttt{ARPACK} routine to find the modes
+with the largest real part. Unfortunately, the \texttt{ZNAUPD} problem
 can only directly solve for the eigenvalues if the matrix $B$ in the
 eigenvalue problem is positive definite. In our case, it is positive
 semi-definite (made up of `1's and `0's on the diagonal), and so we
@@ -783,7 +784,7 @@ $\sigma$ is a user-specified shift. This can be rewritten
 \end{equation}
 
 The choice of $\sigma$, the eigenvalue shift, is very important for
-correct behavior of the \verb@ARPACK@ routine, since it determines
+correct behavior of the \texttt{ARPACK} routine, since it determines
 which part of the eigenvalue spectrum will be returned. We are
 interested in the eigenvalues with the largest real part of $\gamma$.
 To select the largest-growing eigenvalues $\gamma$, we can ask for the
@@ -823,7 +824,7 @@ largest-growing computed eigenvalue $\gamma_0$, $\sigma_1 =
 is repeated four times, and the resulting $\sigma$ is then used to
 solve the problem at machine tolerance.
 
-Using the \verb@ARPACK@ subroutine results in greatly improved
+Using the \texttt{ARPACK} subroutine results in greatly improved
 performance, as shown in Figure~\ref{fig:globalcode:timings}. But
 there is a danger of picking eigenvalues from the incorrect part of
 the spectrum with a bad choice of $\sigma$. Because of this, it is
@@ -833,16 +834,16 @@ eigenvalue calculation.
 \subsection{Convergence}
 
 Convergence of computed eigenvalues with increasing grid resolution
-was tested both in order to validate the \verb@ARPACK@ solver and to
+was tested both in order to validate the \texttt{ARPACK} solver and to
 find the optimum grid resolution for computations. The results of a
 convergence test using the marginally stable MRI eigenmode from the
 first part of the ``Test problems'' section are shown in
 Figure~\ref{fig:globalcode:growth_rate_convergence}. Results from the
-full eigenvalue solution and from the \verb@ARPACK@ method are very
+full eigenvalue solution and from the \texttt{ARPACK} method are very
 consistent with each other up to the largest resolution at which it
 was reasonable to calculate the full solution, with the error in each
 dropping as $1/N^2$, as should be expected for second-order centered
-differences. The error for the \verb@ARPACK@ solution eventually
+differences. The error for the \texttt{ARPACK} solution eventually
 levels out, suggesting an intrinsic error in the eigenvalue
 solver. 2000-8000 grid cells are typically used for the computations
 in this work.
