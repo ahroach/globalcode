@@ -54,7 +54,7 @@ to a simplified version of Amp\`{e}re's law
 
 If we take the curl of Equation~\ref{eqn:globalcode:ohmslaw},
 substitute for $\nabla\times\vec{E}$ in
-Equation~\ref{eqn:globalcode:faradayslaw}, and then substitue for
+Equation~\ref{eqn:globalcode:faradayslaw}, and then substitute for
 $\vec{j}$ from Equation~\ref{eqn:globalcode:ampereslawmhd}, we find
 \begin{equation}
 -\frac{1}{c}\frac{\partial\vec{B}}{\partial t} = 
@@ -103,7 +103,7 @@ divide by $\rho$ to find
 \end{equation}
 where $\nu = \mu/\rho$ is the kinematic viscosity in units of cm$^2/s$.
 
-We can make a subsitution for $\vec{j}$ in the $\vec{j}\times\vec{B}$
+We can make a substitution for $\vec{j}$ in the $\vec{j}\times\vec{B}$
 term using Amp\`{e}re's law
 \begin{align}
 \frac{1}{\rho c}\vec{j}\times\vec{B} 
@@ -444,9 +444,9 @@ can be written in terms of the new coordinate $x$: $\partial_r =
 \label{fig:globalcode:globalcode_grid}
 \end{figure}
 
-The equations are evaluated with centered differences.  The quantity
-$\beta_{r,j}$ indicates the value of $\beta_r$ at the $j$th
-gridpoint. $\Delta x$ indicates the size of the grid step.
+The equations are evaluated with second-order centered differences.
+The quantity $\beta_{r,j}$ indicates the value of $\beta_r$ at the
+$j$th grid cell. $\Delta x$ indicates the size of the grid step.
 
 The following finite difference equations are found:
 \begin{align}
@@ -637,7 +637,7 @@ equation in $\tilde{\Phi}$
 \frac{d^2}{d r^2}\tilde{\Phi} + \frac{1}{r}\frac{d}{dr}\tilde{\Phi} 
  - \left(\frac{m^2}{r^2} + k^2\right)\tilde{\Phi} = 0
 \end{equation}
-This equation is satisfied by modified Bessel fuctions
+This equation is satisfied by modified Bessel functions
 \begin{equation}
 \tilde{\Phi}(r) = A_{in} I_m (k r) + A_{out} K_m (k r)
 \end{equation}
@@ -702,7 +702,7 @@ For $m = 0$:
 \section{Solving the equations}
 
 The problem is to solve a system of $5N$ equations, where $N$ is the
-number of gridcells including ghost zones. The equations can be cast
+number of grid cells including ghost zones. The equations can be cast
 in the form of a generalized eigenvalue problem
 \begin{equation}
 {\bf A}\cdot{\bf x} = \gamma {\bf B}\cdot{\bf x}
@@ -1038,7 +1038,7 @@ relation, the value of $k_r$ must be determined, with all other
 parameters having already been specified as inputs to the
 calculation. $k_r$ is found by finding the peak in the spatial Fourier
 spectrum of the eigenmode between the two cylindrical walls. The
-dispersion relation of the computed eigenvaues and eigenmodes is
+dispersion relation of the computed eigenvalues and eigenmodes is
 compared to the ideal dispersion relation in
 Figure~\ref{fig:globalcode:narrowgap_alfven_modes}
 
@@ -1112,7 +1112,7 @@ centering
   each eigenmode. The lines indicate the analytic solution to the
   dispersion relation. Note that there is some deviation of the
   calculated eigenvalues from the analytic dispersion relation, most
-  likely due to errors in determing $k_r$.}
+  likely due to errors in determining $k_r$.}
 \label{fig:globalcode:narrowgap_alfven_pmpoint1}
 \end{figure}
 
@@ -1169,17 +1169,17 @@ Figure~\ref{fig:globalcode:narrowgap_inertial}.
 \begin{figure}
 \centering
 \includegraphics[width=0.80\textwidth]{narrowgap_inertial}
-\caption[Dispersion relation of inertial wavesgap]{Dispersion relation
-  of inertial wavesin a narrow gap. The dots indicate the calculated
-  eigenvalues, with $k_r$ determined from finding the peak in the
-  spatial Fourier spectrum for each eigenmode. The black lines
-  indicate the analytic solution to the ideal periodic dispersion
-  relation. Note that there are some deviation of the calculated
-  eigenvalues from the analytic dispersion relation because of errors
-  in calculating $k_r$. Note also the branch at
-  $\mathrm{Im}\{\gamma\}=0$, which are zero-frequency Alfv\'en waves
-  that are completely decoupled from the inertial waves since
-  $B_0=0$.}
+\caption[Dispersion relation of inertial waves in a narrow
+  gap]{Dispersion relation of inertial waves in a narrow gap. The dots
+  indicate the calculated eigenvalues, with $k_r$ determined from
+  finding the peak in the spatial Fourier spectrum for each
+  eigenmode. The black lines indicate the analytic solution to the
+  ideal periodic dispersion relation. Note that there are some
+  deviation of the calculated eigenvalues from the analytic dispersion
+  relation because of errors in calculating $k_r$. Note also the
+  branch at $\mathrm{Im}\{\gamma\}=0$, which are zero-frequency
+  Alfv\'en waves that are completely decoupled from the inertial waves
+  since $B_0=0$.}
 \label{fig:globalcode:narrowgap_inertial}
 \end{figure}
 
@@ -1195,5 +1195,5 @@ Rev. Lett. {\bf 104}, 074501 (2010).
 New York, 1992).
 
 \noindent 4. H. Ji, J. Goodman, and A. Kageyama, Monthly Notices of
-the Royal Astronnomical Society {\bf 325}, L1 (2001).
+the Royal Astronomical Society {\bf 325}, L1 (2001).
 \end{document}
