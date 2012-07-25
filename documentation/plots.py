@@ -367,7 +367,7 @@ def plot_narrowgap_alfven_modes(filename="narrowgap_alfven_modes.eps"):
 
 def plot_narrowgap_alfven_pmpoint1(filename="narrowgap_alfven_pmpoint1.eps"):
     kmin = 100
-    kmax = 5000
+    kmax = 2000
     #Calculate ks from the global code
     datafile = benchmarkdir + "narrowgap_alfven_pm0.1/m1.nc"
     ncfile = netcdf.netcdf_file(datafile, 'r')
@@ -418,6 +418,7 @@ def plot_narrowgap_alfven_pmpoint1(filename="narrowgap_alfven_pmpoint1.eps"):
     ax2.plot(k, ncfile.variables['lambda'][:,1], 'r.')
 
     ax1.set_xlim(kmin, kmax)
+    ax1.set_ylim(-150000, 0)
     ax2.set_xlim(kmin, kmax)
 
     ax1.set_ylabel(r"Re{$\gamma$}")
