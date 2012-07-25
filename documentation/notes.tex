@@ -758,25 +758,26 @@ are rejected before saving the results.
 \subsection{Subset of eigenvalues}
 
 The code has the option to use the \texttt{ARPACK} routine
-\texttt{ZNAUPD}. This routine supplies a reverse-communication interface
-for the iterative technique, requesting calls to the \texttt{BLAS}
-routine \texttt{ZGBMV} and the \texttt{LAPACK} routine \texttt{ZGBTRS} to do
-its work. Both of these routines can operate on compressed banded
-matrices, requiring less memory than the method to generate the full
-solution. \texttt{ARPACK} is a library that can be used to find a number
-of extremal eigenvalues meeting several different criteria: smallest
-magnitude, largest magnitude, largest real part, smallest real part,
-largest imaginary part, or smallest imaginary part.. This we are
-generally interested in the largest growing modes, at first glance it
-should be as easy as using the \texttt{ARPACK} routine to find the modes
-with the largest real part. Unfortunately, the \texttt{ZNAUPD} problem
-can only directly solve for the eigenvalues if the matrix $B$ in the
-eigenvalue problem is positive definite. In our case, it is positive
-semi-definite (made up of `1's and `0's on the diagonal), and so we
-are forced to use the routine in shift-invert mode, where a set of
-eigenvalues $\lambda$ can be found that are related to the original
-eigenvalues of the problem by $\lambda = 1/(\gamma-\sigma)$, where
-$\sigma$ is a user-specified shift. This can be rewritten
+\texttt{ZNAUPD}. This routine supplies a reverse-communication
+interface for the iterative technique, requesting calls to the
+\texttt{BLAS} routine \texttt{ZGBMV} and the \texttt{LAPACK} routine
+\texttt{ZGBTRS} to do its work. Both of these routines can operate on
+compressed banded matrices, requiring less memory than the method to
+generate the full solution. \texttt{ARPACK} is a library that can be
+used to find a number of extremal eigenvalues meeting several
+different criteria: smallest magnitude, largest magnitude, largest
+real part, smallest real part, largest imaginary part, or smallest
+imaginary part.. This we are generally interested in the largest
+growing modes, at first glance it should be as easy as using the
+\texttt{ARPACK} routine to find the modes with the largest real
+part. Unfortunately, the \texttt{ZNAUPD} problem can only directly
+solve for the eigenvalues if the matrix $B$ in the eigenvalue problem
+is positive definite. In our case, it is positive semi-definite (made
+up of `1's and `0's on the diagonal), and so we are forced to use the
+routine in shift-invert mode, where a set of eigenvalues $\lambda$ can
+be found that are related to the original eigenvalues of the problem
+by $\lambda = 1/(\gamma-\sigma)$, where $\sigma$ is a user-specified
+shift. This can be rewritten
 \begin{equation}
 \lambda = \frac{1}{\gamma-\sigma} = \frac{\mathrm{Re}\{\gamma-\sigma\} 
                                           - i\mathrm{Im\{\gamma-\sigma\}}}
@@ -816,13 +817,13 @@ adjusting the value closer to the eigenvalues of interest. The initial
 value $\sigma_0 = 5|\Omega_1| + 5|\Omega_2| - im(\Omega_1/2 +
 \Omega_2/2)$, since the largest growth rate and frequency of any mode
 are expected to be of order $\Omega_1$ in the absence of very large
-Alfv\`{e}n frequencies and since a Doppler shift of order $m\bar{\Omega}$ is
-expected. The problem is solved with a relatively large tolerance of
-$10^{-2}$. Next, a new value of $\sigma_1$ is determined based on the
-largest-growing computed eigenvalue $\gamma_0$, $\sigma_1 =
-0.1\sigma_0 + 0.9\gamma_0$, and the tolerance is halved. This process
-is repeated four times, and the resulting $\sigma$ is then used to
-solve the problem at machine tolerance.
+Alfv\`{e}n frequencies and since a Doppler shift of order
+$m\bar{\Omega}$ is expected. The problem is solved with a relatively
+large tolerance of $10^{-2}$. Next, a new value of $\sigma_1$ is
+determined based on the largest-growing computed eigenvalue
+$\gamma_0$, $\sigma_1 = 0.1\sigma_0 + 0.9\gamma_0$, and the tolerance
+is halved. This process is repeated four times, and the resulting
+$\sigma$ is then used to solve the problem at machine tolerance.
 
 Using the \texttt{ARPACK} subroutine results in greatly improved
 performance, as shown in Figure~\ref{fig:globalcode:timings}. But
@@ -1036,7 +1037,10 @@ zero. To compare the calculated eigenvalues to this dispersion
 relation, the value of $k_r$ must be determined, with all other
 parameters having already been specified as inputs to the
 calculation. $k_r$ is found by finding the peak in the spatial Fourier
-spectrum of the eigenmode between the two cylindrical walls. The dispersion relation of the computed eigenvaues and eigenmodes is compared to the ideal dispersion relation in Figure~\ref{fig:globalcode:narrowgap_alfven_modes}
+spectrum of the eigenmode between the two cylindrical walls. The
+dispersion relation of the computed eigenvaues and eigenmodes is
+compared to the ideal dispersion relation in
+Figure~\ref{fig:globalcode:narrowgap_alfven_modes}
 
 $k_r$ was calculated for each mode, and the growth rate and
 oscillation frequency are plotted versus $k_r$ to yield the dispersion
@@ -1071,7 +1075,9 @@ Figure~\ref{fig:globalcode:narrowgap_alfven_pm1}.
 
 \subsubsection{Alfv\'en waves with $Pm=0.1$}
 
-The same problem in the previous case was evaluated with all parameters the same except for different values of $\nu$ and $\eta$ to yield $Pm = \nu/\eta = 0.1$:
+The same problem in the previous case was evaluated with all
+parameters the same except for different values of $\nu$ and $\eta$ to
+yield $Pm = \nu/\eta = 0.1$:
 \begin{align*}
 &\Omega_1 = 0\;\mathrm{rpm} = 0\;\mathrm{rad/s},\quad
     &\nu = 3.4\times10^{-2}\;\mathrm{cm^2/s}
@@ -1090,7 +1096,11 @@ The same problem in the previous case was evaluated with all parameters the same
 \end{align*}
 
 Because the second term under the square root of
-Equation~\ref{eqn:globalcode:alfven_wave_dr} is no longer zero, $\mathrm{Im}\{\gamma\}$ goes to zero for a sufficiently large $k_r$. The dispersion relation of the computed eigenmodes was calculated as before, and is shown in Figure~\ref{fig:globalcode:narrowgap_alfven_pmpoint1}
+Equation~\ref{eqn:globalcode:alfven_wave_dr} is no longer zero,
+$\mathrm{Im}\{\gamma\}$ goes to zero for a sufficiently large
+$k_r$. The dispersion relation of the computed eigenmodes was
+calculated as before, and is shown in
+Figure~\ref{fig:globalcode:narrowgap_alfven_pmpoint1}
 
 \begin{figure}
 centering
@@ -1184,5 +1194,6 @@ Rev. Lett. {\bf 104}, 074501 (2010).
 \noindent 3. T. H. Stix, {\emph Waves in Plasmas} (Springer-Verlag,
 New York, 1992).
 
-\noindent 4. H. Ji, J. Goodman, and A. Kageyama, Monthly Notices of the Royal Astronnomical Society {\bf 325}, L1 (2001).
+\noindent 4. H. Ji, J. Goodman, and A. Kageyama, Monthly Notices of
+the Royal Astronnomical Society {\bf 325}, L1 (2001).
 \end{document}
