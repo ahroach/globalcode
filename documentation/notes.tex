@@ -12,16 +12,15 @@ cylindrical geometry}
 \begin{document}
 \maketitle{}
 
-\section{Introduction}
-
-Recently, nonaxisymmetric MHD modes have been observed in the
-Princeton MRI experiment$^1$.  Previous computational work in support
-of the experiment has been almost exclusively axisymmetric.  This work
-will follow a similar approach to Goodman and Ji's examination of
-unstable axisymmetric global linear modes in a cylindrical system$^2$,
-but will extend the analysis to allow examination of nonaxisymmetric
-eigenmodes, eigenmodes with non-ideal Couette rotation profiles, and
-damped eigenmodes.
+This chapter describes the development of a computer code to solve the
+linearized, nonideal, incompressible MHD equations with zeroth-order
+azimuthal velocity and axial magnetic field in a cylindrical geometry
+that is periodic in the axial and azimuthal directions. This work
+follows a similar approach to that used to examine the MRI in the
+paper by Goodmand and Ji [2], though the approach here is more
+general, allowing nonaxisymmetric modes, arbitrary background
+azimuthal velocity distributions, and capable of solving for all
+eigenmodes of the system, not only the fastest-growing eigenmode.
 
 \section{Nonideal, incompressible MHD}
 
@@ -86,14 +85,14 @@ the induction equation can be rewritten
 \label{eqn:globalcode:incompressibleinductionequation}
 \end{equation}
 
-The momentum equation is found by considering $m\vec{a} = \vec{F}$
-for a fluid element
+The momentum equation is found by considering Newton's second law,
+$m\vec{a} = \vec{F}$, for a fluid element
 \begin{equation}
 \rho\left(\frac{d\vec{v}}{dt}\right) = -\nabla p 
  + \frac{\vec{j}\times\vec{B}}{c} + \mu\nabla^2 \vec{v}
 \end{equation}
 where $\rho$ is the fluid density, $\mu$ is the dynamic viscosity, and
-$p$ is the hydrodynamic pressure. We know expand the convective
+$p$ is the hydrodynamic pressure. We now expand the convective
 derivative $d/dt = \partial/\partial t + \vec{v}\cdot\nabla$ and
 divide by $\rho$ to find
 \begin{equation}
@@ -292,7 +291,7 @@ After linearization this becomes
  + \partial_z^2\right]\delta v_z
 \end{align}
 
-\subsection{Equations of constraint}
+\subsection{Constraint equations}
 
 The equation of incompressibility, $\nabla\cdot\vec{v}=0$ is
 \begin{align}
@@ -309,7 +308,7 @@ and $\nabla\cdot\vec{B}=0$ is
 
 These linearized equations will be evaluated to find modes with an
 arbitrary radial dependence that grow exponentially with a growth rate
-$\gamma$, and vary periodically in $\hat{\theta}$ and $\hat{z}$ with
+$\gamma$, and that vary periodically in $\hat{\theta}$ and $\hat{z}$ with
 mode numbers $m$ and $k$, respectively\footnote{The linearized quantities
 have a time behavior that goes as $e^{\gamma t}$. Comparing to the
 time behavior for the form of a wave traveling in the positive
@@ -500,9 +499,7 @@ The following finite difference equations are found:
 \section{Boundary Conditions}
 
 Boundary conditions are implemented by a set of constraint equations
-at the inner and outer cylinders. The constraint equations are scaled
-so that the terms in the equations are of the same order as the other
-non-zero elements in the matrix.
+at the inner and outer cylinders.
 
 \subsection{Velocity boundary conditions}
 
@@ -543,7 +540,7 @@ values. Since the velocity at the boundary is purely azimuthal, where
 the normal vector is radial, this states that the tangential component
 of the electric field across the boundary is continuous.
 
-For stationary conductors, the internal electric field is 0. But we
+For stationary conductors, the internal electric field is zero. But we
 are considering a moving conductor, in which an electric field can be
 generated to balance $\vec{v}\times\vec{B}$ in Ohm's law:
 \begin{equation}
@@ -553,7 +550,7 @@ generated to balance $\vec{v}\times\vec{B}$ in Ohm's law:
 We note that $\vec{v}=r\Omega\hat{\theta}$, and $\vec{B}=B_0\hat{z}$,
 so the electric field in the conductor will be purely in the
 $\hat{r}$-direction, and $\vec{E}\times\hat{n}=0$. So, we still find
-that the tangential electric field is 0 at the boundary. To find the
+that the tangential electric field is zero at the boundary. To find the
 implications of this on the magnetic field, we dot Faraday's law with
 $\hat{n}$:
 \begin{equation}
@@ -589,13 +586,14 @@ Evaluating the axial component of the curl of $\vec{B}$, we see
 \end{equation}
 Since $B_r=0$ at the boundary, we find the boundary condition on
 $B_\theta$, $\partial/\partial r (rB_\theta)= B_\theta +
-r\partial/\partial r B_\theta = 0$.  Written in terms of our discretized
+r\partial/\partial r B_\theta = 0$.  Written in terms of our perturbed
 quantities and logarithmic coordinate $x$:
 \begin{equation}
 \beta_\theta + \frac{\partial}{\partial x}\beta_\theta = 0
 \end{equation}
 
-The values for the magnetic fields in the ghostzones are therefore
+The equations describing the boundary condition for the magnetic field
+are therefore
 \begin{align}
 \beta_{r, j_s-1} + \beta_{r, j_s} =& 0
 \\
@@ -668,10 +666,10 @@ B_\theta = &\frac{1}{r}\frac{\partial \Phi}{\partial \theta}
 \end{align}
 
 We now match the insulating solution to the magnetic field value just
-inside the domain of interest to find $A_{in}$ and $A_{out}$. Once
+inside the boundary to find $A_{in}$ and $A_{out}$. Once
 those constants are known, the value of the magnetic field in the
 ghost zone can be calculated. Note also the special case when $m=0$,
-where $B_\theta$ at the boundary.
+where $B_\theta=0$ at the boundary.
 
 \begin{align}
 \beta_{r, j_s-1} - \beta_{r, j_s}
@@ -712,10 +710,10 @@ of the components $\beta_r$, $\beta_\theta$, $\phi_r$, $\phi_\theta$,
 and $\Pi$ at each grid cell; ${\bf A}$ is a band-diagonal matrix of
 bandwidth 15 that is made up of the terms in the linearized equations
 and constraint equations; and ${\bf B}$ is a diagonal matrix with a 1
-corresponding to the position of the evolution equation for each of
-the quantities $\beta_r$, $\beta_\theta$, $\phi_r$, and $\phi_\theta$
-in the fluid, and a 0 at the position of each boundary condition
-equation and each constraint equation on $\Pi$.
+corresponding to the position of the time evolution equation for each
+of the quantities $\beta_r$, $\beta_\theta$, $\phi_r$, and
+$\phi_\theta$ in the fluid, and a 0 at the position of each boundary
+condition equation and each constraint equation on $\Pi$.
 
 Two methods are used to solve this generalized eigenvalue problem. The
 first solves the full problem for all eigenvalues and
@@ -737,7 +735,7 @@ The routine does not take advantage of the banded nature of the
 problem and takes in $(5N)^2$ complex values describing the matrices
 ${\bf A}$ and ${\bf B}$, and requires additional memory allocation for
 its work. This is not a very efficient mechanism, requiring large
-values of both time and memory, as shown in
+amounts of both time and memory, as shown in
 Figure~\ref{fig:globalcode:timings}. On the order of 20-30\% of the
 eigenvalues are spurious, with infinite eigenvalues. These eigenvalues
 are rejected before saving the results.
@@ -755,29 +753,31 @@ are rejected before saving the results.
 \label{fig:globalcode:timings}
 \end{figure}
 
-\subsection{Subset of eigenvalues}
+\subsection{Subset of eigenvalues with \texttt{ARPACK}}
 
 The code has the option to use the \texttt{ARPACK} routine
-\texttt{ZNAUPD}. This routine supplies a reverse-communication
-interface for the iterative technique, requesting calls to the
-\texttt{BLAS} routine \texttt{ZGBMV} and the \texttt{LAPACK} routine
-\texttt{ZGBTRS} to do its work. Both of these routines can operate on
-compressed banded matrices, requiring less memory than the method to
-generate the full solution. \texttt{ARPACK} is a library that can be
+\texttt{ZNAUPD} to find a subset of the eigenvalues. This routine
+supplies a reverse-communication interface for the iteration
+algorithm, requesting calls to the \texttt{BLAS} routine
+\texttt{ZGBMV} and the \texttt{LAPACK} routine \texttt{ZGBTRS} to do
+its work. Both of these routines can operate on compressed banded
+matrices, requiring less memory than the method for the full solution
+to the eigenvalue problem. \texttt{ARPACK} is a library that can be
 used to find a number of extremal eigenvalues meeting several
-different criteria: smallest magnitude, largest magnitude, largest
-real part, smallest real part, largest imaginary part, or smallest
-imaginary part.. This we are generally interested in the largest
-growing modes, at first glance it should be as easy as using the
+different possible criteria: smallest magnitude, largest magnitude,
+largest real part, smallest real part, largest imaginary part, or
+smallest imaginary part. We are most often interested in the largest
+growing modes, so at first glance it should be as easy as using the
 \texttt{ARPACK} routine to find the modes with the largest real
-part. Unfortunately, the \texttt{ZNAUPD} problem can only directly
-solve for the eigenvalues if the matrix $B$ in the eigenvalue problem
-is positive definite. In our case, it is positive semi-definite (made
-up of `1's and `0's on the diagonal), and so we are forced to use the
-routine in shift-invert mode, where a set of eigenvalues $\lambda$ can
-be found that are related to the original eigenvalues of the problem
-by $\lambda = 1/(\gamma-\sigma)$, where $\sigma$ is a user-specified
-shift. This can be rewritten
+part. Unfortunately, the \texttt{ZNAUPD} routine can only directly
+solve for the eigenvalues with largest real part if the matrix $B$ in
+the generalized eigenvalue problem is positive definite. In our case,
+it is positive semi-definite (made up of `1's and `0's on the
+diagonal), and so we are forced to use the routine in shift-invert
+mode, where a set of eigenvalues $\lambda$ can be found that are
+related to the original eigenvalues of the problem by $\lambda =
+1/(\gamma-\sigma)$, where $\sigma$ is a user-specified shift. This can
+be rewritten
 \begin{equation}
 \lambda = \frac{1}{\gamma-\sigma} = \frac{\mathrm{Re}\{\gamma-\sigma\} 
                                           - i\mathrm{Im\{\gamma-\sigma\}}}
@@ -986,7 +986,7 @@ Kageyama [2001],
 where the epicyclic frequency $\kappa$ is defined by
 $\kappa^2=(1/r^3)\partial(r^4\Omega^2)/\partial r = 4\Omega^2 +
 \partial \Omega^2/\partial \ln r$ and $k$ is the total wavenumber,
-$k^2 = k_z^2 + k_r^2$. (Note that this definition of $k$ for the local
+$k^2 = k_z^2 + k_r^2$. (Note that this definition of $k$ in the local
 dispersion relation is different from that used elsewhere throughout
 this chapter, where $k=k_z$ and the modes have arbitrary radial
 dependence.)
@@ -995,7 +995,7 @@ The lowest-order effects of a nonaxisymmetric correction to this
 dispersion relation are a Doppler shift to the frequency ($\gamma
 \rightarrow \gamma - im\Omega$) and an additional contribution to the
 wavenumber $k^2 \rightarrow k_r^2 + k_z^2 + m^2/r^2$. We can compare the
-behavior of eigenmodes in this narrowgap limit to the analytic
+behavior of eigenmodes in this narrow-gap limit to the local
 dispersion relation. We do this below for two of the basic waves of
 rotating MHD systems: Alv\'en waves and inertial waves.
 
@@ -1039,14 +1039,8 @@ parameters having already been specified as inputs to the
 calculation. $k_r$ is found by finding the peak in the spatial Fourier
 spectrum of the eigenmode between the two cylindrical walls. The
 dispersion relation of the computed eigenvalues and eigenmodes is
-compared to the ideal dispersion relation in
-Figure~\ref{fig:globalcode:narrowgap_alfven_modes}
-
-$k_r$ was calculated for each mode, and the growth rate and
-oscillation frequency are plotted versus $k_r$ to yield the dispersion
-relation for these modes.  The dispersion relation is plotted in
-Figure~\ref{fig:globalcode:narrowgap_alfven_pm1}.
-
+compared to the local dispersion relation in
+Figure~\ref{fig:globalcode:narrowgap_alfven_pm1}
 
 \begin{figure}
 \centering
@@ -1067,8 +1061,8 @@ Figure~\ref{fig:globalcode:narrowgap_alfven_pm1}.
   gap]{Dispersion relation of Alfv\'en waves with $Pm=1$ in a narrow
   gap. The dots indicate the calculated eigenvalues, with $k_r$
   determined from finding the peak in the spatial Fourier spectrum for
-  each eigenmode. The black lines indicate the analytic solution to
-  the ideal periodic dispersion relation.}
+  each eigenmode. The black lines indicate the solution to
+  the local dispersion relation.}
 \label{fig:globalcode:narrowgap_alfven_pm1}
 \end{figure}
 
@@ -1103,15 +1097,15 @@ calculated as before, and is shown in
 Figure~\ref{fig:globalcode:narrowgap_alfven_pmpoint1}
 
 \begin{figure}
-centering
+\centering
 \includegraphics[width=0.80\textwidth]{narrowgap_alfven_pmpoint1}
 \caption[Dispersion relation of Alfv\'en waves with $Pm=0.1$ in a
   narrow gap]{Dispersion relation of Alfv\'en waves with $Pm=0.1$ in a
   narrow gap. The dots indicate the calculated eigenvalues, with $k_r$
   determined from finding the peak in the spatial Fourier spectrum for
-  each eigenmode. The lines indicate the analytic solution to the
+  each eigenmode. The lines indicate the solution to the local
   dispersion relation. Note that there is some deviation of the
-  calculated eigenvalues from the analytic dispersion relation, most
+  calculated eigenvalues from the local dispersion relation, most
   likely due to errors in determining $k_r$.}
 \label{fig:globalcode:narrowgap_alfven_pmpoint1}
 \end{figure}
@@ -1153,7 +1147,7 @@ nonaxisymmetric modes.
 
 As before, $k_r$ for each mode was found from the peak in the spatial
 Fourier transform so that the calculated eigenvalues could be compared
-to the analytic dispersion relation. The result is shown in
+to the local dispersion relation. The result is shown in
 Figure~\ref{fig:globalcode:narrowgap_inertial}.
 
 \begin{figure}
@@ -1173,9 +1167,9 @@ Figure~\ref{fig:globalcode:narrowgap_inertial}.
   gap]{Dispersion relation of inertial waves in a narrow gap. The dots
   indicate the calculated eigenvalues, with $k_r$ determined from
   finding the peak in the spatial Fourier spectrum for each
-  eigenmode. The black lines indicate the analytic solution to the
-  ideal periodic dispersion relation. Note that there are some
-  deviation of the calculated eigenvalues from the analytic dispersion
+  eigenmode. The black lines indicate the solution to the
+  local dispersion relation. Note that there are some
+  deviation of the calculated eigenvalues from the local dispersion
   relation because of errors in calculating $k_r$. Note also the
   branch at $\mathrm{Im}\{\gamma\}=0$, which are zero-frequency
   Alfv\'en waves that are completely decoupled from the inertial waves
@@ -1186,9 +1180,6 @@ Figure~\ref{fig:globalcode:narrowgap_inertial}.
 
 
 \section{References}
-1. M Nornberg, H. Ji, E. Schartman, A. Roach, and J. Goodman, Phys
-Rev. Lett. {\bf 104}, 074501 (2010).
-
 \noindent 2. J. Goodman and H. Ji, J. Fluid Mech. {\bf 462}, 365 (2002).
 
 \noindent 3. T. H. Stix, {\emph Waves in Plasmas} (Springer-Verlag,
