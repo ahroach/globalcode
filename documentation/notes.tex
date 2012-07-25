@@ -829,165 +829,317 @@ the spectrum with a bad choice of $\sigma$. Because of this, it is
 advisable to verify some of the runs with the results of a full
 eigenvalue calculation.
 
-\section{Benchmarking}
+\section{Test Problems}
 
-\subsection{Narrow gap: Non-axisymmetric Alfv\'en waves}
-
-This test case was run in a narrow gap with the inner cylinder at 20.2
-cm, and the outer cylinder at 20.3 cm.  There was no background
-azimuthal flow.  The applied field was 1000 Gauss, and $\eta$ and
-$\nu$ were both 3.4e-3 cm$^2$/sec.  $k$ was 17.9 1/cm, and m was 1.
-Several eigenmodes, with different effective values of $k_r$ are shown
-in figure~\ref{fig:narrowgapalfveneigenmodes}.  The value of $k_r$ was
-calculated for each mode, and the growth rate and oscillation
-frequency are plotted again $k_r$ to yield the dispersion relation for
-these modes.  The dispersion relation is plotted in
-figure~\ref{fig:narrowgapalfven}.
-
-\begin{figure}
-\begin{center}
-\includegraphics[width=0.80\textwidth]{narrowgap_alfven_eigenmodes.eps}
-\caption{Alfv\'en eigenmodes with Pm=1 in a narrow gap. Modes with
-  several different values of $k_r$ are shown.}
-\label{fig:narrowgapalfveneigenmodes}
-\end{center}
-\end{figure}
-
-\begin{figure}
-\begin{center}
-\includegraphics[width=0.80\textwidth]{narrowgap_alfven_pm1.0.eps}
-\caption{Alfv\'en waves with Pm=1 in a narrow gap.  The lines indicate
-  the analytic solution to the dispersion relation.}
-\label{fig:narrowgapalfven}
-\end{center}
-\end{figure}
-
-\subsection{Narrow gap: Non-axisymmetric Alfv\'en waves with Pm=0.1}
-
-The same problem as in the previous section was repeated, but this
-time with $\nu$ of 3.4e-3 cm$^2$/sec, to yield Pm=0.1.  In this case,
-the modes stop oscillating at a sufficiently high $k_r$.  The
-dispersion relation is plotted in
-figure~\ref{fig:narrowgapalfvenpm0.1}.
-
-\begin{figure}
-\begin{center}
-\includegraphics[width=0.80\textwidth]{narrowgap_alfven_pm0.1.eps}
-\caption{Alfv\'en waves with Pm=0.1 in a narrow gap.  The lines
-  indicate the analytic solution to the dispersion relation.}
-\label{fig:narrowgapalfvenpm0.1}
-\end{center}
-\end{figure}
-
-\subsection{Narrow gap: Non-axisymmetric inertial waves}
-Inertial waves were examined in the narrow gap.  In this case, the
-background flow rotated at a rate of 42 radians/sec, and there was no
-background magnetic field.  $k_z$ was 1795 1/cm, and $\eta$ and $\nu$
-were both 3.4e-3 cm$^2$/sec.  The dispersion relation for these modes
-in shown in figure~\ref{fig:narrowgapinertial}.  The result again
-matches the analytic dispersion relation.  The zero frequency modes in
-this case correspond to zero-frequency alfven waves.  These waves are
-completely decoupled from the inertial modes since $v_{A}=0$.
-
-\begin{figure}
-\begin{center}
-\includegraphics[width=0.80\textwidth]{narrowgap_inertial.eps}
-\caption{Inertial waves in a narrow gap.}
-\label{fig:narrowgapinertial}
-\end{center}
-\end{figure}
-
-\subsection{Axisymmetric MRI modes}
+\subsection{Magnetorotational instability}
 
 The code was used to solve the problem of the marginally unstable
 eigenmode in an ideal Couette background from the paper of Goodman and
 Ji with the following parameters
 \begin{align*}
-&\Omega_1 = 2720\,\mathrm{rpm} = 284.84\,\mathrm{rad/s},\quad
-    &\nu = 3.2\times10^{-3}\,\mathrm{cm^2/s}
+&\Omega_1 = 2720\;\mathrm{rpm} = 284.84\;\mathrm{rad/s},\quad
+    &\nu = 3.2\times10^{-3}\;\mathrm{cm^2/s}
 \\
-&\Omega_2 = 328.4\,\mathrm{rpm} = 34.39\,\mathrm{rad/s},\quad
-    &\eta = 2.0\times10^{3}\,\mathrm{cm^2/s}
+&\Omega_2 = 328.4\;\mathrm{rpm} = 34.39\;\mathrm{rad/s},\quad
+    &\eta = 2.0\times10^{3}\;\mathrm{cm^2/s}
 \\
-&r_1 = 5\,\mathrm{cm},\quad &\rho = 6.0\,\mathrm{g/cm^3}
+&r_1 = 5\;\mathrm{cm},\quad &\rho = 6.0\;\mathrm{g/cm^3}
 \\
-&r_2 = 15\,\mathrm{cm},\quad &B_0 = 3000\, \mathrm{gauss}
+&r_2 = 15\;\mathrm{cm},\quad &B_0 = 3000\; \mathrm{gauss}
 \\
-&k = 2\pi n/h = 2\pi*0.5/10\,\mathrm{cm} = 0.314\,\mathrm{cm^{-1}}
+&k = 2\pi n/h = 2\pi*0.5/10\;\mathrm{cm} = 0.314\;\mathrm{cm^{-1}}
 \\
-&N = 4000\,\mathrm{grid\,cells},\quad &\mathrm{Insulating\,boundaries}
+&N = 4000\;\mathrm{grid\;cells},\quad &\mathrm{Insulating\;boundaries}
 \end{align*}
 
+\subsubsection{Axisymmetric modes}
+
 The spectrum of eigenvalues for the axisymmetric case, m=0, is shown
-in figure~\ref{fig:goodmanm0eigenvalues}. The unstable mode is shown
-in figure~\ref{fig:globalcode:goodman_mri_insulating_mode}. This mode
-matches that found in Goodman and Ji's paper.
+in figure~\ref{fig:globalcode:goodman_mri_m0_eigenvalues}. The
+marginally stable eigenmode is shown in
+Figure~\ref{fig:globalcode:goodman_mri_insulating_mode}. The mode
+found here is a match to that shown in Figure 2(b)
+of Goodman and Ji's paper.
 
 The unstable mode has a $k_r$ such that a half-wavelength of the mode
-spans the gap between the two cylinders.  The other, damped modes of
-the system are modes with increasing $k_r$ as they are increasingly
-damped.  A couple of typical eigenmodes, with two different values of
-$k_r$, are shown in figure~\ref{fig:goodmanm0typicalmodes}.
+spans the gap between the two cylinders, with boundary layers at the
+interfaces with the cylinder walls. The other, damped modes of the
+system are modes with increasing $k_r$ as they are increasingly
+damped.  A few examples of the damped eigenmodes are shown in
+Figure~\ref{fig:globalcode:goodman_mri_m0_stable_modes}.
 
 \begin{figure}
-\begin{center}
-\includegraphics[width=0.80\textwidth]{goodman_m0_eigenvalues.eps}
-\caption{Spectrum of eigenvalues for axisymmetric problem.  Eigenvalue
-  with a slightly positive growth rate and zero frequency is the MRI
-  mode.}
-\label{fig:goodmanm0eigenvalues}
-\end{center}
+\centering
+\includegraphics[width=0.80\textwidth]{goodman_mri_m0_eigenvalues}
+\caption[Eigenvalue spectrum for the axisymmetric MRI
+  problem]{Spectrum of 1000 eigenvalues for axisymmetric MRI problem.
+  Eigenvalue with a slightly positive growth rate and zero frequency
+  corresponds to the marginally unstable MRI mode.}
+\label{fig:globalcode:goodman_mri_m0_eigenvalues}
 \end{figure}
 
 
 \begin{figure}
-\begin{center}
+\centering
 \includegraphics[width=0.80\textwidth]{goodman_mri_insulating_mode}
-\caption[Marginally unstable axisymmetric MRI mode]{Marginally
-  unstable axisymmetric MRI mode. Compare to figure 2{b} from Goodman
-  and Ji.}
+\caption[Marginally unstable eigenmode of the axisymmetric MRI
+  problem]{Marginally unstable axisymmetric MRI mode. Compare to
+  figure 2{b} from Goodman and Ji.}
 \label{fig:globalcode:goodman_mri_insulating_mode}
-\end{center}
 \end{figure}
 
 \begin{figure}
-\begin{center}
-\includegraphics[width=0.80\textwidth]{goodman_m0_typical_modes.eps}
-\caption{Typical modes of the axisymmetric eigenvalue problem.  The
-  modes span the gap with different values of $k_r$.}
-\label{fig:goodmanm0typicalmodes}
-\end{center}
+\centering
+\includegraphics[width=0.80\textwidth]{goodman_mri_m0_stable_modes}
+\caption[Damped eigenmodes of the axisymmetric MRI problem]{Typical
+  damped modes of the axisymmetric MRI problem.  The modes fill the
+  space between the two cylinders with different values of $k_r$.}
+\label{fig:globalcode:goodman_mri_m0_stable_modes}
 \end{figure}
 
-\subsection{Nonaxisymmetric modes}
+\subsubsection{Nonaxisymmetric modes}
 
-Nonaxisymmetric modes of the MRI problem were also examined.  The
-spectrum of eigenvalues for m=1 is shown in
-figure~\ref{fig:goodmanm1eigenvalues}.  The nonaxisymmetric modes in
-this case are all damped.  Typical eigenmodes of this problem are
-shown in figure~\ref{fig:goodmanm1typicalmodes}.  The modes in this
-case tend to be localized at some radius.  The oscillation frequency
-of the mode is Doppler shifted by the fluid retation frequency at that
-radius.  The shape of the velocity component of the modes is that of a
-wavepacket.  But the magnetic modes often have tails that have a
-finite value across the cylinder gap.
+It is also possible to examine nonaxisymmetric eigenmodes of the MRI
+problem. The spectrum of eigenvalues for m=1 is shown in
+Figure~\ref{fig:globalcode:goodman_mri_m1_eigenvalues}.  The
+nonaxisymmetric modes in this case are all damped.  Typical eigenmodes
+of this problem are shown in
+Figure~\ref{fig:globalcode:goodman_mri_m1_stable_modes}.  The velocity
+components of these eigenmodes have a relatively large $k_r$ and are
+confined in an envelope localized at some radius. The oscillation
+frequency $-\mathrm{Im}\{\gamma\}$ is Doppler shifted by the rotation
+frequency at that radius. The magnetic components have a larger length
+scale, and often have tails that extend far beyond the localized
+velocity fluctuations.
 
 \begin{figure}
-\begin{center}
-\includegraphics[width=0.80\textwidth]{goodman_m1_eigenvalues.eps}
-\caption{Spectrum of eigenvalues for nonaxisymmetric problem, m=1.}
-\label{fig:goodmanm1eigenvalues}
-\end{center}
+\centering
+\includegraphics[width=0.80\textwidth]{goodman_mri_m1_eigenvalues}
+\caption[Eigenvalue spectrum for nonaxisymmetric MRI problem]{Spectrum
+  of 1000 eigenvalues for the nonaxisymmetric MRI problem with $m=1$
+  and with all other parameters the same as the axisymmetric
+  case. There are no growing modes, and the average
+  $-\mathrm{Im}\{\gamma\}$ is shifted from the axisymmetric case
+  because of the Doppler shift of the frequencies.}
+\label{fig:globalcode:goodman_mri_m1_eigenvalues}
 \end{figure}
 
 \begin{figure}
-\begin{center}
-\includegraphics[width=0.80\textwidth]{goodman_m1_typical_modes.eps}
-\caption{Typical modes of the nonaxisymmetric eigenvalue problem.
-  Each mode is localized near a specific radius.}
-\label{fig:goodmanm1typicalmodes}
-\end{center}
+\centering
+\includegraphics[width=0.80\textwidth]{goodman_mri_m1_stable_modes}
+\caption[Damped eigenmodes of the nonaxisymmetric MRI problem]{Typical
+  damped modes of the nonaxisymmetric eigenvalue problem. Modes have a
+  relatively large $k_r$ and are confined to an envelope localized to
+  a particular radius, }
+\label{fig:globalcode:goodman_mri_m1_stable_modes}
 \end{figure}
+
+
+
+\subsection{Basic waves in narrow-gap limit}
+
+With a vary narrow gap, such that $r_1 \gg r_2 - r_1$, the effects of
+the curvature terms in the linearized equations can be neglected ($k_r
+\gg 1/r$). In this case, a local dispersion relation can be derived, as
+in the axisymmetric dispersion relation derive in Ji, Goodman, and
+Kageyama [2001],
+\begin{equation}
+\left[(\gamma + \nu k^2)(\gamma + \eta k^2) 
+      + (k_zv_A)^2\right]^2\frac{k^2}{k_z^2}
++ \kappa^2(\gamma + \eta k^2)^2
++ \frac{\partial \Omega^2}{\partial \mathrm{ln} r}(k_z v_A)^2 = 0
+\end{equation}
+where the epicyclic frequency $\kappa$ is defined by
+$\kappa^2=(1/r^3)\partial(r^4\Omega^2)/\partial r = 4\Omega^2 +
+\partial \Omega^2/\partial \ln r$ and $k$ is the total wavenumber,
+$k^2 = k_z^2 + k_r^2$. (Note that this definition of $k$ for the local
+dispersion relation is different from that used elsewhere throughout
+this chapter, where $k=k_z$ and the modes have arbitrary radial
+dependence.)
+
+The lowest-order effects of a nonaxisymmetric correction to this
+dispersion relation are a Doppler shift to the frequency ($\gamma
+\rightarrow \gamma - im\Omega$) and an additional contribution to the
+wavenumber $k^2 \rightarrow k_r^2 + k_z^2 + m^2/r^2$. We can compare the
+behavior of eigenmodes in this narrowgap limit to the analytic
+dispersion relation. We do this below for two of the basic waves of
+rotating MHD systems: Alv\'en waves and inertial waves.
+
+\subsubsection{Alfv\'en waves with $Pm=1$}
+
+Eigenvalues and eigenmodes were calculated in the narrow-gap limit for
+the case with an applied magnetic field but no rotation with the
+following parameters:
+\begin{align*}
+&\Omega_1 = 0\;\mathrm{rpm} = 0\;\mathrm{rad/s},\quad
+    &\nu = 1.0\times10^{-4}\;\mathrm{cm^2/s}
+\\
+&\Omega_2 = 0\;\mathrm{rpm} = 0\;\mathrm{rad/s},\quad
+    &\eta = 1.0\times10^{-4}\;\mathrm{cm^2/s}
+\\
+&r_1 = 20.2\;\mathrm{cm},\quad &\rho = 6.36\;\mathrm{g/cm^3}
+\\
+&r_2 = 20.3\;\mathrm{cm},\quad &B_0 = 1000\; \mathrm{gauss}
+\\
+&k = 2\pi n/h = 2\pi*500/100\;\mathrm{cm} = 31.4\;\mathrm{cm^{-1}},\quad
+    &m=1
+\\
+&N = 2000\;\mathrm{grid\;cells},\quad &\mathrm{Conducting\;boundaries}
+\end{align*}
+
+The eigenmodes of this system are Alfv\'en waves with varying values
+of $k_r$ are shown in
+Figure~\ref{fig:globalcode:narrowgap_alfven_modes}.
+
+The dispersion relation with no rotation in the narrow gap limit reduces to
+\begin{equation}
+\gamma = -(\nu k^2 + \eta k^2) 
+         \pm i\sqrt{\frac{k_z^2B_0^2}{4\pi\rho} 
+                    - \frac{1}{4}\left(\nu k^2 - \eta k^2\right)^2}
+\label{eqn:globalcode:alfven_wave_dr}
+\end{equation}
+Because $Pm=\nu/\eta=1$ here, the second term under the square root is
+zero. To compare the calculated eigenvalues to this dispersion
+relation, the value of $k_r$ must be determined, with all other
+parameters having already been specified as inputs to the
+calculation. $k_r$ is found by finding the peak in the spatial Fourier
+spectrum of the eigenmode between the two cylindrical walls. The dispersion relation of the computed eigenvaues and eigenmodes is compared to the ideal dispersion relation in Figure~\ref{fig:globalcode:narrowgap_alfven_modes}
+
+$k_r$ was calculated for each mode, and the growth rate and
+oscillation frequency are plotted versus $k_r$ to yield the dispersion
+relation for these modes.  The dispersion relation is plotted in
+Figure~\ref{fig:globalcode:narrowgap_alfven_pm1}.
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.80\textwidth]{narrowgap_alfven_modes}
+\caption[Alfv\'en wave eigenmodes with $Pm=1$ in a narrow
+  gap]{Alfv\'en wave eigenmodes with $Pm=1$ in a narrow gap. Modes
+  with several different values of $k_r$ are shown. Note the two
+  primary polarizations of the wave: one with perturbations primarily
+  in $v_r$ and $b_r$, and the other with perturbations primarily in
+  $v_z$ and $b_z$.}
+\label{fig:globalcode:narrowgap_alfven_modes}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.80\textwidth]{narrowgap_alfven_pm1}
+\caption[Dispersion relation of Alfv\'en waves with $Pm=1$ in a narrow
+  gap]{Dispersion relation of Alfv\'en waves with $Pm=1$ in a narrow
+  gap. The dots indicate the calculated eigenvalues, with $k_r$
+  determined from finding the peak in the spatial Fourier spectrum for
+  each eigenmode. The black lines indicate the analytic solution to
+  the ideal periodic dispersion relation.}
+\label{fig:globalcode:narrowgap_alfven_pm1}
+\end{figure}
+
+
+\subsubsection{Alfv\'en waves with $Pm=0.1$}
+
+The same problem in the previous case was evaluated with all parameters the same except for different values of $\nu$ and $\eta$ to yield $Pm = \nu/\eta = 0.1$:
+\begin{align*}
+&\Omega_1 = 0\;\mathrm{rpm} = 0\;\mathrm{rad/s},\quad
+    &\nu = 3.4\times10^{-2}\;\mathrm{cm^2/s}
+\\
+&\Omega_2 = 0\;\mathrm{rpm} = 0\;\mathrm{rad/s},\quad
+    &\eta = 3.4\times10^{-3}\;\mathrm{cm^2/s}
+\\
+&r_1 = 20.2\;\mathrm{cm},\quad &\rho = 6.36\;\mathrm{g/cm^3}
+\\
+&r_2 = 20.3\;\mathrm{cm},\quad &B_0 = 1000\; \mathrm{gauss}
+\\
+&k = 2\pi n/h = 2\pi*500/100\;\mathrm{cm} = 31.4\;\mathrm{cm^{-1}},\quad
+    &m=1
+\\
+&N = 2000\;\mathrm{grid\;cells},\quad &\mathrm{Conducting\;boundaries}
+\end{align*}
+
+Because the second term under the square root of
+Equation~\ref{eqn:globalcode:alfven_wave_dr} is no longer zero, $\mathrm{Im}\{\gamma\}$ goes to zero for a sufficiently large $k_r$. The dispersion relation of the computed eigenmodes was calculated as before, and is shown in Figure~\ref{fig:globalcode:narrowgap_alfven_pmpoint1}
+
+\begin{figure}
+centering
+\includegraphics[width=0.80\textwidth]{narrowgap_alfven_pmpoint1}
+\caption[Dispersion relation of Alfv\'en waves with $Pm=0.1$ in a
+  narrow gap]{Dispersion relation of Alfv\'en waves with $Pm=0.1$ in a
+  narrow gap. The dots indicate the calculated eigenvalues, with $k_r$
+  determined from finding the peak in the spatial Fourier spectrum for
+  each eigenmode. The lines indicate the analytic solution to the
+  dispersion relation. Note that there is some deviation of the
+  calculated eigenvalues from the analytic dispersion relation, most
+  likely due to errors in determing $k_r$.}
+\label{fig:globalcode:narrowgap_alfven_pmpoint1}
+\end{figure}
+
+
+\subsubsection{Inertial waves}
+
+Eigenvalues and eigenmodes were calculated in the narrow-gap limit for
+the case with background solid body rotation but no background
+magnetic field with the following parameters:
+\begin{align*}
+&\Omega_1 = 400\;\mathrm{rpm} = 41.9\;\mathrm{rad/s},\quad
+    &\nu = 1.0\times10^{-5}\;\mathrm{cm^2/s}
+\\
+&\Omega_2 = 400\;\mathrm{rpm} = 41.9\;\mathrm{rad/s},\quad
+    &\eta = 1.0\times10^{-5}\;\mathrm{cm^2/s}
+\\
+&r_1 = 20.2\;\mathrm{cm},\quad &\rho = 6.36\;\mathrm{g/cm^3}
+\\
+&r_2 = 20.3\;\mathrm{cm},\quad &B_0 = 0\; \mathrm{gauss}
+\\
+&k = 2\pi n/h = 2\pi*50000/100\;\mathrm{cm} = 3141.6\;\mathrm{cm^{-1}},\quad
+    &m=1
+\\
+&N = 2000\;\mathrm{grid\;cells},\quad &\mathrm{Conducting\;boundaries}
+\end{align*}
+
+The eigenmodes of this system are inertial waves with varying values
+of $k_r$ and are shown in
+Figure~\ref{fig:globalcode:narrowgap_inertial_modes}
+
+The dispersion relation with no applied field in the narrow gap limit
+reduces to
+\begin{equation}
+\gamma = \nu k^2 - im\Omega \pm i \frac{2 \Omega k_z}{k}
+\end{equation}
+where the $-im\Omega$ term represents the Doppler shift of
+nonaxisymmetric modes.
+
+As before, $k_r$ for each mode was found from the peak in the spatial
+Fourier transform so that the calculated eigenvalues could be compared
+to the analytic dispersion relation. The result is shown in
+Figure~\ref{fig:globalcode:narrowgap_inertial}.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.80\textwidth]{narrowgap_inertial_modes}
+\caption[Inertial wave eigenmodes in a narrow gap]{Inertial wave
+  eigenmodes in a narrow gap with several different values of
+  $k_r$.}
+\label{fig:globalcode:narrowgap_inertial_modes}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.80\textwidth]{narrowgap_inertial}
+\caption[Dispersion relation of inertial wavesgap]{Dispersion relation
+  of inertial wavesin a narrow gap. The dots indicate the calculated
+  eigenvalues, with $k_r$ determined from finding the peak in the
+  spatial Fourier spectrum for each eigenmode. The black lines
+  indicate the analytic solution to the ideal periodic dispersion
+  relation. Note that there are some deviation of the calculated
+  eigenvalues from the analytic dispersion relation because of errors
+  in calculating $k_r$. Note also the branch at
+  $\mathrm{Im}\{\gamma\}=0$, which are zero-frequency Alfv\'en waves
+  that are completely decoupled from the inertial waves since
+  $B_0=0$.}
+\label{fig:globalcode:narrowgap_inertial}
+\end{figure}
+
 
 
 \section{References}
@@ -998,4 +1150,6 @@ Rev. Lett. {\bf 104}, 074501 (2010).
 
 \noindent 3. T. H. Stix, {\emph Waves in Plasmas} (Springer-Verlag,
 New York, 1992).
+
+\noindent 4. H. Ji, J. Goodman, and A. Kageyama, Monthly Notices of the Royal Astronnomical Society {\bf 325}, L1 (2001).
 \end{document}
