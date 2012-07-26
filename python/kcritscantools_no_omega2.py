@@ -256,6 +256,93 @@ def plot_kscan_curves(rule):
     ax.set_xscale('log')
     ax.legend(loc='best')
 
+def plot_mode_transition(rule, *Bs):
+    """Show effect of centrifugal instability to KH instability by comparing
+    contributions to the incompressibility equation"""
+    
+    if (not(len(Bs)) > 0):
+        print "Must specify at least one B"
+        return 0
+
+    #Need to grab the data myself, since I also want information
+    #from the eigenmodes.
+
+    files = glob.glob(rule)
+    numfiles = len(files)
+    data = numpy.ones(numfiles, dtype= [('kz', float), ('B', float),
+                                        ('gr', float), ('vrcontrib', float),
+                                        ('vtcontrib', float),
+                                        ('vzcontrib', float)])
+
+    for i in range(0, numfiles):
+        #Make sure that there's not a path stuck on the front of this.
+        fname = re.split('/', files[i])[-1]
+        data[i]['kz'] = float(re.split('B',
+                                       re.split('k', fname)[1])[0])
+        data[i]['B'] = float(re.split('.nc',
+                                      re.split('B', fname)[1])[0])
+
+        ncfile = netcdf.netcdf_file(files[i], 'r')
+
+        if(ncfile.arpack_modes_converged > 0):
+            #vtcontrib, vzcontrib, and vtcontrib are the contributions
+            #of each of the components to the incompressibility equation
+            #summed across the gap.
+            
+            data[i]['gr'] = ncfile.variables['lambda'][0,0]
+            vr_mag = ncfile.variables['vr'][0,:,0]
+            vr_phase = ncfile.variables['vr'][0,:,1]
+            vt_mag = ncfile.variables['vt'][0,:,0]
+            vt_phase = ncfile.variables['vt'][0,:,1]
+            vrcontrib = numpy.zeros(vr_mag.size, dtype=complex)
+            vtcontrib = numpy.zeros(vr_mag.size, dtype=complex)
+            vzcontrib = numpy.zeros(vr_mag.size, dtype=complex)
+            m = ncfile.m
+            r = ncfile.variables['r'][:]
+            e = numpy.e
+            for ii in range(0, r.size-1):
+                vrcontrib[ii] = ((1/r[ii]) *
+                                 ((r[ii+1]*vr_mag[ii+1] *
+                                   e**(1j*vr_phase[ii+1]) -
+                                   r[ii]*vr_mag[ii]*e**(1j*vr_phase[ii]))/
+                                  (r[ii+1]-r[ii])))
+                vtcontrib[ii] = 1j*m*vt_mag[ii]*e**(1j*vt_phase[ii])/r[ii]
+                vzcontrib[ii] = -vrcontrib[ii] - vtcontrib[ii]
+
+            data[i]['vrcontrib'] = abs(vrcontrib).sum()
+            data[i]['vtcontrib'] = abs(vtcontrib).sum()
+            data[i]['vzcontrib'] = abs(vzcontrib).sum()
+        else:
+            data[i]['gr'] = numpy.nan
+            data[i]['vrcontrib'] = numpy.nan
+            data[i]['vtcontrib'] = numpy.nan
+            data[i]['vzcontrib'] = numpy.nan
+            
+        ncfile.close()
+
+    data = numpy.sort(data, order=['B', 'kz'])
+
+    #Okay, now find where the information is for the Bs that I want.
+    
+    Bidx = []
+    for i in range(0, len(Bs)):
+        Bidx.append(numpy.equal(data[:]['B'],
+                                Bs[i]*numpy.ones(data.size)))
+
+    #And plot each curve
+    fig = pyplot.figure()
+    ax = fig.add_subplot(111)
+    for i in range(0, len(Bs)):
+        ax.plot(data[Bidx[i]]['kz'],
+                data[Bidx[i]]['vzcontrib']/data[Bidx[i]]['vrcontrib'],
+                '.-', label="B=%g gauss" % Bs[i])
+
+    ax.set_xlabel(r"$k_z$ [1/cm]")
+    ax.set_ylabel(r"$\sum_N|(\nabla\cdot v)_z|/\sum_N|(\nabla\cdot v)_r|$")
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+    ax.legend(loc='best')
+                  
 
 def plot_gr_contour(rule):
     data = grab_data(rule)
