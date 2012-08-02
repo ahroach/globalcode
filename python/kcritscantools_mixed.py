@@ -189,7 +189,8 @@ def plot_quantities_const_B(rule, *Bs):
 
     axs[-1][1].set_xlabel(r"$\Omega_1-\Omega_2$ [rpm]")
 
-def plot_gr_contour(rule, *zerodeltaomegas):
+def plot_gr_contour(rule, *zerodeltaomegas, **kwargs):
+    maxgr = kwargs.pop('maxgr', 0)
     data = grab_data(rule)
 
     #Find all of the unique Bs and deltaomegas
@@ -234,6 +235,9 @@ def plot_gr_contour(rule, *zerodeltaomegas):
     fig = pyplot.figure()
     ax = fig.add_subplot(1,1,1)
 
+    if (maxgr != 0):
+        normgrs = normgrs.clip(-maxgr, maxgr)
+    
     cf = ax.contourf(deltaomegas, Bs, normgrs, 50)
     ax.scatter(data[:]['deltaomega'], data[:]['B'], s=1, c='k')
     cb = fig.colorbar(cf, ax=ax)

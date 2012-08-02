@@ -344,7 +344,7 @@ def plot_mode_transition(rule, *Bs):
     ax.legend(loc='best')
                   
 
-def plot_gr_contour(rule):
+def plot_gr_contour(rule, maxgr=0):
     data = grab_data(rule)
 
     #Find all of the unique Bs and deltaomegas
@@ -375,6 +375,9 @@ def plot_gr_contour(rule):
     fig = pyplot.figure()
     ax = fig.add_subplot(1,1,1)
 
+    if (maxgr != 0):
+        normgrs = normgrs.clip(-maxgr, maxgr)
+    
     cf = ax.contourf(omega1s, Bs, normgrs, 50)
     ax.scatter(data[:]['omega1'], data[:]['B'], s=2, c='k')
     cb = fig.colorbar(cf, ax=ax)

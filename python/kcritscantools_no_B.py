@@ -280,7 +280,7 @@ def plot_kscan_curves(rule):
     ax.legend(loc='best')
 
 
-def plot_gr_contour(rule):
+def plot_gr_contour(rule, maxgr=0):
     data = grab_data(rule)
 
     #Find all of the unique Bs and deltaomegas
@@ -310,6 +310,9 @@ def plot_gr_contour(rule):
     
     fig = pyplot.figure()
     ax = fig.add_subplot(1,1,1)
+
+    if (maxgr != 0):
+        normgrs = normgrs.clip(-maxgr, maxgr)
 
     cf = ax.contourf(deltaomegas, omega2s, normgrs, 50)
     ax.scatter(data[:]['deltaomega'], data[:]['omega2'], s=1, c='k')
