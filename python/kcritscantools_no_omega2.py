@@ -338,7 +338,7 @@ def plot_mode_transition(rule, *Bs):
                 '.-', label="B=%g gauss" % Bs[i])
 
     ax.set_xlabel(r"$k_z$ [1/cm]")
-    ax.set_ylabel(r"$\sum_N|(\nabla\cdot v)_z|/\sum_N|(\nabla\cdot v)_r|$")
+    ax.set_ylabel(r"$\sum_N|k_z v_z|/\sum_N|(1/r + \partial/\partial r)v_r|$")
     ax.set_xscale('log')
     ax.set_yscale('log')
     ax.legend(loc='best')
