@@ -92,12 +92,14 @@ def plot_eigenvalues(filename, logx=0):
 
     if(logx):
         ax.set_xscale('log')
-        plot(-ncfile.variables['lambda'][:,0], -ncfile.variables['lambda'][:,1], 'o')    
+        plot(-ncfile.variables['lambda'][:,0],
+             -ncfile.variables['lambda'][:,1], 'k.')    
         xlabel("-Growth rate [1/sec]")
         ylabel("Oscillation frequency [rad/sec]")
 
     else:
-        plot(ncfile.variables['lambda'][:,0], -ncfile.variables['lambda'][:,1], 'o')    
+        plot(ncfile.variables['lambda'][:,0],
+             -ncfile.variables['lambda'][:,1], 'k.')    
         xlabel(r"Re[$\gamma$] [1/s]")
         ylabel(r"-Im[$\gamma$] [1/s]")
     grid(b=1)
