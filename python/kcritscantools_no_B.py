@@ -135,7 +135,8 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
         #sure that we plot all zeros.
         zerogromega2s = []
         for omega2 in omega2s:
-            if (list(data[idxs[i]]['omega2']).count(omega2) == 0):
+            if ((list(data[idxs[i]]['omega2']).count(omega2) == 0) and
+                (omega2 > data[idxs[i]]['omega2'][-1])):
                 zerogromega2s.append(omega2)
         axs[i][1].plot(numpy.concatenate((data[idxs[i]]['omega2'],
                                           numpy.array(zerogromega2s))),
