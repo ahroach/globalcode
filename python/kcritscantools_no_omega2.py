@@ -245,7 +245,7 @@ def plot_kscan_curves(rule):
     ax = fig.add_subplot(111)
     for i in range(0, len(Bs)):
         ax.plot(data[Bidx[i]]['kz'], data[Bidx[i]]['gr'],
-                '.-', label="B=%g" % Bs[i])
+                '.-', label="B=%g G" % Bs[i])
     
     ax.set_xlabel(r"$k_z$ [1/cm]")
     ax.set_ylabel(r"Re[$\gamma$] [1/s]")
