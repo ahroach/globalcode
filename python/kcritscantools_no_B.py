@@ -128,9 +128,9 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
 
     for i in range(0, len(deltaomegas)):
         axs[i][0].plot(data[idxs[i]]['omega2'], data[idxs[i]]['kmax'],
-                       'r.-', label=r"$k_{max}$")
+                       'r.-', label=r"$k_{\rm max}$")
         axs[i][0].plot(data[idxs[i]]['omega2'], data[idxs[i]]['kpeak'],
-                       'g.-', label=r"$k_{peak}$")
+                       'g.-', label=r"$k_{\rm peak}$")
         #Special treatment from the growth rate, where we want to make
         #sure that we plot all zeros.
         zerogromega2s = []
@@ -195,9 +195,9 @@ def plot_quantities_const_omega2(rule, *omega2s):
 
     for i in range(0, len(omega2s)):
         axs[i][0].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['kmax'],
-                       'r.-', label=r"$k_{max}$")
+                       'r.-', label=r"$k_{\rm max}$")
         axs[i][0].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['kpeak'],
-                       'g.-', label=r"$k_{peak}$")
+                       'g.-', label=r"$k_{\rm peak}$")
         axs[i][1].plot(data[idxs[i]]['deltaomega'],
                        data[idxs[i]]['peakgr']/(2*numpy.pi * 
                                                 data[idxs[i]]['deltaomega'] /

@@ -110,9 +110,9 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
 
     for i in range(0, len(deltaomegas)):
         axs[i][0].plot(data[idxs[i]]['B'], data[idxs[i]]['kmax'],
-                       'r.-', label=r"$k_{max}$")
+                       'r.-', label=r"$k_{\rm max}$")
         axs[i][0].plot(data[idxs[i]]['B'], data[idxs[i]]['kpeak'],
-                       'g.-', label=r"$k_{peak}$")
+                       'g.-', label=r"$k_{\rm peak}$")
         axs[i][1].plot(data[idxs[i]]['B'],
                        data[idxs[i]]['peakgr']/(2*numpy.pi*deltaomegas[i]/60),
                        'b.-', label=r"Peak Re{$\gamma$}")
@@ -132,7 +132,7 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
     axs[0][0].legend(loc='upper right')
     axs[0][1].legend(loc='upper right')
 
-    axs[-1][1].set_xlabel("B [gauss]")
+    axs[-1][1].set_xlabel("B [Gauss]")
 
 
 def plot_quantities_const_B(rule, *Bs):
@@ -167,9 +167,9 @@ def plot_quantities_const_B(rule, *Bs):
 
     for i in range(0, len(Bs)):
         axs[i][0].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['kmax'],
-                       'r.-', label=r"$k_{max}$")
+                       'r.-', label=r"$k_{\rm max}$")
         axs[i][0].plot(data[idxs[i]]['deltaomega'], data[idxs[i]]['kpeak'],
-                       'g.-', label=r"$k_{peak}$")
+                       'g.-', label=r"$k_{\rm peak}$")
         axs[i][1].plot(data[idxs[i]]['deltaomega'],
                        data[idxs[i]]['peakgr']/(2*numpy.pi * 
                                                 data[idxs[i]]['deltaomega'] / 
@@ -177,9 +177,9 @@ def plot_quantities_const_B(rule, *Bs):
                        'b.-', label=r"Peak Re{$\gamma$}")
         axs[i][0].loglog()
         axs[i][1].set_xscale('log')
-        axs[i][0].text(0.1, 0.1, r"$B$= %g gauss" % Bs[i],
+        axs[i][0].text(0.1, 0.1, r"$B$= %g Gauss" % Bs[i],
                        transform = axs[i][0].transAxes)
-        axs[i][1].text(0.1, 0.1, r"$B$= %g gauss" % Bs[i],
+        axs[i][1].text(0.1, 0.1, r"$B$= %g Gauss" % Bs[i],
                        transform = axs[i][1].transAxes)
         axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
         axs[i][1].set_ylabel(r"Re{$\gamma$}/$\Delta\Omega$")
@@ -243,7 +243,7 @@ def plot_gr_contour(rule, *zerodeltaomegas, **kwargs):
     cb = fig.colorbar(cf, ax=ax)
     cb.set_label(r"Re{$\gamma$}/($\Omega_1-\Omega_2$)", rotation=270)
     ax.set_xlabel(r"$\Omega_1-\Omega_2$ [rpm]")
-    ax.set_ylabel("B [gauss]")
+    ax.set_ylabel("B [Gauss]")
 
     
 
