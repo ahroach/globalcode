@@ -136,7 +136,7 @@ def plot_quantities_const_omega1(rule, *omegas):
     axs[0][0].legend(loc='upper right')
     axs[0][1].legend(loc='upper right')
 
-    axs[-1][1].set_xlabel("B [Gauss]")
+    axs[-1][1].set_xlabel(r"$B_0$ [Gauss]")
 
 
 def plot_quantities_const_B(rule, *Bs):
@@ -181,9 +181,9 @@ def plot_quantities_const_B(rule, *Bs):
                        'b.-', label=r"Peak Re{$\gamma$}")
         axs[i][0].loglog()
         axs[i][1].set_xscale('log')
-        axs[i][0].text(0.1, 0.1, r"$B$= %g Gauss" % Bs[i],
+        axs[i][0].text(0.1, 0.1, r"$B_0$= %g Gauss" % Bs[i],
                        transform = axs[i][0].transAxes)
-        axs[i][1].text(0.1, 0.1, r"$B$= %g Gauss" % Bs[i],
+        axs[i][1].text(0.1, 0.1, r"$B_0$= %g Gauss" % Bs[i],
                        transform = axs[i][1].transAxes)
         axs[i][0].set_ylabel(r"$k_z$ [1/cm]")
         axs[i][1].set_ylabel(r"Re{$\gamma$}/\Omega_1$")
@@ -335,7 +335,7 @@ def plot_mode_transition(rule, *Bs):
     for i in range(0, len(Bs)):
         ax.plot(data[Bidx[i]]['kz'],
                 data[Bidx[i]]['vzcontrib']/data[Bidx[i]]['vrcontrib'],
-                '.-', label="B=%g Gauss" % Bs[i])
+                '.-', label=r"$B_0$=%g Gauss" % Bs[i])
 
     ax.set_xlabel(r"$k_z$ [1/cm]")
     ax.set_ylabel(r"$\sum_N|k_z v_z|/\sum_N|(1/r + \partial/\partial r)v_r|$")
@@ -383,7 +383,7 @@ def plot_gr_contour(rule, maxgr=0):
     cb = fig.colorbar(cf, ax=ax)
     cb.set_label(r"Re{$\gamma$}/$\Omega_1$", rotation=270)
     ax.set_xlabel(r"$\Omega_1$ [rpm]")
-    ax.set_ylabel("B [Gauss]")
+    ax.set_ylabel(r"$B_0$ [Gauss]")
 
 
 def elsasser(omega, B):
@@ -424,7 +424,7 @@ def plot_Bcrit_scaling():
             label=r"Re{$\gamma$}$=0.10\Omega_1$")
     
     ax.set_xlabel(r"$\Omega_1$ [rpm]")
-    ax.set_ylabel(r"$B$ [Gauss]")
+    ax.set_ylabel(r"$B_0$ [Gauss]")
     ax.legend(loc='upper left')
 
     ax.set_ylim(40, 10000)
