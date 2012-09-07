@@ -200,8 +200,8 @@ def grab_data_kscan(rule):
     numfiles = len(files)
 
     data =  numpy.ones(numfiles, dtype = [('kz', float), ('B', float),
-                                          ('gr', float)])
-
+                                          ('gr', float), ('gr_norm', float)])
+    
     for i in range(0,numfiles):        
         #Make sure there's not a path stuck on the front of this.
         fname = re.split('/', files[i])[-1]
@@ -214,8 +214,12 @@ def grab_data_kscan(rule):
 
         if(ncfile.arpack_modes_converged > 0):
             data[i]['gr'] = ncfile.variables['lambda'][0,0]
+            data[i]['gr_norm'] = (ncfile.variables['lambda'][0,0] /
+                                  abs(ncfile.variables['omega'][0] -
+                                      ncfile.variables['omega'][-1]))
         else:
             data[i]['gr'] = numpy.nan
+            data[i]['gr_norm'] = numpy.nan
 
         ncfile.close()
 
@@ -224,7 +228,7 @@ def grab_data_kscan(rule):
     
     return data
 
-def plot_kscan_curves(rule):
+def plot_kscan_curves(rule, normalized=0):
     data = grab_data_kscan(rule)
     
     Bs = []
@@ -244,11 +248,19 @@ def plot_kscan_curves(rule):
     fig = pyplot.figure()
     ax = fig.add_subplot(111)
     for i in range(0, len(Bs)):
-        ax.plot(data[Bidx[i]]['kz'], data[Bidx[i]]['gr'],
-                '.-', label="B=%g G" % Bs[i])
+        if (normalized == 0):
+            ax.plot(data[Bidx[i]]['kz'], data[Bidx[i]]['gr'],
+                    '.-', label="B=%g G" % Bs[i])
+        else:
+            ax.plot(data[Bidx[i]]['kz'], data[Bidx[i]]['gr_norm'],
+                    '.-', label="B=%g G" % Bs[i])
     
     ax.set_xlabel(r"$k_z$ [1/cm]")
-    ax.set_ylabel(r"Re[$\gamma$] [1/s]")
+
+    if (normalized == 0):
+        ax.set_ylabel(r"Re[$\gamma$] [1/s]")
+    else:
+        ax.set_ylabel(r"$\mathrm{Re}\{\gamma\}/\Omega_1$")
     ax.autoscale(axis='y', tight=True)
     ytop = ax.set_ylim()[1]
     if (ytop > 0):
