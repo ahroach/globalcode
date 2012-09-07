@@ -323,12 +323,13 @@ def plot_shear_dependence(rule):
     ax.legend(loc='upper left')
     ax.axhline(0, color='k')
 
-def plot_width_dependence(rule):
+def plot_width_dependence(rule, normalized=0):
     files = glob.glob(rule)
     numfiles = len(files)
 
     data = zeros(numfiles, dtype = [('width', float), ('m', int),
-                                    ('growthrate', float)])
+                                    ('growthrate', float),
+                                    ('growthrate_norm', float)])
     for i in range(0, numfiles):
         ncfile = netcdf.netcdf_file(files[i], 'r')
         filename = re.split('/', files[i])[-1]
@@ -339,6 +340,9 @@ def plot_width_dependence(rule):
         data[i]['m'] = int(re.split('m', re.split('.nc',
                                                   filename)[0])[1])
         data[i]['growthrate'] = ncfile.variables['lambda'][0,0]
+        data[i]['growthrate_norm'] = (ncfile.variables['lambda'][0,0] /
+                                      abs(ncfile.variables['omega'][0] -
+                                          ncfile.variables['omega'][-1]))
         ncfile.close()
 
     #Sort the data array so that things plot correctly later.
@@ -357,11 +361,17 @@ def plot_width_dependence(rule):
     #Now plot all of the azimuthal mode numbers as separate lines
     for m in ms:
         indices = equal(data[:]['m'], m*ones(numfiles))
-        ax.plot(data[indices]['width'], data[indices]['growthrate'],
-                '.-', label="m=%i" % m)
-
+        if (normalized == 0):
+            ax.plot(data[indices]['width'], data[indices]['growthrate'],
+                    '.-', label="m=%i" % m)
+        else:
+            ax.plot(data[indices]['width'], data[indices]['growthrate_norm'],
+                    '.-', label="m=%i" % m)
     ax.set_xscale('log')
-    ax.set_ylabel("Growth rate [1/sec]")
+    if (normalized == 0):
+        ax.set_ylabel(r"Re{$\gamma$} [1/sec]")
+    else:
+        ax.set_ylabel(r"$\mathrm{Re}\{\gamma\}/\Delta\Omega$")
     ax.set_xlabel("Shear layer half-width [cm]")
     ax.legend(loc='best')
     ax.axhline(0, color='k')
