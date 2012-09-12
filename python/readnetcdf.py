@@ -376,6 +376,59 @@ def plot_width_dependence(rule, normalized=0):
     ax.legend(loc='best')
     ax.axhline(0, color='k')
 
+
+def plot_width_dependence_vr_vt_avg(rule):
+    files = glob.glob(rule)
+    numfiles = len(files)
+
+    data = zeros(numfiles, dtype = [('width', float), ('m', int),
+                                    ('growthrate', float),
+                                    ('vr_vt_avg', float)])
+
+    for i in range(0, numfiles):
+        ncfile = netcdf.netcdf_file(files[i], 'r')
+        filename = re.split('/', files[i])[-1]
+        #Now grab width out of the title string
+        data[i]['width'] = float(re.split('d', re.split('m',
+                                                        filename)[0])[1])
+        #Now grab m out of the file name
+        data[i]['m'] = int(re.split('m', re.split('.nc',
+                                                  filename)[0])[1])
+        data[i]['growthrate'] = ncfile.variables['lambda'][0,0]
+        data[i]['vr_vt_avg'] = find_peak_vr_vt_avg(files[i], 0)
+        ncfile.close()
+
+    #Sort the data array so that things plot correctly later.
+    data = sort(data, order=['width', 'm'])
+
+
+    #Find the list of unique ms
+    ms = []
+    for point in data:
+        if(ms.count(point['m']) == 0):
+            ms.append(point['m'])
+    ms.sort()
+
+    fig = figure()
+    ax = fig.add_subplot(111)
+    #Now plot all of the azimuthal mode numbers as separate lines
+    for m in ms:
+        indices = zeros(data.size, dtype=bool)
+        for i in range(0, data.size):
+            if (data[i]['m'] == m) and (data[i]['growthrate'] > 0):
+                indices[i] = True
+            else:
+                indices[i] = False
+        ax.plot(data[indices]['width'], data[indices]['vr_vt_avg'],
+                '.-', label="m=%i" % m)
+
+    ax.set_xscale('log')
+    ax.set_ylabel(r"$\langle \tilde{v}_r \tilde{v}_{\theta} \rangle$ [arb.]")
+    ax.set_xlabel("Shear layer half-width [cm]")
+    ax.legend(loc='best')
+    ax.axhline(0, color='k')
+
+
 def find_vz_deriv(filename, mode_number):
     ncfile = netcdf.netcdf_file(filename, 'r')
     vr_mag = ncfile.variables['vr'][mode_number,:,0]
@@ -421,6 +474,40 @@ def plot_velocity_contours(filename, mode_number):
     vzderiv_mag, vzderiv_phase = find_vz_deriv(filename, mode_number)
     plot_derived_quantity_contour(filename, vzderiv_mag, vzderiv_phase,
                                   showcolorbar=1, axisequalize=0)
+
+def find_peak_vr_vt_avg(filename, mode_number):
+    ncfile = netcdf.netcdf_file(filename, 'r')
+
+
+    vr_mag = ncfile.variables['vr'][mode_number,:,0]
+    vr_phase = ncfile.variables['vr'][mode_number,:,1]
+    vt_mag = ncfile.variables['vt'][mode_number,:,0]
+    vt_phase = ncfile.variables['vt'][mode_number,:,1]
+    ncells = ncfile.numcells
+    
+    var_r = ncfile.variables['r'][:]
+    m = ncfile.m
+    ncfile.close()
+    del ncfile
+
+    #First let's renormalize vr and vt so that the expected value of
+    #any given element is 1.
+    #scalefac^2*(sum(vr^2) + sum(vt^2)) = 2*numcells
+    x = sqrt((vr_mag*vr_mag).sum()
+             + (vt_mag*vt_mag).sum())
+    scalefac = sqrt(2*ncells)/x
+    vr_mag = vr_mag*scalefac
+    vt_mag = vt_mag*scalefac
+
+    #Now calculate the average torque
+    vrvt_avg = zeros(var_r.size)
+
+    for i in range(0, var_r.size):
+        vrvt_avg[i] = 0.5*(vr_mag[i]*vt_mag[i]*
+                           (cos(vr_phase[i]-vt_phase[i])))
+
+    return vrvt_avg.max()
+
 
 def plot_avg_torque(filename, mode_number):
     ncfile = netcdf.netcdf_file(filename, 'r')
