@@ -323,7 +323,7 @@ def plot_shear_dependence(rule):
     ax.legend(loc='upper left')
     ax.axhline(0, color='k')
 
-def plot_width_dependence(rule, normalized=0):
+def plot_width_dependence(rule, normalized=0, dampedgrs=1):
     files = glob.glob(rule)
     numfiles = len(files)
 
@@ -360,7 +360,17 @@ def plot_width_dependence(rule, normalized=0):
     ax = fig.add_subplot(111)
     #Now plot all of the azimuthal mode numbers as separate lines
     for m in ms:
-        indices = equal(data[:]['m'], m*ones(numfiles))
+        indices = zeros(data.size, dtype=bool)
+        for i in range(0, data.size):
+            if ((data[i]['m'] == m) and
+                (data[i]['growthrate'] > 0) and
+                (dampedgrs==0)):
+                indices[i] = True
+            elif ((data[i]['m'] == m) and (dampedgrs!=0)):
+                indices[i] = True
+            else:
+                indices[i] = False
+
         if (normalized == 0):
             ax.plot(data[indices]['width'], data[indices]['growthrate'],
                     '.-', label="m=%i" % m)
