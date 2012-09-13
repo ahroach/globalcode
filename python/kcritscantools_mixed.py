@@ -243,7 +243,7 @@ def plot_gr_contour(rule, *zerodeltaomegas, **kwargs):
     cb = fig.colorbar(cf, ax=ax)
     cb.set_label(r"Re{$\gamma$}/($\Omega_1-\Omega_2$)", rotation=270)
     ax.set_xlabel(r"$\Omega_1-\Omega_2$ [rpm]")
-    ax.set_ylabel("B_0 [Gauss]")
+    ax.set_ylabel(r"$B_0$ [Gauss]")
 
     
 
