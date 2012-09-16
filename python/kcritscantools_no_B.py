@@ -111,8 +111,10 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
 
     for i in range(0, len(deltaomegas)):
         tempax = []
-        idxs.append(numpy.equal(data[:]['deltaomega'],
-                                deltaomegas[i]*numpy.ones(data.size)))
+        idxs.append(numpy.less_equal(abs(data[:]['deltaomega'] - 
+                                         deltaomegas[i]*numpy.ones(data.size)),
+                                     (deltaomegas[i]*1e-10*
+                                      numpy.ones(data.size))))
         if(i == 0):
             tempax.append(fig.add_subplot(2*numdeltaomegas, 1, i*2 + 1))
             tempax.append(fig.add_subplot(2*numdeltaomegas, 1, i*2 + 2,
@@ -127,20 +129,21 @@ def plot_quantities_const_deltaomega(rule, *deltaomegas):
         axs.append(tempax)
 
     for i in range(0, len(deltaomegas)):
-        axs[i][0].plot(data[idxs[i]]['omega2'], data[idxs[i]]['kmax'],
+        tmpdata = numpy.sort(data[idxs[i]], order=['omega2'])
+        axs[i][0].plot(tmpdata['omega2'], tmpdata['kmax'],
                        'r.-', label=r"$k_{\rm max}$")
-        axs[i][0].plot(data[idxs[i]]['omega2'], data[idxs[i]]['kpeak'],
+        axs[i][0].plot(tmpdata['omega2'], tmpdata['kpeak'],
                        'g.-', label=r"$k_{\rm peak}$")
         #Special treatment from the growth rate, where we want to make
         #sure that we plot all zeros.
         zerogromega2s = []
         for omega2 in omega2s:
-            if ((list(data[idxs[i]]['omega2']).count(omega2) == 0) and
-                (omega2 > data[idxs[i]]['omega2'][-1])):
+            if ((list(tmpdata['omega2']).count(omega2) == 0) and
+                (omega2 > tmpdata['omega2'][-1])):
                 zerogromega2s.append(omega2)
-        axs[i][1].plot(numpy.concatenate((data[idxs[i]]['omega2'],
+        axs[i][1].plot(numpy.concatenate((tmpdata['omega2'],
                                           numpy.array(zerogromega2s))),
-                       (numpy.concatenate((data[idxs[i]]['peakgr'],
+                       (numpy.concatenate((tmpdata['peakgr'],
                                            numpy.zeros(len(zerogromega2s)))) /
                         (2*numpy.pi*deltaomegas[i]/60)),
                        'b.-', label=r"Peak Re{$\gamma$}")
